@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAuthContext } from "@/app/hooks/AuthContext";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -18,19 +18,13 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-  InputOTPSeparator,
-} from "@/components/ui/input-otp";
-import { useRouter, useSearchParams } from "next/navigation";
+
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
   password: z
@@ -47,14 +41,15 @@ const ResetPassword = (props: Props) => {
   const { resetPassword } = useAuthContext();
   const { toast } = useToast();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  // Use useEffect to handle redirection
   useEffect(() => {
-    if (!searchParams.get("token")) {
+    const queryParams = new URLSearchParams(window.location.search);
+    const token = queryParams.get("token");
+
+    if (!token) {
       router.push("/sign-in");
     }
-  }, [router, searchParams]);
+  }, [router]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -65,17 +60,20 @@ const ResetPassword = (props: Props) => {
   });
 
   function onSubmit(values: z.infer<typeof FormSchema>) {
-    if (values.password === values.passwordConfirm) {
-      const token = searchParams.get("token") as string;
+    const queryParams = new URLSearchParams(window.location.search);
+    const token = queryParams.get("token");
+
+    if (values.password === values.passwordConfirm && token) {
       resetPassword(values.password, token);
     } else {
       toast({
         variant: "destructive",
-        title: "Passwords dont match",
-        description: "Friday, February 10, 2023 at 5:57 PM",
+        title: "Passwords don't match",
+        description: "Please make sure both passwords match.",
       });
     }
   }
+
   return (
     <section className="flex justify-center min-h-screen items-center">
       <div className="w-full max-w-[560px] mx-auto border p-4 rounded-lg">

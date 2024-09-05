@@ -41,7 +41,6 @@ type Props = {};
 const Verification = (props: Props) => {
   const { verifyEmail } = useAuthContext();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -51,22 +50,15 @@ const Verification = (props: Props) => {
   });
 
   useEffect(() => {
-    //Get the token from the URL query parameters
-    const token = searchParams.get("token");
+    const queryParams = new URLSearchParams(window.location.search);
+    const token = queryParams.get("token");
 
-    // Ensure token is a string
-    const authToken = Array.isArray(token) ? token[0] : token;
-
-    //If a token is present, automatically verify the user
-    if (authToken && token) {
-      //verify token
-      const decoded = jwt.decode(authToken) as DecodedToken;
+    if (token) {
+      const decoded = jwt.decode(token) as DecodedToken;
       console.log(decoded);
-
-      //Api to verify Email
       verifyEmail(decoded.token as string);
     }
-  }, [searchParams, verifyEmail]); // Add missing dependencies
+  }, [verifyEmail]);
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     verifyEmail(data.pin);

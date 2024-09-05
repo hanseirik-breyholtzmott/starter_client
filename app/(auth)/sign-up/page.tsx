@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
-import * as z from 'zod';
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -20,26 +20,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import UserSignUpForm from '@/components/forms/user-sign-up-form';
-
-
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import UserSignUpForm from "@/components/forms/user-sign-up-form";
 
 const formSchema = z.object({
-    username: z.string().min(2).max(50),
-  })
-  
+  username: z.string().min(2).max(50),
+});
 
 export default function AuthenticationPage() {
-    
   return (
     <div className="relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <Link
-        href="/examples/authentication"
+        href="/sign-in"
         className={cn(
-          buttonVariants({ variant: 'ghost' }),
-          'absolute right-4 top-4 hidden md:right-8 md:top-8'
+          buttonVariants({ variant: "ghost" }),
+          "absolute right-4 top-4 hidden md:right-8 md:top-8"
         )}
       >
         Login
@@ -82,18 +78,18 @@ export default function AuthenticationPage() {
               Enter your email below to create your account
             </p>
           </div>
-       
+
           <UserSignUpForm />
-         
+
           <p className="px-8 text-center text-sm text-muted-foreground">
-            By clicking continue, you agree to our{' '}
+            By clicking continue, you agree to our{" "}
             <Link
               href="/terms"
               className="underline underline-offset-4 hover:text-primary"
             >
               Terms of Service
-            </Link>{' '}
-            and{' '}
+            </Link>{" "}
+            and{" "}
             <Link
               href="/privacy"
               className="underline underline-offset-4 hover:text-primary"

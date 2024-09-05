@@ -58,27 +58,22 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { toast } = useToast();
 
-  useEffect(() => {
-    // Set up the token getter function for the Axios instance
-    // setAuthorizationHeader(() => accessToken);
-
-    checkAuth();
-  }, []);
-
-  const handleApiError = (error: any, message: string) => {
-    console.error(message, error);
-    toast({
-      variant: "destructive",
-      title: "Error",
-      description: message,
-    });
-  };
+  const handleApiError = useCallback(
+    (error: any, message: string) => {
+      console.error(message, error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: message,
+      });
+    },
+    [toast]
+  ); // Memoize handleApiError and add dependencies
 
   const checkAuth = useCallback(async () => {
     setLoading(true);
     try {
       const session = await getServerCookie("session");
-      console.log(session);
 
       if (session) {
         const response = await axiosInstance.post("/api/refresh-token", {
@@ -86,7 +81,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
           withCredentials: true,
         });
 
-        const { accessToken, user, success, message } = response.data;
+        const { accessToken, user, success } = response.data;
 
         if (!success) {
           deleteServerCookie("session");
@@ -112,7 +107,11 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [handleApiError, router]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const login = async (email: string, password: string) => {
     try {

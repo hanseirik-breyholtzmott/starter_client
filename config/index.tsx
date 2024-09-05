@@ -4,6 +4,5 @@ export const appConfig: {
   mode: "live",
 };
 
-export const protectedRoutes = ["/purchases", "/dashboard"];
-export const applicationName = "Starter Client";
-export const companyName = "Starter Client";
+export const applicationName = "Folkekraft";
+export const companyName = process.env.NEXT_PUBLIC_COMPANY_NAME;

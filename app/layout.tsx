@@ -1,26 +1,27 @@
+//Nextjs
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
-import { extractRouterConfig } from "uploadthing/server";
 
+//Uploadthing
+import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 
 //config
-import { applicationName, appConfig } from "@/config";
+import { applicationName } from "@/config";
 
 //Shadn
 import { Toaster } from "@/components/ui/toaster";
 
 //Provider
 import { AuthWrapper } from "./hooks/AuthContext";
+
+//Analytics
+import { Analytics } from "@vercel/analytics/react";
+import StarterAnalytics from "@/analytics";
+
+//Public
+import { Inter } from "next/font/google";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,6 +43,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <StarterAnalytics />
+      </head>
       <body className={inter.className}>
         <AuthWrapper>
           <NextSSRPlugin
@@ -54,6 +58,7 @@ export default function RootLayout({
             routerConfig={extractRouterConfig(ourFileRouter)}
           />
           {children}
+          <Analytics />
         </AuthWrapper>
         <Toaster />
       </body>

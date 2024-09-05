@@ -1,11 +1,12 @@
 import React from "react";
+import Script from "next/script";
 
 type Props = {};
 
-const hotjar = (props: Props) => {
+const Hotjar = (props: Props) => {
   return (
     <>
-      <script
+      <Script
         dangerouslySetInnerHTML={{
           __html: `(function(h,o,t,j,a,r){
                 h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
@@ -21,4 +22,4 @@ const hotjar = (props: Props) => {
   );
 };
 
-export default hotjar;
+export default Hotjar;

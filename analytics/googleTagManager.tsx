@@ -1,16 +1,18 @@
 import React from "react";
+import Script from "next/script";
 
 type Props = {};
 
-const googleTagManager = (props: Props) => {
+const GoogleTagManager = (props: Props) => {
   return (
     <>
-      <script>
-        <script
+      <Script>
+        <Script
           async
+          strategy="lazyOnload"
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
-        ></script>
-        <script
+        />
+        <Script
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer = window.dataLayer || [];
                     function gtag(){dataLayer.push(arguments);}
@@ -19,9 +21,9 @@ const googleTagManager = (props: Props) => {
                     gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}');`,
           }}
         />
-      </script>
+      </Script>
     </>
   );
 };
 
-export default googleTagManager;
+export default GoogleTagManager;

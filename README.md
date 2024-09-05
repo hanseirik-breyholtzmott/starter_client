@@ -3,7 +3,7 @@
 This project is designed to help you rapidly develop your startup ideas by providing the essential components that most applications require. My goal is to save you countless hours, allowing you to concentrate on what truly matters: creating innovative and groundbreaking tools.
 
 <p align="center">
-  <a href="https://github.com/Hans-Breyholtz" target="_blank">
+  <a href="https://github.com/hanseirik-breyholtzmott/" target="_blank">
     <img src="https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=github&logoColor=white" alt="GitHub">
   </a>
   <a href="https://www.linkedin.com/in/hans-eirik-breyholtz-mott/" target="_blank">

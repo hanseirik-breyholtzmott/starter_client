@@ -1,7 +1,5 @@
-"use client";
 import React from "react";
 
-import Test from "@/components/test";
 import {
   Card,
   CardContent,
@@ -37,8 +35,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-
-export const description = "A donut chart with text";
 
 const chartConfig = {
   visitors: {

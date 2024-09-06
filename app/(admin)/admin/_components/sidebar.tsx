@@ -4,19 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 
 //Nav
-import nav from "@/config/contants";
+import { adminNavLinks } from "@/config/contants";
 
-//Shadn
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
@@ -25,30 +14,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 //Icons
-import { LayoutDashboard, CirclePlus, ChevronsUpDown } from "lucide-react";
-
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
+import { CirclePlus, ChevronsUpDown, ChevronRight } from "lucide-react";
 
 type Props = {};
 
@@ -73,9 +39,11 @@ const Sidebar = (props: Props) => {
                   {/** LOGO */}
                 </div>
                 <div className=" flex-col items-start pl-2 hidden lg:flex">
-                  <p className="font-semibold text-sm text-black">Folkekraft</p>
+                  <p className="font-semibold text-sm text-black">
+                    {process.env.NEXT_PUBLIC_COMPANY_NAME}
+                  </p>
                   <p className="text-[10px] text-stone-500">
-                    Team - 20 Members
+                    Company - 400+ investorer
                   </p>
                 </div>
               </div>
@@ -83,86 +51,61 @@ const Sidebar = (props: Props) => {
             </div>
           </PopoverTrigger>
           <PopoverContent className="w-[200px] p-2">
-            <div>
+            <div className="pt-4">
               <ul className="flex flex-col gap-2">
                 <p className="text-[10px] font-medium ">Personal Acccount</p>
                 <li className="text-sm hover:bg-zinc-200 transition-all ease-in-out p-1 cursor-pointer">
-                  Hans-Eirik Breyholtz-Mott
+                  Investor name
                 </li>
                 <p className="text-[10px] font-medium">Companies</p>
                 <li className="text-sm hover:bg-zinc-200 transition-all ease-in-out p-1 cursor-pointer">
-                  Company AS
+                  Folkekraft AS
                 </li>
-                <li className="text-sm hover:bg-zinc-200 transition-all ease-in-out p-1 cursor-pointer">
-                  Company AS 2
-                </li>
+
                 <Separator />
                 <li className="text-sm hover:bg-zinc-200 transition-all ease-in-out p-1 cursor-pointer flex flex-row items-center">
-                  <CirclePlus size={16} className="mr-2" /> Create new
+                  <CirclePlus size={16} className="mr-2" /> Legg til bedrift
                 </li>
               </ul>
             </div>
           </PopoverContent>
         </Popover>
 
-        <ul className=" flex flex-col space-y-2">
-          <p className="text-sm text-slate-700">Menu</p>
-          <a href="#" className="text-slate-900">
-            <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 bg-stone-300 p-2 rounded-lg">
-              <LayoutDashboard className="lg:mr-2" />
-              <p className="hidden lg:block">Dashboard</p>
-            </li>
-          </a>
-          <a href="#" className="text-slate-900">
-            <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-              <LayoutDashboard className="lg:mr-2" />
-              <p className="hidden lg:block">Report</p>
-            </li>
-          </a>
-          <a href="#" className="text-slate-900">
-            <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-              <LayoutDashboard className="lg:mr-2" />
-              <p className="hidden lg:block">Products</p>
-            </li>
-          </a>
-          <Link href={"/dashboard/customer"}>
-            <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg text-slate-900">
-              <LayoutDashboard className="lg:mr-2" />
-              <p className="hidden lg:block">Customers</p>
-            </li>
-          </Link>
-          <p className="text-sm text-slate-700">Financial</p>
-          <a href="#" className="text-slate-900">
-            <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-              <LayoutDashboard className="lg:mr-2" />
-              <p className="hidden lg:block">Transactions</p>
-            </li>
-          </a>
-          <a href="#" className="text-slate-900">
-            <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-              <LayoutDashboard className="lg:mr-2" />
-              <p className="hidden lg:block">Invoices</p>
-            </li>
-          </a>
-          <p className="text-sm text-slate-700">Tools</p>
-          <a href="#" className="text-slate-900">
-            <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-              <LayoutDashboard className="lg:mr-2" />
-              <p className="hidden lg:block">Settings</p>
-            </li>
-          </a>
-          <a href="#" className="text-slate-900">
-            <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-              <LayoutDashboard className="lg:mr-2" />
-              <p className="hidden lg:block">Feedback</p>
-            </li>
-          </a>
-          <a href="#" className="text-slate-900">
-            <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-              <LayoutDashboard className="lg:mr-2" />
-              <p className="hidden lg:block">Help</p>
-            </li>
-          </a>
+        <ul className="flex flex-col space-y-2">
+          {["Menu", "Financial", "Tools"].map((category) => (
+            <React.Fragment key={category}>
+              <p className="text-sm text-slate-700">{category}</p>
+              {adminNavLinks
+                .filter((link) => link.category === category)
+                .map((link) => (
+                  <React.Fragment key={link.name}>
+                    <Link href={link.href}>
+                      <li className="flex flex-row lg:justify-between justify-center w-full hover:bg-stone-300 p-2 rounded-lg text-slate-900">
+                        <div className="flex items-center">
+                          <link.icon className="lg:mr-2" />
+                          <p className="hidden lg:block">{link.name}</p>
+                        </div>
+                        {link.subMenu && (
+                          <ChevronRight size={16} className="hidden lg:block" />
+                        )}
+                      </li>
+                    </Link>
+                    {link.subMenu && (
+                      <ul className="ml-4 hidden lg:block">
+                        {link.subMenu.map((subLink) => (
+                          <Link key={subLink.name} href={subLink.href}>
+                            <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg text-slate-900">
+                              <subLink.icon className="lg:mr-2" />
+                              <p className="hidden lg:block">{subLink.name}</p>
+                            </li>
+                          </Link>
+                        ))}
+                      </ul>
+                    )}
+                  </React.Fragment>
+                ))}
+            </React.Fragment>
+          ))}
         </ul>
       </nav>
     </aside>

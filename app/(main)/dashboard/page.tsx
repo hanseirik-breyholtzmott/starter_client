@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
 import Test from "@/components/test";
 import {
@@ -14,12 +14,19 @@ import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DashboardFooter from "./_components/dashboard_footer";
 import OnboardingMultistep from "@/components/forms/onboarding-multistep";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
 const Dashboard = (props: Props) => {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
+
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/dashboard/folkekraft");
+  }, [router]);
 
   return (
     <>

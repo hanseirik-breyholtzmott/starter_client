@@ -58,6 +58,7 @@ import { Notification } from "@/app/types";
 
 //Helper
 import { dateHelper } from "@/lib/helperFunctions";
+import axiosInstance, { setAuthorizationHeader } from "@/lib/axiosInstance";
 
 type Props = {};
 
@@ -73,8 +74,8 @@ const Header = (props: Props) => {
     const fetchNotifications = async () => {
       try {
         if (user) {
-          const response = await axios.get(
-            "http://localhost:5000/api/notifications/" + user.id
+          const response = await axiosInstance.get(
+            "api/notifications/" + user.id
           );
           const notificationsData = response.data.data.notifications;
           console.log(response.data.data.notifications);

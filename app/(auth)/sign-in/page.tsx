@@ -77,7 +77,7 @@ export default function AuthenticationPage() {
               href="/sign-up"
               className="underline underline-offset-4 hover:text-primary"
             >
-              Sign up here
+              Sign up here {process.env.NEXT_PUBLIC_SERVER_BASE_URL}
             </Link>
             .
           </p>

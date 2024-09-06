@@ -116,14 +116,11 @@ const FolkeinvestInvest = () => {
     event.preventDefault();
     // Console log the current value of the input field
 
-    const response = await axios.post(
-      "http://localhost:5000/api/purchaseshares",
-      {
-        userId: user?.id,
-        numberOfShares: numberOfShares,
-        purchasePrice: 8,
-      }
-    );
+    const response = await axiosInstance.post("/api/purchaseshares", {
+      userId: user?.id,
+      numberOfShares: numberOfShares,
+      purchasePrice: 8,
+    });
 
     if (!response.data.success) {
       toast({

@@ -49,6 +49,7 @@ import {
   ArrowLeftRight,
   Settings,
 } from "lucide-react";
+import axiosInstance, { setAuthorizationHeader } from "@/lib/axiosInstance";
 
 //Context
 import { useAuthContext } from "@/app/hooks/AuthContext";
@@ -73,8 +74,8 @@ const Header = (props: Props) => {
     const fetchNotifications = async () => {
       try {
         if (user) {
-          const response = await axios.get(
-            "http://localhost:5000/api/notifications/" + user.id
+          const response = await axiosInstance.get(
+            "/api/notifications/" + user.id
           );
           const notificationsData = response.data.data.notifications;
           console.log(response.data.data.notifications);

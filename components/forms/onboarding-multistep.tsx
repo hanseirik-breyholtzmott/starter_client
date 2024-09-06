@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/form";
 import axiosInstance from "@/lib/axiosInstance";
 import { useAuthContext } from "@/app/hooks/AuthContext";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
   investor: z
@@ -49,12 +50,12 @@ interface StepProps {
 const OnboardingMultistep = (props: Props) => {
   const { user } = useAuthContext();
   const [step, setStep] = useState<number>(1);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       investor: "",
-      numberOfShares: 0,
       terms: false,
       risks: false,
     },
@@ -64,7 +65,6 @@ const OnboardingMultistep = (props: Props) => {
 
   const onSubmit = async () => {
     try {
-      console.log(user);
       const response = await axiosInstance.post("/api/purchaseshares", {
         userId: user?.id,
         numberOfShares: form.watch("numberOfShares"),
@@ -106,11 +106,12 @@ const OnboardingMultistep = (props: Props) => {
   const isStepValid = () => {
     switch (step) {
       case 1:
-        if (form.watch("numberOfShares") > 24) {
-          return true;
-        } else {
-          return false;
-        }
+        const numberOfSharesValid = form.watch("numberOfShares") > 24;
+        const investor = form.watch("investor");
+
+        const investorValid = /^.{9}$|^.{11}$/.test(investor);
+
+        return numberOfSharesValid && investorValid;
       case 2:
         return submitButton && form.watch("numberOfShares") > 24;
       case 3:
@@ -143,7 +144,7 @@ const OnboardingMultistep = (props: Props) => {
                         Tegn på vegne av (påkrevd)
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} placeholder="Fødselnr eller orgnr" />
                       </FormControl>
                       <FormDescription>
                         Skriv inn fødselnr eller orgnr.
@@ -181,7 +182,7 @@ const OnboardingMultistep = (props: Props) => {
                     <FormLabel className="block mb-2">Beløp</FormLabel>
                     <FormControl>
                       <Input
-                        value={`${form.watch("numberOfShares") * 8} kr`}
+                        value={`${(form.watch("numberOfShares") || 0) * 8} kr`}
                         readOnly
                       />
                     </FormControl>
@@ -194,6 +195,7 @@ const OnboardingMultistep = (props: Props) => {
                   variant="outline"
                   className="flex-1"
                   onClick={() => form.setValue("numberOfShares", Number(100))}
+                  type="button"
                 >
                   Minimum
                 </Button>
@@ -206,6 +208,7 @@ const OnboardingMultistep = (props: Props) => {
                       Number(form.watch("numberOfShares") + 125)
                     )
                   }
+                  type="button"
                 >
                   + 1 000 kr
                 </Button>
@@ -269,6 +272,7 @@ const OnboardingMultistep = (props: Props) => {
                     variant="link"
                     className="mt-4 p-0 h-auto text-blue-600"
                     onClick={() => setStep(1)}
+                    type="button"
                   >
                     Endre beløp
                   </Button>
@@ -366,7 +370,9 @@ const OnboardingMultistep = (props: Props) => {
                       </span>
                     </div>
                     <div className="flex justify-end">
-                      <Button className="mt-6">Last ned Bekreftelse</Button>
+                      <Button className="mt-6" type="button">
+                        Last ned Bekreftelse
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -388,9 +394,7 @@ const OnboardingMultistep = (props: Props) => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Adresse:</span>
-                      <span className="font-medium">
-                        C. Sundts gate 55, 5004 Bergen
-                      </span>
+                      <span className="font-medium">C. Sundts gate 55</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Antall aksjer:</span>
@@ -486,6 +490,7 @@ const OnboardingMultistep = (props: Props) => {
                   onClick={handlePrevious}
                   disabled={step === 1}
                   className="w-[100px]"
+                  type="button"
                 >
                   Previous
                 </Button>
@@ -495,6 +500,7 @@ const OnboardingMultistep = (props: Props) => {
                     onClick={handleNext}
                     disabled={!isStepValid()}
                     className="w-[100px]"
+                    type="button"
                   >
                     Next
                   </Button>
@@ -503,7 +509,7 @@ const OnboardingMultistep = (props: Props) => {
                     onClick={onSubmit}
                     disabled={!isStepValid()}
                     className="w-[100px]"
-                    type="submit"
+                    type="button"
                   >
                     Bekreft
                   </Button>
@@ -512,8 +518,9 @@ const OnboardingMultistep = (props: Props) => {
             ) : (
               // New button for step 3
               <Button
-                onClick={() => console.log("New action on step 3")}
+                onClick={() => router.push("/dashboard/transactions")}
                 className="w-[180px]"
+                type="button"
               >
                 View transactions
               </Button>

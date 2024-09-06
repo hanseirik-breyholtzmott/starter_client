@@ -15,29 +15,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DashboardFooter from "./_components/dashboard_footer";
 import OnboardingMultistep from "@/components/forms/onboarding-multistep";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
-
 type Props = {};
 
 const Dashboard = (props: Props) => {
@@ -48,7 +25,7 @@ const Dashboard = (props: Props) => {
     <>
       <div className="flex flex-row w-full justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Dashboard</h2>
-        <div>
+        <div className="hidden">
           <CalendarDateRangePicker />
         </div>
       </div>

@@ -123,7 +123,6 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
       const { refreshToken, accessToken, user, message, success } =
         response.data;
-      console.log(response.data);
 
       if (!success) {
         toast({
@@ -146,7 +145,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       setAccessToken(accessToken);
       setUser(user);
 
-      return router.push("/dashboard");
+      return router.replace("/dashboard");
     } catch (error) {
       handleApiError(error, "Login Failed");
       setUser(null);
@@ -230,7 +229,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     setUser(null);
     setAccessToken(null);
     localStorage.removeItem("accessToken");
-    router.push("/sign-in");
+    router.replace("/sign-in");
   };
 
   const verifyEmail = async (token: string) => {

@@ -37,7 +37,7 @@ import {
 
 //Icons
 import {
-  LayoutDashboard,
+  ChevronRight,
   User,
   SunMoon,
   LogOut,
@@ -60,15 +60,13 @@ import { Notification } from "@/app/types";
 //Helper
 import { dateHelper } from "@/lib/helperFunctions";
 
+import { navLinks } from "@/config/contants";
+
 type Props = {};
 
 const Header = (props: Props) => {
   const { logout, user, loading } = useAuthContext();
   const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  const handleLogout = async () => {
-    logout();
-  };
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -102,7 +100,7 @@ const Header = (props: Props) => {
       <div className="w-full md:w-[calc(100%-96px)] lg:w-[calc(100%-256px)] h-[64px] flex flex-row items-center px-4 justify-between">
         <div className="">
           <h2 className="text-2xl font-bold md:block hidden">
-            Hi, Welcome back 👋
+            Hei, Velkommen til Folkekraft AS emisjon 👋
           </h2>
           <Sheet>
             <SheetTrigger className="block md:hidden">
@@ -110,71 +108,50 @@ const Header = (props: Props) => {
             </SheetTrigger>
             <SheetContent className="w-[400px] sm:w-[540px]" side={"left"}>
               <nav>
-                <ul className=" flex flex-col space-y-2">
-                  <p className="text-sm text-slate-700">Menu</p>
-                  <a href="#" className="text-slate-900">
-                    <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 bg-stone-300 p-2 rounded-lg">
-                      <LayoutDashboard className="lg:mr-2" />
-                      <p className="hidden lg:block">Dashboard</p>
-                    </li>
-                  </a>
-                  <a href="#" className="text-slate-900">
-                    <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-                      <LayoutDashboard className="lg:mr-2" />
-                      <p className="hidden lg:block">Report</p>
-                    </li>
-                  </a>
-                  <a href="#" className="text-slate-900">
-                    <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-                      <LayoutDashboard className="lg:mr-2" />
-                      <p className="hidden lg:block">Products</p>
-                    </li>
-                  </a>
-                  <Link href={"/dashboard/customer"}>
-                    <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg text-slate-900">
-                      <LayoutDashboard className="lg:mr-2" />
-                      <p className="hidden lg:block">Customers</p>
-                    </li>
-                  </Link>
-                  <p className="text-sm text-slate-700">Financial</p>
-                  <a href="#" className="text-slate-900">
-                    <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-                      <LayoutDashboard className="lg:mr-2" />
-                      <p className="hidden lg:block">Transactions</p>
-                    </li>
-                  </a>
-                  <a href="#" className="text-slate-900">
-                    <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-                      <LayoutDashboard className="lg:mr-2" />
-                      <p className="hidden lg:block">Invoices</p>
-                    </li>
-                  </a>
-                  <p className="text-sm text-slate-700">Tools</p>
-                  <a href="#" className="text-slate-900">
-                    <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-                      <LayoutDashboard className="lg:mr-2" />
-                      <p className="hidden lg:block">Settings</p>
-                    </li>
-                  </a>
-                  <a href="#" className="text-slate-900">
-                    <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-                      <LayoutDashboard className="lg:mr-2" />
-                      <p className="hidden lg:block">Feedback</p>
-                    </li>
-                  </a>
-                  <a href="#" className="text-slate-900">
-                    <li className="flex flex-row lg:justify-start justify-center w-full hover:bg-stone-300 p-2 rounded-lg">
-                      <LayoutDashboard className="lg:mr-2" />
-                      <p className="hidden lg:block">Help</p>
-                    </li>
-                  </a>
+                <ul className="flex flex-col space-y-2">
+                  {["Menu", "Financial", "Tools"].map((category) => (
+                    <React.Fragment key={category}>
+                      <p className="text-sm text-slate-700">{category}</p>
+                      {navLinks
+                        .filter((link) => link.category === category)
+                        .map((link) => (
+                          <React.Fragment key={link.name}>
+                            <Link href={link.href}>
+                              <li className="flex flex-row lg:justify-start justify-between w-full hover:bg-stone-300 p-2 rounded-lg text-slate-900">
+                                <div className="flex items-center">
+                                  <link.icon className="mr-2" />
+                                  <p className="md:hidden lg:block text-black">
+                                    {link.name}
+                                  </p>
+                                </div>
+                                {link.subMenu && <ChevronRight size={16} />}
+                              </li>
+                            </Link>
+                            {link.subMenu && (
+                              <ul className="ml-4">
+                                {link.subMenu.map((subLink) => (
+                                  <Link key={subLink.name} href={subLink.href}>
+                                    <li className="flex flex-row justify-start w-full hover:bg-stone-300 p-2 rounded-lg text-slate-900">
+                                      <subLink.icon className="mr-2" />
+                                      <p className="md:hidden lg:block text-black">
+                                        {subLink.name}
+                                      </p>
+                                    </li>
+                                  </Link>
+                                ))}
+                              </ul>
+                            )}
+                          </React.Fragment>
+                        ))}
+                    </React.Fragment>
+                  ))}
                 </ul>
               </nav>
             </SheetContent>
           </Sheet>
         </div>
         <div className="flex flex-row relative items-center space-x-4">
-          <div className=" h-[30px] w-[30px] flex items-center justify-center relative">
+          <div className=" h-[30px] w-[30px]  items-center justify-center relative hidden">
             <div className="bg-red-500 w-[8px] h-[8px] absolute top-[3px] right-[3px] rounded-full"></div>
             <Sheet>
               <SheetTrigger>
@@ -327,12 +304,12 @@ const Header = (props: Props) => {
                       <p className="ml-2">Transactions</p>
                     </li>
                   </Link>
-                  <Link href={"/dashboard"}>
+                  <Link href={"/dashboard"} className="hidden">
                     <li className="flex flex-row text-sm">
                       <Settings size={20} /> <p className="ml-2">Settings</p>
                     </li>
                   </Link>
-                  <a href="" className="text-sm">
+                  <a href="" className="text-sm hidden">
                     <li className="flex flex-row justify-between items-center text-sm">
                       <div className="flex flex-row">
                         <SunMoon size={20} /> <p className="ml-2">Dark mode</p>
@@ -340,7 +317,7 @@ const Header = (props: Props) => {
                       <Switch checked={true} />
                     </li>
                   </a>
-                  <button onClick={handleLogout}>
+                  <button onClick={() => logout()}>
                     <li className="flex flex-row text-sm text-red-500">
                       <LogOut size={20} /> <p className="ml-2">Log out</p>
                     </li>

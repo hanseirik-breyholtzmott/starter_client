@@ -33,7 +33,7 @@ const capTableData = [
 
 type Props = {};
 
-const page = (props: Props) => {
+const Page = (props: Props) => {
   const [data, setData] = useState<Investors[]>([]);
 
   useEffect(() => {
@@ -47,4 +47,4 @@ const page = (props: Props) => {
   );
 };
 
-export default page;
+export default Page;

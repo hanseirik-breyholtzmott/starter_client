@@ -29,7 +29,9 @@ const Sidebar = (props: Props) => {
     <aside className="bg-white hidden md:block w-24 lg:w-64 fixed h-full transition-all ease-in-out">
       <div className="bg-white h-[64px] w-full relative flex items-center justify-center">
         <Link href={"/dashboard"}>
-          <h2 className="text-4xl font-bold">Logo</h2>
+          <h2 className="text-4xl font-bold">
+            {process.env.NEXT_PUBLIC_COMPANY_NAME}
+          </h2>
         </Link>
       </div>
 

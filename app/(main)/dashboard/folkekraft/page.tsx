@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 //Shadn
@@ -11,23 +11,20 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 
-//import { User, columns } from "../_components/customer-columns";
-//import { DataTable } from "../_components/customer-data-table";
-
 import { Investors, columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 
-//Uploadthing
-import { UploadButton } from "@/lib/uploadthing";
-
 //Helper function
-import { formatCurrency, covertToPercentage } from "@/lib/helperFunctions";
+import {
+  formatCurrency,
+  covertToPercentage,
+  formatNumber,
+} from "@/lib/helperFunctions";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -39,31 +36,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-
 //Icons
 import { X, Info } from "lucide-react";
 
 import { number, z } from "zod";
 
-import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/app/hooks/AuthContext";
 import axiosInstance from "@/lib/axiosInstance";
-
-const formSchema = z.object({
-  numberOfShares: z.string(),
-});
 
 const capTableData = [
   {
@@ -97,9 +77,6 @@ const FolkeinvestInvest = () => {
   const [data, setData] = useState<Investors[]>([]);
   const router = useRouter();
 
-  //Purchase
-  const [numberOfShares, setNumberOfShares] = useState<number>(0);
-
   //Campaign
   const [totalShares, setTotalShares] = useState<number>(0);
   const [totalPurchases, setTotalPurchases] = useState<number>(0);
@@ -107,37 +84,7 @@ const FolkeinvestInvest = () => {
   const [totalSharesUser, setTotalSharesUser] = useState<number>(0);
   const [goal, setGoal] = useState<number>(0);
   const [daysRemaining, setDaysRemaining] = useState<number>(0);
-
-  const handleClose = () => {
-    window.location.reload();
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    // Console log the current value of the input field
-
-    const response = await axiosInstance.post("/api/purchaseshares", {
-      userId: user?.id,
-      numberOfShares: numberOfShares,
-      purchasePrice: 8,
-    });
-
-    if (!response.data.success) {
-      toast({
-        title: "Error has occured",
-        description: `Error message: ${response.data.message}`,
-      });
-      return;
-    }
-
-    // Handle form submission, e.g., show a toast notification
-    toast({
-      title: "Takk for at du har investert i Folkekraft",
-      description: `Sjekk eposten din for sluttsedel. Antall aksjer ${numberOfShares} for ${
-        numberOfShares * 8
-      } kr`,
-    });
-  };
+  const [sharesAvailable, setSharesAvailable] = useState<number>(0);
 
   useEffect(() => {
     setData(capTableData);
@@ -154,6 +101,7 @@ const FolkeinvestInvest = () => {
           setTotalAmount(response.data.data.totalAmount);
           setTotalSharesUser(response.data.user.totalShares);
           setGoal(response.data.data.goal);
+          setSharesAvailable(response.data.data.sharesAvailable);
         } catch (err) {
           console.log(err);
         }
@@ -180,8 +128,8 @@ const FolkeinvestInvest = () => {
         <div className="bg-white rounded-xl h-[400px] p-4 relative">
           <div className="w-full h-full relative overflow-hidden rounded-xl">
             <iframe
-              src="https://player.vimeo.com/video/995795812?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
-              frameBorder="0"
+              src="https://player.vimeo.com/video/1007463389?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+              style={{ border: "none" }}
               allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
               title="Vi har ikke vært gode nok"
               className="absolute top-0 left-0 w-full h-full"
@@ -205,7 +153,7 @@ const FolkeinvestInvest = () => {
           <div className="bg-slate-200 rounded-xl p-4 space-y-3">
             <div className="flex flex-row justify-between">
               <p className="font-semibold">
-                Minstemål <br />{" "}
+                Maksmål <br />{" "}
                 <span className="font-normal">{covertToPercentage(goal)}</span>
               </p>
               <p className="font-semibold">
@@ -237,13 +185,13 @@ const FolkeinvestInvest = () => {
                     </Tooltip>
                   </TooltipProvider>
                 </p>
-                <p>19 999 976,40 kr</p>
+                <p>21 713 752,00 kr</p>
               </div>
               <div className="flex flex-row justify-between">
                 <p className="font-semibold flex items-center">
                   Antall aksjer du har:
                 </p>
-                <p>{totalShares}</p>
+                <p>{formatNumber(totalShares)}</p>
               </div>
               <div className="flex flex-row justify-between">
                 <p className="font-semibold flex items-center">
@@ -259,13 +207,13 @@ const FolkeinvestInvest = () => {
                     </Tooltip>
                   </TooltipProvider>
                 </p>
-                <p>19 999 976,40 kr</p>
+                <p>6 800,00 kr</p>
               </div>
               <div className="flex flex-row justify-between">
                 <p className="font-semibold">
                   Antall aksjer tilgjengelig til salg:
                 </p>
-                <p>19 999 976,40 kr</p>
+                <p>{formatNumber(sharesAvailable)} / 1 000 000</p>
               </div>
             </div>
           </div>
@@ -282,30 +230,207 @@ const FolkeinvestInvest = () => {
       </section>
       <section className="bg-white rounded-xl p-4">
         <Tabs defaultValue="about" className="w-full mx-auto">
-          <TabsList className="grid w-full grid-cols-5 mx-auto">
+          <TabsList className="grid w-full grid-cols-4 mx-auto">
             <TabsTrigger value="about">Beskrivelse</TabsTrigger>
-            <TabsTrigger value="information">Grunnleggende Info</TabsTrigger>
             <TabsTrigger value="table">CapList</TabsTrigger>
             <TabsTrigger value="team">Team og eiere</TabsTrigger>
             <TabsTrigger value="documents">Dokumenter</TabsTrigger>
           </TabsList>
-          <TabsContent value="about" className="min-h-[50vh]">
-            <UploadButton
-              endpoint="imageUploader"
-              onClientUploadComplete={(res) => {
-                // Do something with the response
-                console.log("Files: ", res);
-                alert("Upload Completed");
-              }}
-              onUploadError={(error: Error) => {
-                // Do something with the error.
-                alert(`ERROR! ${error.message}`);
-              }}
-            />
+          <TabsContent value="about" className=" relative">
+            <div className="flex min-h-screen bg-white text-gray-800 relative">
+              {/* Sidebar */}
+              <aside className="w-64 p-6 border-r border-gray-200 sticky top-0">
+                <h2 className="font-semibold mb-4">FOLKEKRAFT AS</h2>
+                <nav>
+                  <ul className="space-y-2">
+                    <li className="hover:text-blue-600 hover:underline cursor-pointer">
+                      <a href="#konsept">Konsept: strømkunde og medeier</a>
+                    </li>
+                    <li className="hover:text-blue-600 hover:underline cursor-pointer">
+                      <a href="#utfordring">Utfordring i strømbransjen</a>
+                    </li>
+                    <li className="hover:text-blue-600 hover:underline cursor-pointer">
+                      <a href="#markedsmulighet">
+                        Markedsmulighet for Folkekraft
+                      </a>
+                    </li>
+                    <li className="hover:text-blue-600 hover:underline cursor-pointer">
+                      <a href="#kundetilfredshet">Kundetilfredshet og salg</a>
+                    </li>
+                    <li className="hover:text-blue-600 hover:underline cursor-pointer">
+                      <a href="#strømavtalen">Strømavtalen i Folkekraft</a>
+                    </li>
+                    <li className="hover:text-blue-600 hover:underline cursor-pointer">
+                      <a href="#restrukturering">
+                        Restrukturering av Folkekraft
+                      </a>
+                    </li>
+                    <li className="hover:text-blue-600 hover:underline cursor-pointer">
+                      <a href="#kapital">Kapital og exit</a>
+                    </li>
+                    <li className="hover:text-blue-600 hover:underline cursor-pointer">
+                      <a href="#konkurrenter">Konkurrenter</a>
+                    </li>
+                    <li className="hover:text-blue-600 hover:underline cursor-pointer">
+                      <a href="#emision">Om pågående emisjon</a>
+                    </li>
+                  </ul>
+                </nav>
+              </aside>
+
+              {/* Main content */}
+              <div className="flex-1 p-8">
+                <h1 className="text-3xl font-bold mb-6">Hvorfor investere?</h1>
+
+                <section className="mb-8">
+                  <h2 className="text-2xl font-semibold mb-4" id="konsept">
+                    Konsept: strømkunde og medeier
+                  </h2>
+                  <p className="mb-4">
+                    Alle kunder blir aksjonærer i Folkekraft. Vi gir også
+                    aksjepremie til kunder som verver andre. Kundene får en
+                    enkel strømavtale basert på månedsavgift og påslag på
+                    strømmen.
+                    <br />
+                    <br />
+                    Folkekraft minner om konseptet til store samvirkeforetak som
+                    Coop og Felleskjøpet, men vi gir aktivt eierskap og
+                    exit-muligheter. Forretningsmodellen bidrar til
+                    verdiskapning gjennom økt kundelojalitet og lavere
+                    markedsføringskostnader gjennom bl.a. verveordning.
+                    <br />
+                    <br />
+                    Du kan også kjøpe aksjer i Folkekraft som investor.
+                    Folkekraft kjøper tilbake aksjer fra investorer for å gi dem
+                    til nye kunder mens vi vokser. Investorer vil dermed få
+                    flere exit-muligheter.
+                  </p>
+                </section>
+
+                <section className="mb-8">
+                  <h2 className="text-2xl font-semibold mb-4" id="utfordring">
+                    Utfordring i strømbransjen
+                  </h2>
+                  <p className="mb-4">
+                    Forbrukerrådet mener at mange{" "}
+                    <a
+                      className="text-blue-500 underline"
+                      href="https://e24.no/energi-og-klima/i/1BV4GK/forbrukerraadet-mener-stroemkundene-blir-lurt"
+                    >
+                      strømkunder blir lurt
+                    </a>
+                    . Tilbud kompliseres for å skjule høye kostnader. Dette har
+                    ført til{" "}
+                    <a
+                      className="text-blue-500 underline"
+                      href="https://www.bytt.no/strom/stromleverandorer/zbgv/misfornoyde-stromkunder-med-klagestorm"
+                    >
+                      klagestorm mot strømleverandører
+                    </a>
+                    . Vi bygger tillit ved at kundene er medeiere. I vårt første
+                    driftsår har vi sett at Folkekraft får lojale kunder som
+                    anskaffes til lav kostnad. Målet er at kundene skal bli
+                    største aksjonærgruppe.
+                  </p>
+                </section>
+
+                <section>
+                  <h2
+                    className="text-2xl font-semibold mb-4"
+                    id="markedsmulighet"
+                  >
+                    Markedsmulighet for Folkekraft
+                  </h2>
+                  <p className="mb-4">
+                    Det norske strømmarkedet er på ca. 3.2 mill. brukere. Vi har
+                    som mål å få 100.000 kunder. Altså en markedsandel på noe
+                    over 3 %. Det finnes ca. 80 strømleverandører i Norge.
+                    Konkurransen om kundene er stor. Inntektsmarginene er små på
+                    strømsalg og produktet er relativt generisk. De fleste
+                    strømselskaper har store salg- og
+                    markedsføringsorganisasjoner som tilfører kunden lite utover
+                    høyere sluttkostnader.
+                  </p>
+                </section>
+
+                <section>
+                  <h2
+                    className="text-2xl font-semibold mb-4"
+                    id="kundetilfredshet"
+                  >
+                    Kundetilfredshet og salg
+                  </h2>
+                  <p className="mb-4">
+                    Folkekraft har nesten 700 strømkunder. Det er stor
+                    tilfredshet med både vår kundeapp som gir oversikt over
+                    strømforbruk og betalingsløsninger via Vipps, avtalegiro,
+                    etc. Selskapet har testet og optimalisert salgsstrategier.
+                    Tidligere avhengighet av telesalg er nå byttet ut med
+                    digital annonsering som i siste testkampanje bidro til å
+                    hente 115 til en snittpris på 330 kroner. Markedsstandard på
+                    telesalg er på 1000 - 1300 kr per kunde.
+                  </p>
+                </section>
+
+                <section>
+                  <h2 className="text-2xl font-semibold mb-4" id="strømavtalen">
+                    Strømavtalen i Folkekraft
+                  </h2>
+                  <p className="mb-4">
+                    Aksjeverdi: Alt vi estimerer å tjene på kunden gis i aksjer
+                    første året. Det tilsvarer ca. 1000 kr i aksjeverdi.
+                  </p>
+                </section>
+
+                <section>
+                  <h2
+                    className="text-2xl font-semibold mb-4"
+                    id="restrukturering"
+                  >
+                    Restrukturering av Folkekraft
+                  </h2>
+                  <p className="mb-4">
+                    Etter etablering og Folkefinansieringskampanje i 2023 har
+                    Folkekraft gjort betydelige endringer i organisasjonens
+                    struktur. Nye lederskap har bidratt til økt effektivitet og
+                    kostnadsreduksjon. Selskapet har også forbedret sine
+                    IT-systemer, som inkluderer en ny kundeapp og
+                    faktureringssystem, og har fjernet gamle systemer som
+                    hindret vekst.
+                  </p>
+                </section>
+
+                <section>
+                  <h2 className="text-2xl font-semibold mb-4" id="kapital">
+                    Kapital og exit
+                  </h2>
+                  <p className="mb-4">
+                    Selskapet planlegger tre emisjoner fremover, med sikte på å
+                    hente kapital fra både profesjonelle investorer og kunder.
+                    Allerede ved ca. 8.000–9.000 kunder vil selskapet være
+                    selvfinansiert frem mot 100.000 kunder. Inntektsgrunnlaget
+                    vil primært komme fra strømleveranser, men også
+                    mersalgsprodukter.
+                    <br />
+                    <br />
+                    Investorer i Folkekraft får flere muligheter til å realisere
+                    gevinst før børsnoteringen. Selskapet estimerer en aksjekurs
+                    på 57 kroner og en selskapsverdi på 330 millioner kroner
+                    innen 2028. Deltagelse i denne emisjonen vil i så tilfelle
+                    gi 7 ganger tilbake på investert beløp.
+                  </p>
+                </section>
+
+                <section>
+                  <h2 className="text-2xl font-semibold mb-4" id="emision">
+                    Om pågående emisjon
+                  </h2>
+                  <p className="mb-4"></p>
+                </section>
+              </div>
+            </div>
           </TabsContent>
-          <TabsContent value="information" className="min-h-[50vh]">
-            Change your password here.
-          </TabsContent>
+
           <TabsContent value="table" className=" h-fit">
             <div className="w-full max-w-[960px] mx-auto mb-4 h-fit">
               <h1 className="text-3xl font-bold mt-12 mb-8">All Investors</h1>
@@ -319,31 +444,6 @@ const FolkeinvestInvest = () => {
             </div>
 
             <div className="flex gap-4 flex-row flex-wrap w-full max-w-[960px] mx-auto justify-center">
-              <Card className="rounded-xl overflow-hidden max-w-[300px]">
-                <CardHeader className=" p-0">
-                  <div className="mb-4">
-                    <img
-                      className=""
-                      src="https://framerusercontent.com/images/cE9N3xOHYmrgmqWBHdWHXoW5U.png"
-                      alt=""
-                    />
-                  </div>
-
-                  <CardTitle className="mt-8 px-6">Geir Morten</CardTitle>
-                  <CardDescription className="px-6 text-sm">
-                    Gründer og styreleder
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="mt-4">
-                  <p>Entreprenør i over 20 år</p>
-                  <br />
-                  <p>Bakgrunn fra shipping, finans, teknologi og kraft</p>
-                  <br />
-                  <p className="text-wrap">
-                    Medgründer i bl.a. H2 Marine, The Ship og GreenPowerHub
-                  </p>
-                </CardContent>
-              </Card>
               <Card className="rounded-xl overflow-hidden max-w-[300px]">
                 <CardHeader className=" p-0">
                   <div className="mb-4">
@@ -369,32 +469,7 @@ const FolkeinvestInvest = () => {
                   </p>
                 </CardContent>
               </Card>
-              <Card className="rounded-xl overflow-hidden max-w-[300px]">
-                <CardHeader className=" p-0">
-                  <div className="mb-4">
-                    <img
-                      className=""
-                      src="https://framerusercontent.com/images/1vSG1wm8G35q5CTun4um0c61U0.png"
-                      alt=""
-                    />
-                  </div>
 
-                  <CardTitle className="mt-8 px-6">Tormund</CardTitle>
-                  <CardDescription className="px-6 text-sm">
-                    Teknologisjef
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="mt-4">
-                  <p>Over 12 års erfaring fra IT-bransjen</p>
-                  <br />
-                  <p>
-                    Bakgrunn som utvikler av apper, webløsninger og
-                    integrasjoner
-                  </p>
-                  <br />
-                  <p>Brenner for gode og sikre digitale løsninger</p>
-                </CardContent>
-              </Card>
               <Card className="rounded-xl overflow-hidden max-w-[300px]">
                 <CardHeader className=" p-0">
                   <div className="mb-4">
@@ -450,26 +525,77 @@ const FolkeinvestInvest = () => {
               <div className="flex flex-col space-y-3">
                 <div className="flex flex-row justify-between items-center">
                   <div className="flex flex-col">
-                    <p className="font-semibold">Document type</p>
-                    <p>Document name</p>
+                    <p className="font-semibold">Verdsettelse</p>
+                    <p>Verdsettelese av Folkekraft AS</p>
                   </div>
-                  <div className="cursor-pointer underline">Last ned</div>
+                  <Link
+                    href="/doc/Verdsettelse.pdf"
+                    className="cursor-pointer underline"
+                    target="_blank"
+                    download={"Verdsettelse.pdf"}
+                  >
+                    Last ned
+                  </Link>
                 </div>
                 <Separator />
                 <div className="flex flex-row justify-between items-center">
                   <div className="flex flex-col">
-                    <p className="font-semibold">Document type</p>
+                    <p className="font-semibold">Reklamasjon Havskraft</p>
                     <p>Document name</p>
                   </div>
-                  <div className="cursor-pointer underline">Last ned</div>
+                  <Link
+                    href="/doc/Reklamasjon Havskraft.pdf"
+                    className="cursor-pointer underline"
+                    target="_blank"
+                    download={"Reklamasjon Havskraft.pdf"}
+                  >
+                    Last ned
+                  </Link>
                 </div>
                 <Separator />
                 <div className="flex flex-row justify-between items-center">
                   <div className="flex flex-col">
-                    <p className="font-semibold">Document type</p>
+                    <p className="font-semibold">Notat disput med Props</p>
                     <p>Document name</p>
                   </div>
-                  <div className="cursor-pointer underline">Last ned</div>
+                  <Link
+                    href="/doc/Notat_disput med Props.pdf"
+                    className="cursor-pointer underline"
+                    target="_blank"
+                    download={"Notat_disput med Props.pdf"}
+                  >
+                    Last ned
+                  </Link>
+                </div>
+                <Separator />
+                <div className="flex flex-row justify-between items-center">
+                  <div className="flex flex-col">
+                    <p className="font-semibold">Folkekraft AS Årsrapport</p>
+                    <p>Document name</p>
+                  </div>
+                  <Link
+                    href="/doc/Folkekraft AS Årsregnskap + noter.pdf"
+                    className="cursor-pointer underline"
+                    target="_blank"
+                    download={"Folkekraft AS Årsregnskap + noter.pdf"}
+                  >
+                    Last ned
+                  </Link>
+                </div>
+                <Separator />
+                <div className="flex flex-row justify-between items-center">
+                  <div className="flex flex-col">
+                    <p className="font-semibold">Financial model Folkekraft</p>
+                    <p>Document name</p>
+                  </div>
+                  <Link
+                    href="/doc/Financial model Folkekraft_28.08.pdf"
+                    className="cursor-pointer underline"
+                    target="_blank"
+                    download={"Financial model Folkekraft_28.08.pdf"}
+                  >
+                    Last ned
+                  </Link>
                 </div>
                 <Separator />
               </div>

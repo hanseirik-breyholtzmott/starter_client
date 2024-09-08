@@ -67,7 +67,7 @@ export const adminNavLinks: NavLink[] = [
   },
   {
     name: "Stakeholder",
-    href: "/dashboard/invoices",
+    href: "/admin/stakeholders",
     icon: FileText,
     category: "Financial",
   },

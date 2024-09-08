@@ -1,15 +1,15 @@
 "use client";
 
-import {
+import React, {
   createContext,
   useState,
   useContext,
   useEffect,
   useCallback,
 } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 //Utils
 import {
@@ -17,7 +17,7 @@ import {
   getServerCookie,
   deleteServerCookie,
 } from "./authUtils";
-import axiosInstance, { setAuthorizationHeader } from "@/lib/axiosInstance";
+import axiosInstance from "@/lib/axiosInstance";
 
 //Shadcn
 import { ToastAction } from "@/components/ui/toast";

@@ -205,7 +205,7 @@ const OnboardingMultistep = (props: Props) => {
                   onClick={() =>
                     form.setValue(
                       "numberOfShares",
-                      Number(form.watch("numberOfShares") + 125)
+                      Number(form.watch("numberOfShares")) + 125
                     )
                   }
                   type="button"

@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
 
-import Test from "@/components/test";
 import {
   Card,
   CardContent,

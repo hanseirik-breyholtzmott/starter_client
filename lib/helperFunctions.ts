@@ -38,3 +38,8 @@ export const formatCurrency = (value: number): string => {
 
   return formattedString;
 };
+
+export const formatNumber = (value: number): string => {
+  // Convert the number to string and use regex to add spaces as thousand separators
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+};

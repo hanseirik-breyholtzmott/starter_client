@@ -1,6 +1,7 @@
 //Nextjs
 import type { Metadata } from "next";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import Head from "next/head";
 
 //Uploadthing
 import { extractRouterConfig } from "uploadthing/server";
@@ -43,9 +44,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
+      <Head>
         <StarterAnalytics />
-      </head>
+      </Head>
       <body className={inter.className}>
         <AuthWrapper>
           <NextSSRPlugin

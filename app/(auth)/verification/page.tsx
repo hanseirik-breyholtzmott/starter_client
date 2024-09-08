@@ -1,11 +1,17 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useAuthContext } from "@/app/hooks/AuthContext";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import jwt, { JwtPayload } from "jsonwebtoken";
+
+//Auth
+import { useAuthContext } from "@/app/hooks/AuthContext";
+
+//Form
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface DecodedToken extends JwtPayload {
   token?: string;
@@ -26,9 +32,7 @@ import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-  InputOTPSeparator,
 } from "@/components/ui/input-otp";
-import { useRouter, useSearchParams } from "next/navigation";
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -40,6 +44,8 @@ type Props = {};
 
 const Verification = (props: Props) => {
   const { verifyEmail } = useAuthContext();
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -59,6 +65,22 @@ const Verification = (props: Props) => {
       verifyEmail(decoded.token as string);
     }
   }, [verifyEmail]);
+
+  /*
+  const handleResendToken = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    if (!isResendDisabled) {
+      setIsResendDisabled(true)
+      setResendTimer(60) // Set a 60-second cooldown
+      try {
+        await resendVerificationToken() // Assuming this function exists in your AuthContext
+        // You might want to show a success message here
+      } catch (error) {
+        // Handle any errors, maybe show an error message
+        console.error("Failed to resend verification token:", error)
+      }
+    }
+  }*/
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     verifyEmail(data.pin);
@@ -106,3 +128,22 @@ const Verification = (props: Props) => {
 };
 
 export default Verification;
+
+/*
+
+<div className="text-sm">
+              Didn't receive the code?{" "}
+              <Link
+                href="#"
+                onClick={handleResendToken}
+                className={`text-blue-600 hover:underline ${
+                  isResendDisabled ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                Resend verification token
+                {/*isResendDisabled
+                  ? `Resend in ${resendTimer}s`
+                  : "Resend verification token"}
+                  </Link>
+                  </div>
+                  */

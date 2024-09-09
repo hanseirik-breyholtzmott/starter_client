@@ -14,23 +14,18 @@ import {
 //Icons
 import { ExternalLink, FileText, Ellipsis } from "lucide-react";
 
-interface Transaction {
+//Helpers
+import { formatCurrency, formatDateString } from "@/lib/helperFunctions";
+
+export interface Transaction {
   id: number;
-  date: string;
+  transactionDate: string;
   amount: string;
-  invoice: string;
+  stripePaymentId: string;
   status: string;
 }
 
 export const columns: ColumnDef<Transaction>[] = [
-  {
-    accessorKey: "invoice",
-    header: () => <div className="text-center">Kvittering</div>,
-    cell: ({ row }) => {
-      var invoice = row.getValue("invoice") as string;
-      return <div className="text-center">{invoice}</div>;
-    },
-  },
   {
     accessorKey: "status",
     header: () => <div className="text-center">Status</div>,
@@ -62,19 +57,35 @@ export const columns: ColumnDef<Transaction>[] = [
     },
   },
   {
-    accessorKey: "date",
-    header: () => <div className="text-center">Dato</div>,
+    accessorKey: "stripePaymentId",
+    header: () => <div className="text-center">KID/Melding</div>,
     cell: ({ row }) => {
-      var date = row.getValue("date") as string;
-      return <div className="text-center">{date}</div>;
+      var invoice = row.getValue("stripePaymentId") as string;
+      return <div className="text-center">{invoice}</div>;
+    },
+  },
+  {
+    accessorKey: "stripePaymentId",
+    header: () => <div className="text-center">Bankkontonummer</div>,
+    cell: ({ row }) => {
+      return <div className="text-center">3208.27.99299</div>;
+    },
+  },
+
+  {
+    accessorKey: "transactionDate",
+    header: () => <div className="text-center">Tegningsdato</div>,
+    cell: ({ row }) => {
+      var date = row.getValue("transactionDate") as string;
+      return <div className="text-center">{formatDateString(date)}</div>;
     },
   },
   {
     accessorKey: "amount",
     header: () => <div className="text-center">Beløp</div>,
     cell: ({ row }) => {
-      var amount = row.getValue("amount") as string;
-      return <div className="text-center">{amount}</div>;
+      var amount = row.getValue("amount") as number;
+      return <div className="text-center">{formatCurrency(amount)}</div>;
     },
   },
 
@@ -89,7 +100,9 @@ export const columns: ColumnDef<Transaction>[] = [
               <Ellipsis size={20} />
             </PopoverTrigger>
             <PopoverContent className="w-[240px] p-4">
-              <div>
+              <p>Kommer snart . . .</p>
+              {/**
+               * <div>
                 <ul className="flex flex-col gap-2">
                   <Link href={"/dashboard/profile"}>
                     <li className="flex flex-row text-sm">
@@ -105,6 +118,7 @@ export const columns: ColumnDef<Transaction>[] = [
                   </Link>
                 </ul>
               </div>
+               */}
             </PopoverContent>
           </Popover>
         </div>

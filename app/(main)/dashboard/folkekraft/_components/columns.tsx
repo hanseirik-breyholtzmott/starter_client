@@ -8,62 +8,68 @@ import { Button } from "@/components/ui/button";
 //Icons
 import { ArrowUpDown } from "lucide-react";
 
-export type Investors = {
-  name: string;
-  shares: number;
-  ownership: number;
+export type Investor = {
+  totalShares: number;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  ssn: string | null;
+  ownershipPercentage: string;
 };
 
-export const columns: ColumnDef<Investors>[] = [
+export const columns: ColumnDef<Investor>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <div className="text-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Navn
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      );
-    },
+    header: ({ column }) => (
+      <div className="text-center">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Navn
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    ),
     cell: ({ row }) => {
-      return <div className="text-center">{row.getValue("name")}</div>;
+      const firstName = row.original.firstName;
+      const lastName = row.original.lastName;
+      return <div className="text-center">{`${firstName} ${lastName}`}</div>;
     },
   },
   {
-    accessorKey: "shares",
-    header: ({ column }) => {
-      return (
-        <div className="text-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Aksjer
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      );
-    },
-    cell: ({ row }) => {
-      return <div className="text-center">{row.getValue("shares")}</div>;
-    },
+    accessorKey: "totalShares",
+    header: ({ column }) => (
+      <div className="text-center">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Aksjer
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("totalShares")}</div>
+    ),
   },
   {
-    accessorKey: "ownership",
-    header: ({ column }) => {
-      return (
-        <div className="text-center">
-          <Button variant="ghost">Eiendeler</Button>
-        </div>
-      );
-    },
-    cell: ({ row }) => {
-      return <div className="text-center">{row.getValue("ownership")}</div>;
-    },
+    accessorKey: "ownershipPercentage",
+    header: ({ column }) => (
+      <div className="text-center">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Eiendeler
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("ownershipPercentage")}</div>
+    ),
   },
 ];

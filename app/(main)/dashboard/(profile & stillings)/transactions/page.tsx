@@ -1,4 +1,7 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import axiosInstance from "@/lib/axiosInstance";
 
 //Shadcn
 import {
@@ -11,18 +14,13 @@ import {
 } from "@/components/ui/card";
 
 //Components
-import { columns } from "./_components/columns";
+import { columns, Transaction } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 
-type Props = {};
+//Hooks
+import { useAuthContext } from "@/app/hooks/AuthContext";
 
-interface Transaction {
-  id: number;
-  date: string;
-  amount: string;
-  invoice: string;
-  status: string;
-}
+type Props = {};
 
 const transactions = [
   {
@@ -49,6 +47,31 @@ const transactions = [
 ];
 
 const TransactionsDashboard = (props: Props) => {
+  const { user } = useAuthContext();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        setLoading(true);
+        if (user?.id) {
+          const response = await axiosInstance.get(
+            `/api/transactions/${user.id}`
+          );
+          console.log("transactions:", response.data);
+          setTransactions(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [user]);
   return (
     <Card>
       <CardHeader>

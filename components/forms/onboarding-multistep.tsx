@@ -56,6 +56,7 @@ const OnboardingMultistep = (props: Props) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      numberOfShares: 25,
       investor: "",
       terms: false,
       risks: false,
@@ -110,12 +111,15 @@ const OnboardingMultistep = (props: Props) => {
       case 1:
         const numberOfSharesValid = form.watch("numberOfShares") > 24;
         const investor = form.watch("investor");
-        const whitewashesValid = form.watch("whitewashes");
+
         const investorValid = /^.{9}$|^.{11}$/.test(investor);
 
-        return numberOfSharesValid && investorValid && whitewashesValid;
+        return numberOfSharesValid && investorValid;
       case 2:
-        return submitButton && form.watch("numberOfShares") > 24;
+        const whitewashesValid = form.watch("whitewashes");
+        return (
+          submitButton && form.watch("numberOfShares") > 24 && whitewashesValid
+        );
       case 3:
         return true;
       default:
@@ -172,7 +176,13 @@ const OnboardingMultistep = (props: Props) => {
                           Antall aksjer
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="number" />
+                          <Input
+                            {...field}
+                            type="number"
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -196,7 +206,7 @@ const OnboardingMultistep = (props: Props) => {
                 <Button
                   variant="outline"
                   className="flex-1"
-                  onClick={() => form.setValue("numberOfShares", Number(100))}
+                  onClick={() => form.setValue("numberOfShares", 100)}
                   type="button"
                 >
                   Minimum

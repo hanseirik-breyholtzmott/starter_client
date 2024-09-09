@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 //Nav
 import { navLinks } from "@/config/contants";
 //Shadn
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   Popover,
@@ -41,7 +43,10 @@ const Sidebar = (props: Props) => {
             <div className="flex flex-row items-center justify-center lg:justify-between border p-2 rounded-xl hover:bg-zinc-200 transition-all ease-in-out">
               <div className="flex flex-row items-center">
                 <div className="rounded-lg bg-slate-800 h-[40px] w-[40px]">
-                  {/** LOGO */}
+                  <Avatar>
+                    <AvatarImage src="https://play-lh.googleusercontent.com/imVxwK62k8Fe_XOyWB81MPSPm5Km-Q5V1av2i_jTYjtaoUEG4Xw_UyXkPMIL8uKPp0Q=w240-h480" />
+                    <AvatarFallback>FK</AvatarFallback>
+                  </Avatar>
                 </div>
                 <div className=" flex-col items-start pl-2 hidden lg:flex">
                   <p className="font-semibold text-sm text-black">

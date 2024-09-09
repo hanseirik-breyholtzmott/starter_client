@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import axiosInstance from "@/lib/axiosInstance";
 
 //Shadn
 import { Progress } from "@/components/ui/progress";
@@ -15,7 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import { Investors, columns } from "./_components/columns";
+import { Investor, columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 
 //Helper function
@@ -44,7 +45,6 @@ import {
 import { X, Info } from "lucide-react";
 
 import { useAuthContext } from "@/app/hooks/AuthContext";
-import axiosInstance from "@/lib/axiosInstance";
 
 const capTableData = [
   {
@@ -75,7 +75,8 @@ const capTableData = [
 
 const FolkeinvestInvest = () => {
   const { user } = useAuthContext();
-  const [data, setData] = useState<Investors[]>([]);
+  const [data, setData] = useState<Investor[]>([]);
+  const [capTableData, setCapTableData] = useState<Investor[]>([]);
   const router = useRouter();
 
   //Campaign
@@ -120,7 +121,17 @@ const FolkeinvestInvest = () => {
       setDaysRemaining(differenceInDays);
     };
 
+    const fetchCapTableData = async () => {
+      try {
+        const response = await axiosInstance.get("/api/cap-table");
+        setCapTableData(response.data.capTable);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     calculateDaysRemaining();
+    fetchCapTableData();
   }, [user]);
 
   return (
@@ -428,7 +439,7 @@ const FolkeinvestInvest = () => {
           <TabsContent value="table" className=" h-fit">
             <div className="w-full max-w-[960px] mx-auto mb-4 h-fit">
               <h1 className="text-3xl font-bold mt-12 mb-8">All Investors</h1>
-              <DataTable columns={columns} data={data} />
+              <DataTable columns={columns} data={capTableData} />
             </div>
           </TabsContent>
           <TabsContent value="team" className="min-h-[50vh]">

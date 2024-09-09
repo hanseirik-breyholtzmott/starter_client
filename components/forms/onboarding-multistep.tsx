@@ -37,6 +37,7 @@ const FormSchema = z.object({
     .max(10000, { message: "Number of shares must be no more than 10,000" }),
   terms: z.boolean().default(false).optional(),
   risks: z.boolean().default(false).optional(),
+  whitewashes: z.boolean().default(false).optional(),
 });
 
 type Props = {};
@@ -58,6 +59,7 @@ const OnboardingMultistep = (props: Props) => {
       investor: "",
       terms: false,
       risks: false,
+      whitewashes: false,
     },
   });
 
@@ -108,10 +110,10 @@ const OnboardingMultistep = (props: Props) => {
       case 1:
         const numberOfSharesValid = form.watch("numberOfShares") > 24;
         const investor = form.watch("investor");
-
+        const whitewashesValid = form.watch("whitewashes");
         const investorValid = /^.{9}$|^.{11}$/.test(investor);
 
-        return numberOfSharesValid && investorValid;
+        return numberOfSharesValid && investorValid && whitewashesValid;
       case 2:
         return submitButton && form.watch("numberOfShares") > 24;
       case 3:
@@ -337,6 +339,33 @@ const OnboardingMultistep = (props: Props) => {
                       </Label>
                     </div>
                   </div>
+                  <div className="flex items-start space-x-2">
+                    <FormField
+                      control={form.control}
+                      name="whitewashes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="grid gap-1.5 leading-none">
+                      <Label htmlFor="risks">
+                        Alle økonomiske bidrag må overholde gjeldende lover,
+                        inkludert regler om hvitvasking av penger. Midler fra
+                        ulovlige aktiviteter vil bli avvist. Vi forbeholder oss
+                        retten til å returnere midler som mistenkes for å bryte
+                        disse reglene.
+                      </Label>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -354,10 +383,11 @@ const OnboardingMultistep = (props: Props) => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <div>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Aspernatur laborum omnis amet iure maiores sapiente atque
-                      possimus.
+                    <div className="mb-6">
+                      Ditt aksjekjøp blir regnet som lånefordring i Folkekraft
+                      frem til aksjeoppgjøret er fullført ved lukking av
+                      emisjonen. Folkekraft forbeholder seg retten til å benytte
+                      investerte midler før emisjonen er avsluttet.
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Banknr:</span>

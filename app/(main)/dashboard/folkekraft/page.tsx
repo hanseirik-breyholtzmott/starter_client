@@ -9,7 +9,11 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import { Investors, columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
@@ -39,9 +43,6 @@ import {
 //Icons
 import { X, Info } from "lucide-react";
 
-import { number, z } from "zod";
-
-import { toast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/app/hooks/AuthContext";
 import axiosInstance from "@/lib/axiosInstance";
 
@@ -173,17 +174,20 @@ const FolkeinvestInvest = () => {
             <div className="flex flex-col space-y-1">
               <div className="flex flex-row justify-between">
                 <p className="font-semibold flex items-center">
-                  Verdsettelsen:
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info size={20} className="ml-1" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Add to library</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Popover>
+                    <PopoverTrigger>
+                      <span className="underline">Verdsettelsen:</span>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      Verdsettelsen er pre-money og baserer seg på en nedprising
+                      fra kr 12 til kr 8 per aksje i forbindelse med emisjonen.
+                      Dette fører til en justering av verdien fra 32,5 millioner
+                      kr til 21,7 mill. kr. Fremtidig verdsettelse vil bli
+                      beregnet basert på multippelanalyse av både omsetning og
+                      EBITDA, som reflekterer selskapets vekstpotensial og
+                      lønnsomhet.
+                    </PopoverContent>
+                  </Popover>
                 </p>
                 <p>21 713 752,00 kr</p>
               </div>
@@ -196,16 +200,6 @@ const FolkeinvestInvest = () => {
               <div className="flex flex-row justify-between">
                 <p className="font-semibold flex items-center">
                   Anbefalt antall kjøp av aksjer:
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info size={20} className="ml-1" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Add to library</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
                 </p>
                 <p>6 800,00 kr</p>
               </div>

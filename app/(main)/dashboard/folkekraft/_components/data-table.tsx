@@ -6,7 +6,6 @@ import {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -23,7 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 
 //Table
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";

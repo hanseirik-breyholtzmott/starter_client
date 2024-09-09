@@ -3,9 +3,13 @@
 import { useEffect, useState } from "react";
 import { Investors, columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
+import { format } from "date-fns";
+import axiosInstance from "@/lib/axiosInstance";
 
 //Shadcn
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 import {
   Sheet,
   SheetContent,
@@ -15,9 +19,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -34,6 +36,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 //Form
 import { z } from "zod";
@@ -48,6 +57,9 @@ const formSchema = z.object({
   password: z.string().min(8).max(50),
   ssn: z.string().min(9).max(11),
   role: z.string(),
+  earlyInvestmentShares: z.number().min(0),
+  transactionDate: z.date(),
+  recommendedPurchase: z.number().min(0),
 });
 
 const capTableData = [
@@ -81,14 +93,8 @@ type Props = {};
 
 const Page = (props: Props) => {
   const [data, setData] = useState<Investors[]>([]);
-  const [newUser, setNewUser] = useState({
-    firstName: "",
-    lastName: "",
-    primaryEmailAddress: "",
-    primaryPhoneNumber: "",
-    password: "",
-    roles: [{ name: "user", permissions: [] }],
-  });
+  const [date, setDate] = useState<Date>();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -98,28 +104,31 @@ const Page = (props: Props) => {
       primaryEmailAddress: "",
       primaryPhoneNumber: "",
       password: "",
+      earlyInvestmentShares: 0,
+      recommendedPurchase: 0,
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await axiosInstance.post(
+        "/api/create-user-with-shares",
+        values
+      );
+      if (response.data.success) {
+        toast({
+          title: "Success",
+          description: "Stakeholder created successfully",
+          duration: 3000,
+        });
+        form.reset();
+      }
+
+      // TODO: Reset form and close sheet
+    } catch (error) {
+      console.error("Error creating stakeholder:", error);
+    }
   }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewUser({ ...newUser, [e.target.name]: e.target.value });
-  };
-
-  const handleRoleChange = (value: string) => {
-    setNewUser({ ...newUser, roles: [{ name: value, permissions: [] }] });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement user creation logic
-    console.log("New user data:", newUser);
-  };
 
   useEffect(() => {
     setData(capTableData);
@@ -143,7 +152,7 @@ const Page = (props: Props) => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
+                className="space-y-4"
               >
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -271,6 +280,114 @@ const Page = (props: Props) => {
                             </SelectContent>
                           </Select>
 
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                <Separator />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h2 className="text-lg font-bold">Shares</h2>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="earlyInvestmentShares"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Antall aksjer fra Folkeinvest</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Antall aksjer"
+                              type="number"
+                              {...field}
+                              onChange={(e) => {
+                                const value = e.target.value
+                                  ? parseInt(e.target.value, 10)
+                                  : 0;
+                                field.onChange(value);
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="transactionDate"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Date of transaction</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-[280px] justify-start text-left font-normal",
+                                    !date && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP")
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="recommendedPurchase"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Anbefalt kjøp av aksjer</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Antall aksjer"
+                              type="number"
+                              {...field}
+                              onChange={(e) => {
+                                const value = e.target.value
+                                  ? parseInt(e.target.value, 10)
+                                  : 0;
+                                field.onChange(value);
+                              }}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}

@@ -52,6 +52,8 @@ const OnboardingMultistep = (props: Props) => {
   const { user } = useAuthContext();
   const [step, setStep] = useState<number>(1);
   const router = useRouter();
+  const [showKjopsrettInfo, setShowKjopsrettInfo] = useState(false);
+  const [showAnbefaltInfo, setShowAnbefaltInfo] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -104,6 +106,16 @@ const OnboardingMultistep = (props: Props) => {
 
   const handlePrevious = () => {
     if (step > 1) setStep((prev) => prev - 1);
+  };
+
+  const toggleKjopsrettInfo = () => {
+    setShowKjopsrettInfo(!showKjopsrettInfo);
+    setShowAnbefaltInfo(false);
+  };
+
+  const toggleAnbefaltInfo = () => {
+    setShowAnbefaltInfo(!showAnbefaltInfo);
+    setShowKjopsrettInfo(false);
   };
 
   const isStepValid = () => {
@@ -206,11 +218,30 @@ const OnboardingMultistep = (props: Props) => {
                 <Button
                   variant="outline"
                   className="flex-1"
+                  onClick={toggleKjopsrettInfo}
+                  type="button"
+                >
+                  Kjøpsrett
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={toggleAnbefaltInfo}
+                  type="button"
+                >
+                  Anbefalt minstekjøp
+                </Button>
+                {/*
+                <Button
+                  variant="outline"
+                  className="flex-1"
                   onClick={() => form.setValue("numberOfShares", 100)}
                   type="button"
                 >
                   Minimum
                 </Button>
+                  
+
                 <Button
                   variant="outline"
                   className="flex-1"
@@ -224,17 +255,48 @@ const OnboardingMultistep = (props: Props) => {
                 >
                   + 1 000 kr
                 </Button>
+                */}
               </div>
             </div>
             <Card className="flex-1 p-6 bg-blue-50">
-              <h3 className="text-xl font-semibold mb-4">Risiko</h3>
-              <p className="mb-4">
-                Investering i unoterte aksjer innebærer høy risiko. Det er
-                viktig at du som investor leser investeringstilbudet nøye og
-                gjør deg din egen formening om hvilken risiko den eventuelle
-                investeringen innebærer for deg. Ikke invester mer enn det du
-                har råd til å tape.
-              </p>
+              <div>
+                <h3 className="text-xl font-semibold mb-4">Risiko</h3>
+                <p className="mb-4">
+                  Investering i unoterte aksjer innebærer høy risiko. Det er
+                  viktig at du som investor leser investeringstilbudet nøye og
+                  gjør deg din egen formening om hvilken risiko den eventuelle
+                  investeringen innebærer for deg. Ikke invester mer enn det du
+                  har råd til å tape.
+                </p>
+              </div>
+              {showKjopsrettInfo && (
+                <div className="mt-4 p-4 bg-blue-50 rounded-md">
+                  <h3 className="text-xl font-semibold mb-4">Kjøpsrett</h3>
+                  <p className="mb-4">
+                    Vi har beregnet hvor mange aksjer du må kjøpe for å
+                    opprettholde din eierandel i Folkekraft ved fulltegning.
+                    Beregningen er rundet av til nærmeste hele aksje og
+                    minimumsinvesteringen er satt til kr 2600. Vær oppmerksom på
+                    at regnestykket ikke tar hensyn til långivere som
+                    konverterer gjeld, kun nye aksjekjøp.
+                  </p>
+                </div>
+              )}
+              {showAnbefaltInfo && (
+                <div className="mt-4 p-4 bg-blue-50 rounded-md">
+                  <h3 className="text-xl font-semibold mb-4">
+                    Anbefalt minstekjøp
+                  </h3>
+                  <p className="mb-4">
+                    Vi har utarbeidet en skreddersydd investeringssum for alle
+                    eksisterende aksjonærer. Beregningen tar utgangspunkt i din
+                    tidligere investering og eventuelt vår kjennskap til din
+                    nåværende investeringskapasitet. Vi oppfordrer deg til å
+                    følge denne anbefalingen for at vi skal nå emisjonsmålet
+                    vårt.
+                  </p>
+                </div>
+              )}
             </Card>
           </div>
         );

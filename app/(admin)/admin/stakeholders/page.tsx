@@ -60,6 +60,7 @@ const formSchema = z.object({
   earlyInvestmentShares: z.number().min(0),
   transactionDate: z.date(),
   recommendedPurchase: z.number().min(0),
+  purchaseRight: z.number().min(0),
 });
 
 const capTableData = [
@@ -106,6 +107,7 @@ const Page = (props: Props) => {
       password: "",
       earlyInvestmentShares: 0,
       recommendedPurchase: 0,
+      purchaseRight: 0,
     },
   });
 
@@ -123,8 +125,6 @@ const Page = (props: Props) => {
         });
         form.reset();
       }
-
-      // TODO: Reset form and close sheet
     } catch (error) {
       console.error("Error creating stakeholder:", error);
     }
@@ -378,6 +378,31 @@ const Page = (props: Props) => {
                           <FormControl>
                             <Input
                               placeholder="Antall aksjer"
+                              type="number"
+                              {...field}
+                              onChange={(e) => {
+                                const value = e.target.value
+                                  ? parseInt(e.target.value, 10)
+                                  : 0;
+                                field.onChange(value);
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="purchaseRight"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Forkjøpsrett</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Rett på aksjer antall"
                               type="number"
                               {...field}
                               onChange={(e) => {

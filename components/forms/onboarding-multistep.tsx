@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -48,17 +48,41 @@ interface StepProps {
   active: boolean;
 }
 
+interface UserData {
+  id: number;
+  name: string;
+  email: string;
+}
+
 const OnboardingMultistep = (props: Props) => {
   const { user } = useAuthContext();
   const [step, setStep] = useState<number>(1);
   const router = useRouter();
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [showKjopsrettInfo, setShowKjopsrettInfo] = useState(false);
   const [showAnbefaltInfo, setShowAnbefaltInfo] = useState(false);
+  const [recommendedPurchase, setRecommendedPurchase] = useState(0);
+  const [purchaseRiget, setPurchaseRight] = useState(0);
+
+  useEffect(() => {
+    fetchUserData();
+  }, [user]);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axiosInstance.get("/api/folkekraft/" + user?.id);
+
+      setRecommendedPurchase(response.data.user.recommendedPurchase);
+      setPurchaseRight(response.data.user.purchaseRight);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      numberOfShares: 25,
+      numberOfShares: 300,
       investor: "",
       terms: false,
       risks: false,
@@ -111,17 +135,22 @@ const OnboardingMultistep = (props: Props) => {
   const toggleKjopsrettInfo = () => {
     setShowKjopsrettInfo(!showKjopsrettInfo);
     setShowAnbefaltInfo(false);
+    form.setValue("numberOfShares", Number(purchaseRiget));
   };
 
   const toggleAnbefaltInfo = () => {
     setShowAnbefaltInfo(!showAnbefaltInfo);
     setShowKjopsrettInfo(false);
+    form.setValue("numberOfShares", Number(recommendedPurchase));
   };
 
   const isStepValid = () => {
     switch (step) {
       case 1:
-        const numberOfSharesValid = form.watch("numberOfShares") > 24;
+        const numberOfSharesValid =
+          form.watch("numberOfShares") >= 300 &&
+          form.watch("numberOfShares") <= 10000;
+
         const investor = form.watch("investor");
 
         const investorValid = /^.{9}$|^.{11}$/.test(investor);

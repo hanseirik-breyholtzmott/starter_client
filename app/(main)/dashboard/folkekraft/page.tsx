@@ -34,44 +34,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-//Icons
-import { X, Info } from "lucide-react";
-
 import { useAuthContext } from "@/app/hooks/AuthContext";
+import Image from "next/image";
 
-const capTableData = [
-  {
-    id: 1,
-    name: "John Doe",
-    role: "Founder",
-    shares: 1000000,
-    ownership: 25,
-    value: "$250,000",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    role: "Investor",
-    shares: 2000000,
-    ownership: 50,
-    value: "$500,000",
-  },
-  {
-    id: 3,
-    name: "Alex Johnson",
-    role: "Employee",
-    shares: 1000000,
-    ownership: 25,
-    value: "$250,000",
-  },
-];
+//Images
+import emisjon from "@/public/img/emisjon.png";
+import stromavtale from "@/public/img/stromavtale.png";
+import kapital from "@/public/img/kapital.png";
 
 const FolkeinvestInvest = () => {
   const { user } = useAuthContext();
@@ -113,7 +82,7 @@ const FolkeinvestInvest = () => {
 
     const calculateDaysRemaining = () => {
       const currentDate = new Date();
-      const targetDate = new Date(currentDate.getFullYear(), 8, 30); // 7 = August (0-indexed)
+      const targetDate = new Date(currentDate.getFullYear(), 9, 1); // 7 = August (0-indexed)
 
       const differenceInTime = targetDate.getTime() - currentDate.getTime();
       const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
@@ -238,7 +207,7 @@ const FolkeinvestInvest = () => {
           <TabsList className="grid w-full grid-cols-4 mx-auto">
             <TabsTrigger value="about">Beskrivelse</TabsTrigger>
             <TabsTrigger value="table">CapList</TabsTrigger>
-            <TabsTrigger value="team">Team og eiere</TabsTrigger>
+            <TabsTrigger value="team">Team og samarbeidspartnere</TabsTrigger>
             <TabsTrigger value="documents">Dokumenter</TabsTrigger>
           </TabsList>
           <TabsContent value="about" className=" relative">
@@ -273,9 +242,7 @@ const FolkeinvestInvest = () => {
                     <li className="hover:text-blue-600 hover:underline cursor-pointer">
                       <a href="#kapital">Kapital og exit</a>
                     </li>
-                    <li className="hover:text-blue-600 hover:underline cursor-pointer">
-                      <a href="#konkurrenter">Konkurrenter</a>
-                    </li>
+
                     <li className="hover:text-blue-600 hover:underline cursor-pointer">
                       <a href="#emision">Om pågående emisjon</a>
                     </li>
@@ -285,8 +252,6 @@ const FolkeinvestInvest = () => {
 
               {/* Main content */}
               <div className="flex-1 p-8">
-                <h1 className="text-3xl font-bold mb-6">Hvorfor investere?</h1>
-
                 <section className="mb-8">
                   <h2 className="text-2xl font-semibold mb-4" id="konsept">
                     Konsept: strømkunde og medeier
@@ -385,6 +350,11 @@ const FolkeinvestInvest = () => {
                     Aksjeverdi: Alt vi estimerer å tjene på kunden gis i aksjer
                     første året. Det tilsvarer ca. 1000 kr i aksjeverdi.
                   </p>
+                  <Image
+                    src={stromavtale}
+                    alt="Emisjon"
+                    style={{ width: "100%", height: "auto" }}
+                  />
                 </section>
 
                 <section>
@@ -406,7 +376,7 @@ const FolkeinvestInvest = () => {
                 </section>
 
                 <section>
-                  <h2 className="text-2xl font-semibold mb-4" id="kapital">
+                  <h2 className="text-2xl font-semibold mb-12" id="kapital">
                     Kapital og exit
                   </h2>
                   <p className="mb-4">
@@ -424,13 +394,22 @@ const FolkeinvestInvest = () => {
                     innen 2028. Deltagelse i denne emisjonen vil i så tilfelle
                     gi 7 ganger tilbake på investert beløp.
                   </p>
+                  <Image
+                    src={kapital}
+                    alt="Emisjon"
+                    style={{ width: "100%", height: "auto" }}
+                  />
                 </section>
 
                 <section>
                   <h2 className="text-2xl font-semibold mb-4" id="emision">
                     Om pågående emisjon
                   </h2>
-                  <p className="mb-4"></p>
+                  <Image
+                    src={emisjon}
+                    alt="Emisjon"
+                    style={{ width: "100%", height: "auto" }}
+                  />
                 </section>
               </div>
             </div>
@@ -530,8 +509,8 @@ const FolkeinvestInvest = () => {
               <div className="flex flex-col space-y-3">
                 <div className="flex flex-row justify-between items-center">
                   <div className="flex flex-col">
-                    <p className="font-semibold">Verdsettelse</p>
-                    <p>Verdsettelese av Folkekraft AS</p>
+                    <p className="font-semibold">Financial model Folkekraft</p>
+                    <p>Finansiell prognosemodell</p>
                   </div>
                   <Link
                     href="/doc/Verdsettelse.pdf"
@@ -545,8 +524,8 @@ const FolkeinvestInvest = () => {
                 <Separator />
                 <div className="flex flex-row justify-between items-center">
                   <div className="flex flex-col">
-                    <p className="font-semibold">Reklamasjon Havskraft</p>
-                    <p>Document name</p>
+                    <p className="font-semibold">Verdsettelsesmodell</p>
+                    <p>Fremtidig verdsettelsesmodell</p>
                   </div>
                   <Link
                     href="/doc/Reklamasjon Havskraft.pdf"
@@ -560,23 +539,8 @@ const FolkeinvestInvest = () => {
                 <Separator />
                 <div className="flex flex-row justify-between items-center">
                   <div className="flex flex-col">
-                    <p className="font-semibold">Notat disput med Props</p>
-                    <p>Document name</p>
-                  </div>
-                  <Link
-                    href="/doc/Notat_disput med Props.pdf"
-                    className="cursor-pointer underline"
-                    target="_blank"
-                    download={"Notat_disput med Props.pdf"}
-                  >
-                    Last ned
-                  </Link>
-                </div>
-                <Separator />
-                <div className="flex flex-row justify-between items-center">
-                  <div className="flex flex-col">
                     <p className="font-semibold">Folkekraft AS Årsrapport</p>
-                    <p>Document name</p>
+                    <p>Folkekraft AS_årsrapport 2023</p>
                   </div>
                   <Link
                     href="/doc/Folkekraft AS Årsregnskap + noter.pdf"
@@ -590,14 +554,29 @@ const FolkeinvestInvest = () => {
                 <Separator />
                 <div className="flex flex-row justify-between items-center">
                   <div className="flex flex-col">
-                    <p className="font-semibold">Financial model Folkekraft</p>
-                    <p>Document name</p>
+                    <p className="font-semibold">Notat disput med Props</p>
+                    <p>Notat om disput med IT-leverandør</p>
                   </div>
                   <Link
-                    href="/doc/Financial model Folkekraft_28.08.pdf"
+                    href="/doc/Notat_disput med Props.pdf"
                     className="cursor-pointer underline"
                     target="_blank"
-                    download={"Financial model Folkekraft_28.08.pdf"}
+                    download={"Notat_disput med Props.pdf"}
+                  >
+                    Last ned
+                  </Link>
+                </div>
+                <Separator />
+                <div className="flex flex-row justify-between items-center">
+                  <div className="flex flex-col">
+                    <p className="font-semibold">Reklamasjon Havskraft</p>
+                    <p>Reklamasjon Havskraft</p>
+                  </div>
+                  <Link
+                    href="/doc/Reklamasjon_Havskraft.pdf"
+                    className="cursor-pointer underline"
+                    target="_blank"
+                    download={"Reklamasjon_Havskraft.pdf"}
                   >
                     Last ned
                   </Link>
@@ -613,66 +592,3 @@ const FolkeinvestInvest = () => {
 };
 
 export default FolkeinvestInvest;
-
-/*
-
-
-<AlertDialog>
-              <AlertDialogTrigger className="border rounded-xl px-4 py-2 h-fit bg-slate-600 text-white ">
-                Kjøp
-              </AlertDialogTrigger>
-              <AlertDialogContent className="flex flex-col gap-4">
-                <AlertDialogHeader className="flex flex-row justify-between items-center">
-                  <AlertDialogTitle>Kjøp aksjer</AlertDialogTitle>
-                  <AlertDialogCancel
-                    className="border-0 hover:bg-transparent"
-                    onClick={handleClose}
-                  >
-                    <X />
-                  </AlertDialogCancel>
-                </AlertDialogHeader>
-                <AlertDialogDescription>
-                  Før du bekrefter din tegning bør du forsikre deg om at du
-                  forstår risikoen dette innebærer. Ikke invester mer enn det du
-                  har råd til å tape.
-                </AlertDialogDescription>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="flex flex-row justify-evenly">
-                    <div>
-                      <Label htmlFor="inputField">Antall aksjer</Label>
-                      <Input
-                        id="inputField"
-                        type="number"
-                        min={25}
-                        max={1000}
-                        value={numberOfShares}
-                        onChange={(e) =>
-                          setNumberOfShares(parseInt(e.target.value))
-                        }
-                        placeholder="Enter your name"
-                        className="mt-2"
-                      />
-                      <small>Det minste du kan tegne er 25 aksjer</small>
-                    </div>
-                    <div>
-                      <Label htmlFor="inputField">Beløp</Label>
-                      <Input
-                        readOnly
-                        value={numberOfShares * 8 + " kr"}
-                        placeholder="Beløp"
-                        className="max-w-[100px] mt-2 bg-slate-200 cursor-not-allowed"
-                      />
-                    </div>
-                  </div>
-
-                  <Button type="submit" className="w-full">
-                    Submit
-                  </Button>
-                </form>
-
-                <AlertDialogFooter></AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-
-            */

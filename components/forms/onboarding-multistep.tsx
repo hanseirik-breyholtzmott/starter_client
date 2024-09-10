@@ -225,6 +225,9 @@ const OnboardingMultistep = (props: Props) => {
                             }
                           />
                         </FormControl>
+                        <FormDescription>
+                          Minste antall aksjer er 300.
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -239,6 +242,7 @@ const OnboardingMultistep = (props: Props) => {
                         readOnly
                       />
                     </FormControl>
+                    <FormDescription>Minste beløp er 2 400 kr.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 </div>

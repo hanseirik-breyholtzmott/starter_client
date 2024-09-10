@@ -6,7 +6,6 @@ import Link from "next/link";
 import { z } from "zod";
 import UserSignInForm from "@/components/forms/user-sign-in-form";
 
-
 export default function AuthenticationPage() {
   return (
     <div className="relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
@@ -30,11 +29,12 @@ export default function AuthenticationPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;This library has saved me countless hours of work and
-              helped me deliver stunning designs to my clients faster than ever
-              before.&rdquo;
+              &ldquo;Velkommen til Folkekraft sin egenutviklede emisjonsportal.
+              Bygget fra grunnen av for en sømløs og effektiv prosess, vil denne
+              portalen bli en del av Folkekrafts produktportefølje. Vi er stolte
+              av å tilby en skreddersydd løsning for våre aksjonærer.&rdquo;
             </p>
-            <footer className="text-sm">Sofia Davis</footer>
+            <footer className="text-sm">Hans-Eirik Breyholtz-Mott</footer>
           </blockquote>
         </div>
       </div>

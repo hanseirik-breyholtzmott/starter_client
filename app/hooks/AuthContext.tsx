@@ -140,12 +140,14 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
       const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
-      setServerCookie("session", refreshToken, expiresAt);
+      if (success) {
+        setServerCookie("session", refreshToken, expiresAt);
 
-      setAccessToken(accessToken);
-      setUser(user);
+        setAccessToken(accessToken);
+        setUser(user);
 
-      return router.replace("/dashboard");
+        router.push("/dashboard");
+      }
     } catch (error) {
       handleApiError(error, "Login Failed");
       setUser(null);

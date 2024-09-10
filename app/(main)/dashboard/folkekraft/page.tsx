@@ -139,7 +139,7 @@ const FolkeinvestInvest = () => {
               </p>
               <p className="font-semibold">
                 Ant. tegninger <br />{" "}
-                <span className="font-normal">{totalPurchases}</span>
+                <span className="font-normal">{totalPurchases + 8}</span>
               </p>
               <p className="font-semibold">
                 Pris pr. aksje <br />{" "}

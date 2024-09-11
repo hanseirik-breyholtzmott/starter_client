@@ -171,7 +171,7 @@ const FolkeinvestInvest = () => {
                 </p>
                 <p>21 713 752,00 kr</p>
               </div>
-              <div className="flex flex-row justify-between">
+              <div className="flex flex-row justify-between hidden">
                 <p className="font-semibold flex items-center">
                   Antall aksjer du har:
                 </p>

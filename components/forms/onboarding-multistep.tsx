@@ -255,7 +255,7 @@ const OnboardingMultistep = (props: Props) => {
                     onClick={toggleKjopsrettInfo}
                     type="button"
                   >
-                    Kjøpsrett
+                    Oppretthold eierandel
                   </Button>
                 ) : (
                   <Button
@@ -307,7 +307,9 @@ const OnboardingMultistep = (props: Props) => {
               </div>
               {showKjopsrettInfo && (
                 <div className="mt-4 p-4 bg-blue-50 rounded-md">
-                  <h3 className="text-xl font-semibold mb-4">Kjøpsrett</h3>
+                  <h3 className="text-xl font-semibold mb-4">
+                    Oppretthold eierandel
+                  </h3>
                   <p className="mb-4">
                     Vi har beregnet hvor mange aksjer du må kjøpe for å
                     opprettholde din eierandel i Folkekraft ved fulltegning.

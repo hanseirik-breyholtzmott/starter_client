@@ -29,10 +29,9 @@ export default function AuthenticationPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;Velkommen til Folkekraft sin egenutviklede emisjonsportal.
-              Bygget fra grunnen av for en sømløs og effektiv prosess, vil denne
-              portalen bli en del av Folkekrafts produktportefølje. Vi er stolte
-              av å tilby en skreddersydd løsning for våre aksjonærer.&rdquo;
+              &ldquo;Velkommen til Folkekraft emisjonsportal. Bygget fra grunnen
+              av for en sømløs og effektiv prosess. Folkekraft er stolte av å
+              tilby en skreddersydd løsning for våre aksjonærer.&rdquo;
             </p>
             <footer className="text-sm">Hans-Eirik Breyholtz-Mott</footer>
           </blockquote>

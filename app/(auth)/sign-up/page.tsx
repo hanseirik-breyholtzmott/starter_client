@@ -5,28 +5,9 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
 import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import UserSignUpForm from "@/components/forms/user-sign-up-form";
-
-const formSchema = z.object({
-  username: z.string().min(2).max(50),
-});
 
 export default function AuthenticationPage() {
   return (
@@ -60,10 +41,9 @@ export default function AuthenticationPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;Velkommen til Folkekraft sin egenutviklede emisjonsportal.
-              Bygget fra grunnen av for en sømløs og effektiv prosess, vil denne
-              portalen bli en del av Folkekrafts produktportefølje. Vi er stolte
-              av å tilby en skreddersydd løsning for våre aksjonærer.&rdquo;
+              &ldquo;Velkommen til Folkekraft emisjonsportal. Bygget fra grunnen
+              av for en sømløs og effektiv prosess. Folkekraft er stolte av å
+              tilby en skreddersydd løsning for våre aksjonærer.&rdquo;
             </p>
             <footer className="text-sm">Hans-Eirik Breyholtz-Mott</footer>
           </blockquote>

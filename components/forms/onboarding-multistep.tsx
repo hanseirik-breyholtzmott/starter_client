@@ -58,11 +58,11 @@ const OnboardingMultistep = (props: Props) => {
   const { user } = useAuthContext();
   const [step, setStep] = useState<number>(1);
   const router = useRouter();
-  const [userData, setUserData] = useState<UserData | null>(null);
+
   const [showKjopsrettInfo, setShowKjopsrettInfo] = useState(false);
   const [showAnbefaltInfo, setShowAnbefaltInfo] = useState(false);
   const [recommendedPurchase, setRecommendedPurchase] = useState(0);
-  const [purchaseRiget, setPurchaseRight] = useState(0);
+  const [purchaseRight, setPurchaseRight] = useState(0);
 
   useEffect(() => {
     fetchUserData();
@@ -135,7 +135,7 @@ const OnboardingMultistep = (props: Props) => {
   const toggleKjopsrettInfo = () => {
     setShowKjopsrettInfo(!showKjopsrettInfo);
     setShowAnbefaltInfo(false);
-    form.setValue("numberOfShares", Number(purchaseRiget));
+    form.setValue("numberOfShares", Number(purchaseRight));
   };
 
   const toggleAnbefaltInfo = () => {
@@ -149,7 +149,7 @@ const OnboardingMultistep = (props: Props) => {
       case 1:
         const numberOfSharesValid =
           form.watch("numberOfShares") >= 300 &&
-          form.watch("numberOfShares") <= 10000;
+          form.watch("numberOfShares") <= 100000;
 
         const investor = form.watch("investor");
 
@@ -248,47 +248,50 @@ const OnboardingMultistep = (props: Props) => {
                 </div>
               </div>
               <div className="flex gap-4">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={toggleKjopsrettInfo}
-                  type="button"
-                >
-                  Kjøpsrett
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={toggleAnbefaltInfo}
-                  type="button"
-                >
-                  Anbefalt minstekjøp
-                </Button>
-                {/*
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => form.setValue("numberOfShares", 100)}
-                  type="button"
-                >
-                  Minimum
-                </Button>
-                  
+                {purchaseRight > 0 ? (
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={toggleKjopsrettInfo}
+                    type="button"
+                  >
+                    Kjøpsrett
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => form.setValue("numberOfShares", 300)}
+                    type="button"
+                  >
+                    Minimum
+                  </Button>
+                )}
 
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() =>
-                    form.setValue(
-                      "numberOfShares",
-                      Number(form.watch("numberOfShares")) + 125
-                    )
-                  }
-                  type="button"
-                >
-                  + 1 000 kr
-                </Button>
-                */}
+                {recommendedPurchase > 0 ? (
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={toggleAnbefaltInfo}
+                    type="button"
+                  >
+                    Anbefalt minstekjøp
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() =>
+                      form.setValue(
+                        "numberOfShares",
+                        Number(form.watch("numberOfShares")) + 125
+                      )
+                    }
+                    type="button"
+                  >
+                    + 1 000 kr
+                  </Button>
+                )}
               </div>
             </div>
             <Card className="flex-1 p-6 bg-blue-50">
@@ -494,7 +497,16 @@ const OnboardingMultistep = (props: Props) => {
                       emisjonen. Folkekraft forbeholder seg retten til å benytte
                       investerte midler før emisjonen er avsluttet.
                     </div>
-                    <div className="flex justify-between">
+                    <p>
+                      <strong>Teknisk informasjon</strong>
+                      <br />
+                      Ditt aksjekjøp blir regnet som lånefordring i Folkekraft
+                      frem til aksjeoppgjøret er fullført ved lukking av
+                      emisjonen. Folkekraft forbeholder seg retten til å benytte
+                      investerte midler før emisjonen er avsluttet.
+                    </p>
+
+                    <div className="flex justify-between pt-2">
                       <span className="text-gray-600">Banknr:</span>
                       <span className="font-medium">3208 27 99299</span>
                     </div>
@@ -503,11 +515,6 @@ const OnboardingMultistep = (props: Props) => {
                       <span className="font-medium">
                         Emisjon {form.watch("investor").slice(-5)}
                       </span>
-                    </div>
-                    <div className="flex justify-end">
-                      <Button className="mt-6" type="button">
-                        Last ned Bekreftelse
-                      </Button>
                     </div>
                   </div>
                 </CardContent>

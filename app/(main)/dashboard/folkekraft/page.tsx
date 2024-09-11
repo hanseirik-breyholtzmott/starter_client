@@ -132,8 +132,8 @@ const FolkeinvestInvest = () => {
             </div>
           </div>
           <div className="bg-slate-200 rounded-xl p-4 space-y-3">
-            <div className="flex flex-row justify-between">
-              <p className="font-semibold">
+            <div className="flex flex-row justify-between ">
+              <p className="font-semibold hidden md:block">
                 Maksmål <br />{" "}
                 <span className="font-normal">{covertToPercentage(goal)}</span>
               </p>
@@ -141,7 +141,7 @@ const FolkeinvestInvest = () => {
                 Ant. tegninger <br />{" "}
                 <span className="font-normal">{totalPurchases + 8}</span>
               </p>
-              <p className="font-semibold">
+              <p className="font-semibold hidden md:block">
                 Pris pr. aksje <br />{" "}
                 <span className="font-normal">8,00 kr</span>
               </p>
@@ -179,7 +179,7 @@ const FolkeinvestInvest = () => {
               </div>
               <div className="flex flex-row justify-between">
                 <p className="font-semibold flex items-center">
-                  Anbefalt antall kjøp av aksjer:
+                  Anbefalt kjøp av aksjer:
                 </p>
                 <p>6 800,00 kr</p>
               </div>
@@ -204,16 +204,19 @@ const FolkeinvestInvest = () => {
       </section>
       <section className="bg-white rounded-xl p-4">
         <Tabs defaultValue="about" className="w-full mx-auto">
-          <TabsList className="grid w-full grid-cols-4 mx-auto">
-            <TabsTrigger value="about">Beskrivelse</TabsTrigger>
-            <TabsTrigger value="table">CapList</TabsTrigger>
-            <TabsTrigger value="team">Team og samarbeidspartnere</TabsTrigger>
-            <TabsTrigger value="documents">Dokumenter</TabsTrigger>
-          </TabsList>
+          <div className="flex flex-col md:flex-row justify-center items-center">
+            <TabsList className="flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 h-auto">
+              <TabsTrigger value="about">Beskrivelse</TabsTrigger>
+              <TabsTrigger value="table">Aksjeeierbok</TabsTrigger>
+              <TabsTrigger value="team">Team og samarbeidspartnere</TabsTrigger>
+              <TabsTrigger value="documents">Dokumenter</TabsTrigger>
+            </TabsList>
+          </div>
+
           <TabsContent value="about" className=" relative">
             <div className="flex min-h-screen bg-white text-gray-800 relative">
               {/* Sidebar */}
-              <aside className="w-64 p-6 border-r border-gray-200 sticky top-0">
+              <aside className="w-64 p-6 border-r border-gray-200 sticky top-0 hidden md:block">
                 <h2 className="font-semibold mb-4">FOLKEKRAFT AS</h2>
                 <nav>
                   <ul className="space-y-2">
@@ -505,18 +508,33 @@ const FolkeinvestInvest = () => {
           <TabsContent value="documents" className="min-h-[50vh]">
             <div className="w-full max-w-[960px] mx-auto mb-4 h-fit">
               <h2 className="text-3xl font-bold mt-12 mb-8">Dokumenter</h2>
-              <Separator />
+
               <div className="flex flex-col space-y-3">
+                <div className="flex flex-row justify-between items-center">
+                  <div className="flex flex-col">
+                    <p className="font-semibold">Folkekraft Emisjon 2024</p>
+                    <p>Folkekraft emisjonspresentasjon</p>
+                  </div>
+                  <Link
+                    href={"/doc/folkekraft_emisjonpresentasjon.pdf"}
+                    className="cursor-pointer underline"
+                    target="_blank"
+                    download={"folkekraft_emisjonpresentasjon.pdf"}
+                  >
+                    Last ned
+                  </Link>
+                </div>
+                <Separator />
                 <div className="flex flex-row justify-between items-center">
                   <div className="flex flex-col">
                     <p className="font-semibold">Financial model Folkekraft</p>
                     <p>Finansiell prognosemodell</p>
                   </div>
                   <Link
-                    href="/doc/Verdsettelse.pdf"
+                    href="/doc/finansiell_prognosemodell.pdf"
                     className="cursor-pointer underline"
                     target="_blank"
-                    download={"Verdsettelse.pdf"}
+                    download={"finansiell_prognosemodell.pdf"}
                   >
                     Last ned
                   </Link>
@@ -528,10 +546,10 @@ const FolkeinvestInvest = () => {
                     <p>Fremtidig verdsettelsesmodell</p>
                   </div>
                   <Link
-                    href="/doc/Reklamasjon Havskraft.pdf"
+                    href="/doc/verdsettelse.pdf"
                     className="cursor-pointer underline"
                     target="_blank"
-                    download={"Reklamasjon Havskraft.pdf"}
+                    download={"verdsettelse.pdf"}
                   >
                     Last ned
                   </Link>
@@ -543,10 +561,10 @@ const FolkeinvestInvest = () => {
                     <p>Folkekraft AS_årsrapport 2023</p>
                   </div>
                   <Link
-                    href="/doc/Folkekraft AS Årsregnskap + noter.pdf"
+                    href="/doc/folkekraft_as_årsrapport_2023.pdf"
                     className="cursor-pointer underline"
                     target="_blank"
-                    download={"Folkekraft AS Årsregnskap + noter.pdf"}
+                    download={"folkekraft_as_årsrapport_2023.pdf"}
                   >
                     Last ned
                   </Link>
@@ -558,10 +576,10 @@ const FolkeinvestInvest = () => {
                     <p>Notat om disput med IT-leverandør</p>
                   </div>
                   <Link
-                    href="/doc/Notat_disput med Props.pdf"
+                    href="/doc/notat_disput_med_props.pdf"
                     className="cursor-pointer underline"
                     target="_blank"
-                    download={"Notat_disput med Props.pdf"}
+                    download={"notat_disput_med_props.pdf"}
                   >
                     Last ned
                   </Link>
@@ -573,10 +591,10 @@ const FolkeinvestInvest = () => {
                     <p>Reklamasjon Havskraft</p>
                   </div>
                   <Link
-                    href="/doc/Reklamasjon_Havskraft.pdf"
+                    href="/doc/reklamasjon_havskraft.pdf"
                     className="cursor-pointer underline"
                     target="_blank"
-                    download={"Reklamasjon_Havskraft.pdf"}
+                    download={"reklamasjon_havskraft.pdf"}
                   >
                     Last ned
                   </Link>

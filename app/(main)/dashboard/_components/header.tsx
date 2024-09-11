@@ -291,7 +291,7 @@ const Header = (props: Props) => {
             <PopoverContent className="w-[240px] p-4">
               <div>
                 <ul className="flex flex-col gap-2">
-                  <Link href={"/dashboard/profile"}>
+                  <Link href={"/dashboard/profile"} className={"hidden"}>
                     <li className="flex flex-row text-sm">
                       <User size={20} /> <p className="ml-2">Profile</p>
                     </li>

@@ -550,12 +550,7 @@ const OnboardingMultistep = (props: Props) => {
                       <span className="text-gray-600">Pris per aksje:</span>
                       <span className="font-medium">8,00 kr</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Navn:</span>
-                      <span className="font-medium">
-                        Hans-Eirik Breyholtz-Mott
-                      </span>
-                    </div>
+
                     <div className="flex justify-between">
                       <span className="text-gray-600">Tegnet av:</span>
                       <span className="font-medium">

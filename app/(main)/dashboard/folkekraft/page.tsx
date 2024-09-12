@@ -516,7 +516,9 @@ const FolkeinvestInvest = () => {
                     <p>Folkekraft emisjonspresentasjon</p>
                   </div>
                   <Link
-                    href={"/doc/folkekraft_emisjonpresentasjon.pdf"}
+                    href={
+                      "https://utfs.io/f/13ccf2e2-4eb3-44c0-bc0d-93de7e633b5d-oymfrz.pdf"
+                    }
                     className="cursor-pointer underline"
                     target="_blank"
                     download={"folkekraft_emisjonpresentasjon.pdf"}
@@ -531,7 +533,9 @@ const FolkeinvestInvest = () => {
                     <p>Finansiell prognosemodell</p>
                   </div>
                   <Link
-                    href="/doc/finansiell_prognosemodell.pdf"
+                    href={
+                      "https://utfs.io/f/e76d4dbf-b22f-4e26-88aa-a70df1fe5c56-ry0du0.pdf"
+                    }
                     className="cursor-pointer underline"
                     target="_blank"
                     download={"finansiell_prognosemodell.pdf"}
@@ -546,7 +550,9 @@ const FolkeinvestInvest = () => {
                     <p>Fremtidig verdsettelsesmodell</p>
                   </div>
                   <Link
-                    href="/doc/verdsettelse.pdf"
+                    href={
+                      "https://utfs.io/f/4a34c5b0-da63-4db8-9bab-f34c69466acd-n1l38s.pdf"
+                    }
                     className="cursor-pointer underline"
                     target="_blank"
                     download={"verdsettelse.pdf"}
@@ -561,7 +567,9 @@ const FolkeinvestInvest = () => {
                     <p>Folkekraft AS_årsrapport 2023</p>
                   </div>
                   <Link
-                    href="/doc/folkekraft_as_årsrapport_2023.pdf"
+                    href={
+                      "https://utfs.io/f/19ee23c6-c325-4b78-ad47-f8c45945f640-991f3d.pdf"
+                    }
                     className="cursor-pointer underline"
                     target="_blank"
                     download={"folkekraft_as_årsrapport_2023.pdf"}
@@ -576,7 +584,9 @@ const FolkeinvestInvest = () => {
                     <p>Notat om disput med IT-leverandør</p>
                   </div>
                   <Link
-                    href="/doc/notat_disput_med_props.pdf"
+                    href={
+                      "https://utfs.io/f/b049b0f0-9886-4eb9-8a93-db4a93bc7c78-m39y0.pdf"
+                    }
                     className="cursor-pointer underline"
                     target="_blank"
                     download={"notat_disput_med_props.pdf"}
@@ -591,7 +601,9 @@ const FolkeinvestInvest = () => {
                     <p>Reklamasjon Havskraft</p>
                   </div>
                   <Link
-                    href="/doc/reklamasjon_havskraft.pdf"
+                    href={
+                      "https://utfs.io/f/7b70d7ae-2b3b-4edc-bd53-cb262ad5d0d2-zc0vpm.pdf"
+                    }
                     className="cursor-pointer underline"
                     target="_blank"
                     download={"reklamasjon_havskraft.pdf"}

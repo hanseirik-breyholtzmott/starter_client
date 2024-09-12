@@ -38,8 +38,9 @@ const Campaign = (props: Props) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
   return (
-    <main className="h-[2000px] relative">
+    <main className="min-h-[2000px] relative">
       <div className="container mx-auto px-4 py-8">
         <header className="flex justify-between items-center mb-4">
           <div className="flex items-center">
@@ -70,28 +71,28 @@ const Campaign = (props: Props) => {
           Empowering investors to grow wealth through alternative real estate
           investing
         </p>
-        <div className="flex space-x-2 mb-4">
+        <div className="flex flex-wrap gap-1 sm:gap-2 mb-4">
           {["MEDEIERSKAP", "B2C", "FINTECH", "EMISJON", "STRØM"].map((tag) => (
             <span
               key={tag}
-              className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-sm"
+              className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-sm whitespace-nowrap"
             >
               {tag}
             </span>
           ))}
         </div>
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1">
-            <div className="bg-gray-900 text-white p-6 rounded-lg mb-4 h-[520px]">
+            <div className="bg-gray-900 text-white  rounded-lg mb-4 max-w-[650px] max-h-[520px] w-full h-full">
               {/* Video */}
-              <Carousel className="w-[600px] h-[500px]">
-                <CarouselContent>
+              <Carousel className="max-w-[650px] max-h-[520px] w-full h-full">
+                <CarouselContent className=" h-[520px]">
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <CarouselItem key={index}>
-                      <div className="p-1">
-                        <Card>
-                          <CardContent className="flex aspect-square items-center justify-center p-6">
-                            <span className="text-4xl font-semibold">
+                    <CarouselItem key={index} className="h-full">
+                      <div className="p-1 h-full">
+                        <Card className="h-full">
+                          <CardContent className="flex items-center justify-center p-6 h-full">
+                            <span className="text-6xl font-semibold">
                               {index + 1}
                             </span>
                           </CardContent>
@@ -100,15 +101,37 @@ const Campaign = (props: Props) => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious />
+                <CarouselPrevious className="" />
                 <CarouselNext />
               </Carousel>
             </div>
-            <div className="flex space-x-2 overflow-x-auto">
-              {[1, 2, 3, 4].map((i) => (
-                <div className="w-24 h-16 bg-blue-500" key={i}></div>
-              ))}
-            </div>
+            <Carousel
+              opts={{
+                align: "start",
+              }}
+              className="w-full max-w-sm hidden md:block"
+            >
+              <CarouselContent>
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="md:basis-1/2 lg:basis-1/4"
+                  >
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex aspect-square items-center justify-center p-6">
+                          <span className="text-3xl font-semibold">
+                            {index + 1}
+                          </span>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
           </div>
 
           <div className="flex-1">
@@ -150,7 +173,7 @@ const Campaign = (props: Props) => {
               <p className="text-center text-gray-600 mt-2">
                 Minstetegning er 2 400kr
               </p>
-              <div className="flex justify-between items-center mt-4 gap-8">
+              <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-8">
                 <div className="w-full">
                   <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg h-12">
                     Bli Folkekraft kunde
@@ -222,9 +245,9 @@ const Campaign = (props: Props) => {
         {/* Main content area */}
         <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
-            <h1 id="problem" className="text-2xl font-bold mb-4">
-              Problem
-            </h1>
+            <h3 id="problem" className="text-2xl font-bold mb-4">
+              Konsept: strømkunde og medeier
+            </h3>
             <p className="mb-4">
               In the wake of changes in securities law, technological advances,
               and instability in public markets,{" "}

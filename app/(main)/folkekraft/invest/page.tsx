@@ -266,7 +266,7 @@ const Invest = (props: Props) => {
                   <li className="flex items-center">
                     <ChevronDown className="w-4 h-4 mr-2" />
                     <a href="#" className="text-blue-600 hover:underline">
-                      So I'm only charged if funding succeeds?
+                      So I&apos;m only charged if funding succeeds?
                     </a>
                   </li>
                 </ul>

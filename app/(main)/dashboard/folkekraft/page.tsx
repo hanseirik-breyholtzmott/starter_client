@@ -171,7 +171,7 @@ const FolkeinvestInvest = () => {
                 </p>
                 <p>21 713 752,00 kr</p>
               </div>
-              <div className="flex flex-row justify-between hidden">
+              <div className="flex-row justify-between hidden">
                 <p className="font-semibold flex items-center">
                   Antall aksjer du har:
                 </p>
@@ -207,6 +207,7 @@ const FolkeinvestInvest = () => {
           <div className="flex flex-col md:flex-row justify-center items-center">
             <TabsList className="flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 h-auto">
               <TabsTrigger value="about">Beskrivelse</TabsTrigger>
+              <TabsTrigger value="emisjon">Emisjonsnytt</TabsTrigger>
               <TabsTrigger value="table">Aksjeeierbok</TabsTrigger>
               <TabsTrigger value="team">Team og samarbeidspartnere</TabsTrigger>
               <TabsTrigger value="documents">Dokumenter</TabsTrigger>
@@ -417,7 +418,19 @@ const FolkeinvestInvest = () => {
               </div>
             </div>
           </TabsContent>
-
+          <TabsContent value="emisjon" className=" h-fit">
+            <div className="bg-white rounded-xl h-[400px] p-4 relative">
+              <div className="w-full h-full relative overflow-hidden rounded-xl">
+                <iframe
+                  src="https://player.vimeo.com/video/1010022518?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+                  style={{ border: "none" }}
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                  title="Vi har ikke vært gode nok"
+                  className="absolute top-0 left-0 w-full h-full"
+                ></iframe>
+              </div>
+            </div>
+          </TabsContent>
           <TabsContent value="table" className=" h-fit">
             <div className="w-full max-w-[960px] mx-auto mb-4 h-fit">
               <h1 className="text-3xl font-bold mt-12 mb-8">All Investors</h1>

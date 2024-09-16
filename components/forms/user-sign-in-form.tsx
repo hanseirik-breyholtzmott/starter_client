@@ -80,11 +80,7 @@ const UserSignInForm = (props: Props) => {
             )}
           />
 
-          <Button
-            className="mt-4"
-            onClick={() => login(form.watch("email"), form.watch("password"))}
-            type="button"
-          >
+          <Button className="mt-4" type="submit">
             Sign in
           </Button>
         </form>

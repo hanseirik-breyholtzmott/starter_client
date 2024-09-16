@@ -8,12 +8,7 @@ type Props = {};
 const StarterAnalytics = (props: Props) => {
   const googleTagManager = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
   const hotjar = process.env.NEXT_PUBLIC_HOTJAR;
-  return (
-    <>
-      {googleTagManager ? <GoogleTagManager /> : null}
-      {hotjar ? <Hotjar /> : null}
-    </>
-  );
+  return <>{hotjar ? <Hotjar /> : null}</>;
 };
 
 export default StarterAnalytics;

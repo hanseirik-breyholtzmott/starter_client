@@ -35,6 +35,25 @@ export const metadata: Metadata = {
     "next.js, starter kit, saas, ecommerce, digital products, saas code kit, indie hacking, indie hacker kit, micro saas, entrepreneurship, Code Starter Kit, SaaS Product Launch, Code Documentation Tutorial, Beginner Coding Kit, Start-up SaaS Kit, Coding Guides and Resources, Video Tutorials for Coding, Beginner SaaS Guide, Launch your First SaaS, Step-by-step Coding Kit, SaaS Launch Kit, Software as a Service Starter, Easy Code Launch Kit, Coding Skills for SaaS, Starter Kit for SaaS, Code, Document, Launch, Comprehensive Coding Starter Kit, Master SaaS Product Launch, SaaS Documentation Tutorial, First-Time Coders Kit, SaaS coding course, Initiate SaaS Journey, Seamless SaaS Launch Guide, First SaaS Product Guidance, Bootstrap SaaS Tutorial, Ultimate SaaS Starter Pack, Learning Guide for SaaS, DIY SaaS Kit, Code your SaaS Product, All-in-one Coding Starter Kit",
   description:
     "The code kit to help you quickly setup an online store and sell your digital assets without a middleman skipping off the top of your profits.",
+  openGraph: {
+    url: process.env.NEXT_PUBLIC_URL_BASE,
+    type: "website",
+    title: "Your Page Title for LinkedIn", //LinkedIn page title
+    description: "This is a premade description for LinkedIn.", //LinkedIn page description
+    images: [
+      {
+        url: "https://www.yourwebsite.com/image.jpg", //LinkedIn page image
+        width: 1200,
+        height: 627,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Your Page Title for LinkedIn",
+    description: "This is a premade description for LinkedIn.",
+    images: ["https://www.yourwebsite.com/image.jpg"],
+  },
 };
 
 export default function RootLayout({
@@ -44,9 +63,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
-        <StarterAnalytics />
-      </Head>
+      <StarterAnalytics />
       <body className={inter.className}>
         <AuthWrapper>
           <NextSSRPlugin

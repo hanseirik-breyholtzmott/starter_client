@@ -14,6 +14,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { SlidersHorizontal } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 import {
   Table,
   TableBody,
@@ -22,6 +28,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 //Table
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
@@ -58,7 +71,6 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col space-y-4">
-      <DataTableToolbar table={table} />
       <div className="rounded-md border mb-4">
         <Table>
           <TableHeader>

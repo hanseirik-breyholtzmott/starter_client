@@ -53,3 +53,14 @@ export const formatDateString = (dateString: string): string => {
 
   return `${year}-${month}-${day}`;
 };
+
+export const handleCopy = (text: string) => {
+  return navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      return true; // Return success
+    })
+    .catch((err) => {
+      return false; // Return failure
+    });
+};

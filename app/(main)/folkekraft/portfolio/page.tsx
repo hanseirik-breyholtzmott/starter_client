@@ -37,6 +37,10 @@ import {
 
 type Props = {};
 
+//Table
+import { DataTable } from "./_components/data-table";
+import { Payment, columns } from "./_components/columns";
+
 //Icons
 import { Mail, ArrowUpDown, Info } from "lucide-react";
 
@@ -48,14 +52,6 @@ const tabsData = [
   { id: "transactions", label: "Transaksjoner", count: null },
 ];
 
-const data = [
-  { date: "19 aug", value: 200 },
-  { date: "26 aug", value: 200 },
-  { date: "2 sep", value: 500 },
-  { date: "9 sep", value: 1800 },
-  { date: "16 sep", value: 2000 },
-];
-
 const chartData = [
   { month: "January", desktop: 186 },
   { month: "February", desktop: 305 },
@@ -65,6 +61,82 @@ const chartData = [
   { month: "June", desktop: 214 },
 ];
 
+const investmentData = [
+  {
+    title: "Antall kunder",
+    value: "652",
+    bgColor: "bg-blue-50",
+    button: {
+      text: "Bli kunde",
+      action: () => console.log("Minimum investment clicked"),
+    },
+  },
+  {
+    title: "Antall målepunkter",
+    value: "684",
+    bgColor: "bg-green-50",
+  },
+  {
+    title: "Antall vervinger",
+    value: "30",
+    bgColor: "bg-blue-50",
+  },
+  {
+    title: "Følgere på facebook",
+    value: "128 452",
+    bgColor: "bg-green-50",
+    button: {
+      text: "Følg oss!",
+      action: () => console.log("Minimum investment clicked"),
+    },
+  },
+  {
+    title: "Følgere på instagram",
+    value: "155,70 kr",
+    bgColor: "bg-blue-50",
+    button: {
+      text: "Følg oss!",
+      action: () => console.log("Minimum investment clicked"),
+    },
+  },
+  {
+    title: "Kunde rating Folkekraft",
+    value: "539 811,90 kr",
+    bgColor: "bg-green-50",
+    button: {
+      text: "gi oss tilbake melding",
+      action: () => console.log("Minimum investment clicked"),
+    },
+  },
+  {
+    title: "Bytt rating",
+    value: "3 / 5",
+    bgColor: "bg-blue-50",
+    button: {
+      text: "Invester minimum",
+      action: () => console.log("Minimum investment clicked"),
+    },
+  },
+  {
+    title: "Google rating",
+    value: "4 671 000,00 kr",
+    bgColor: "bg-green-50",
+    button: {
+      text: "Invester maksimum",
+      action: () => console.log("Maximum investment clicked"),
+    },
+  },
+  {
+    title: "App rating",
+    value: "4 671 000,00 kr",
+    bgColor: "bg-blue-50",
+    button: {
+      text: "Invester maksimum",
+      action: () => console.log("Maximum investment clicked"),
+    },
+  },
+];
+
 const chartConfig = {
   desktop: {
     label: "Desktop",
@@ -72,8 +144,30 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+const tableData: Payment[] = [
+  {
+    id: "728ed52f",
+    amount: 100,
+    status: "pending",
+    email: "m@example.com",
+  },
+  {
+    id: "728ed52f",
+    amount: 100,
+    status: "pending",
+    email: "m@example.com",
+  },
+  {
+    id: "728ed52f",
+    amount: 100,
+    status: "pending",
+    email: "m@example.com",
+  },
+];
+
 const Dashboard = (props: Props) => {
   const [activeTab, setActiveTab] = useState<string>("investments");
+
   return (
     <section className="container mx-auto">
       <Tabs
@@ -81,8 +175,8 @@ const Dashboard = (props: Props) => {
         onValueChange={setActiveTab}
         className="w-full sm:w-auto"
       >
-        <div className="text-7xl font-black">
-          <h1>My portfolio</h1>
+        <div className="text-7xl font-black mt-8">
+          <h1>Min portefølje</h1>
         </div>
         <TabsList className="h-auto p-0 bg-transparent flex flex-row gap-8 mt-10 border-b border-gray-200 justify-between">
           <div className="flex flex-row gap-8">
@@ -113,156 +207,91 @@ const Dashboard = (props: Props) => {
           </a>
         </TabsList>
         <TabsContent value="investments">
-          <Table className="mb-32 mt-12">
-            <TableHeader>
-              <TableRow>
-                <TableHead>
-                  Company{" "}
-                  <Info className="inline-block w-4 h-4 text-gray-400" />
-                </TableHead>
-                <TableHead>Your holding</TableHead>
-                <TableHead>
-                  Estimated value{" "}
-                  <Info className="inline-block w-4 h-4 text-gray-400" />
-                </TableHead>
-                <TableHead>Buy/sell</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-10 h-10 bg-blue-500 rounded-full"></div>
+          <div className="container mx-auto p-4 my-12">
+            <Card className="w-full mx-auto p-4">
+              <CardHeader>
+                <CardTitle className="text-2xl font-semibold text-gray-700">
+                  Aksje oversikt
+                </CardTitle>
+              </CardHeader>
+              <Table className="">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>
+                      Folkekraft aksjer{" "}
+                      <Info className="inline-block w-4 h-4 text-gray-400" />
+                    </TableHead>
+                    <TableHead className="text-center">Dine aksjer</TableHead>
+                    <TableHead className="text-center">
+                      Estimated verdi{" "}
+                      <Info className="inline-block w-4 h-4 text-gray-400" />
+                    </TableHead>
+                    <TableHead className="text-center">Buy/sell</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow className="text-center">
+                    <TableCell className="font-medium">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-10 h-10 bg-blue-500 rounded-full"></div>
 
-                    <div>
-                      <div>Folkekraft</div>
-                      <div className="text-sm text-gray-500">Investor</div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>$100</TableCell>
-                <TableCell>$100</TableCell>
-                <TableCell>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg h-12">
-                    Kjøp Folkekraft aksjer
-                  </Button>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-10 h-10 bg-blue-500 rounded-full"></div>
-                    <div>
-                      <div>Folkekraft</div>
-                      <div className="text-sm text-gray-500">Kunde</div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>$150</TableCell>
-                <TableCell>$170</TableCell>
-                <TableCell>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg h-12">
-                    Bli Folkekraft kunde
-                  </Button>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-10 h-10 bg-blue-500 rounded-full"></div>
-                    <div>
-                      <div>Folkekraft</div>
-                      <div className="text-sm text-gray-500">Verving</div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>$150</TableCell>
-                <TableCell>$150</TableCell>
-                <TableCell>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg h-12">
-                    Del verve lenke
-                  </Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+                        <div className="text-left">
+                          <div>Folkekraft</div>
+                          <div className="text-sm text-gray-500">Investor</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>500</TableCell>
+                    <TableCell>4 500 kr</TableCell>
+                    <TableCell>
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg h-12">
+                        Kjøp Folkekraft aksjer
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className="text-center">
+                    <TableCell className="font-medium">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-10 h-10 bg-blue-500 rounded-full"></div>
+                        <div className="text-left">
+                          <div>Folkekraft</div>
+                          <div className="text-sm text-gray-500">Kunde</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>84</TableCell>
+                    <TableCell>1 008 kr</TableCell>
+                    <TableCell>
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg h-12">
+                        Bli Folkekraft kunde
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className="text-center">
+                    <TableCell className="font-medium">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-10 h-10 bg-blue-500 rounded-full"></div>
+                        <div className="text-left">
+                          <div>Folkekraft</div>
+                          <div className="text-sm text-gray-500">Verving</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>0</TableCell>
+                    <TableCell>0</TableCell>
+                    <TableCell>
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg h-12">
+                        Del verve lenke
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Card>
+          </div>
         </TabsContent>
         <TabsContent value="summary">
-          <Card className="w-full max-w-4xl mx-auto">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-2xl font-semibold text-gray-700">
-                  Investments summary
-                </CardTitle>
-                <Select defaultValue="2022">
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select year" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="2022">2022</SelectItem>
-                    <SelectItem value="2021">2021</SelectItem>
-                    <SelectItem value="2020">2020</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500 flex items-center">
-                    Invested total{" "}
-                    <Info className="w-4 h-4 ml-1 text-gray-400" />
-                  </h3>
-                  <p className="text-4xl font-bold">$400</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Companies
-                  </h3>
-                  <p className="text-4xl font-bold">3</p>
-                </div>
-              </div>
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">
-                  Capital deployment over time
-                </h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={data}>
-                    <XAxis dataKey="month" tickLine={false} axisLine={false} />
-                    <YAxis hide />
-                    <Bar
-                      dataKey="amount"
-                      fill="#3b82f6"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500 flex items-center">
-                    Reg CF limit allocation{" "}
-                    <Info className="w-4 h-4 ml-1 text-gray-400" />
-                  </h3>
-                  <p className="text-sm text-gray-700">
-                    Default limit is $2500
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Reg A+ limit
-                  </h3>
-                  <p className="text-sm text-gray-700">Not set</p>
-                </div>
-                <Button variant="outline" className="w-full">
-                  Update limit
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="tracker">
-          <div className="container mx-auto p-4">
+          <div className="container mx-auto p-4 my-12">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="md:col-span-1">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
@@ -273,7 +302,7 @@ const Dashboard = (props: Props) => {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center mr-2">
+                      <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center mr-2">
                         IN
                       </div>
                       <div>
@@ -284,7 +313,7 @@ const Dashboard = (props: Props) => {
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center mr-2">
+                      <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center mr-2">
                         K
                       </div>
                       <div>
@@ -295,7 +324,7 @@ const Dashboard = (props: Props) => {
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center mr-2">
+                      <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center mr-2">
                         V
                       </div>
                       <div>
@@ -307,10 +336,12 @@ const Dashboard = (props: Props) => {
                     </div>
                   </div>
                   <div className="flex space-x-2 mt-4">
-                    <Button variant="outline" className="w-full">
-                      Ny konto
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg h-12">
+                      Bli kunde
                     </Button>
-                    <Button className="w-full">Innbetaling</Button>
+                    <Button className="w-full bg-slate-100  border-blue-600  text-blue-600 hover:bg-slate-200 border-2  text-lg h-12">
+                      Invester
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -328,10 +359,10 @@ const Dashboard = (props: Props) => {
                   <div className="flex justify-between items-center py-4">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 flex items-center">
-                        Invested total{" "}
+                        Total verdi{" "}
                         <Info className="w-4 h-4 ml-1 text-gray-400" />
                       </h3>
-                      <p className="text-4xl font-bold">$400</p>
+                      <p className="text-4xl font-bold">5 508 NOK</p>
                     </div>
                   </div>
                 </CardHeader>
@@ -340,11 +371,11 @@ const Dashboard = (props: Props) => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <div className="text-sm font-medium">
-                          Utvikling i dag (NOK)
+                          Utvikling (NOK)
                         </div>
                         <div className="text-2xl font-bold">0,00% 0</div>
                       </div>
-                      <div>
+                      <div className="hidden">
                         <div className="text-sm font-medium">
                           Markedsverdi (NOK)
                         </div>
@@ -379,90 +410,87 @@ const Dashboard = (props: Props) => {
                         <Line
                           dataKey="desktop"
                           type="natural"
-                          stroke="var(--color-desktop)"
+                          stroke="rgb(59 130 246)"
                           strokeWidth={2}
                           dot={false}
                         />
                       </LineChart>
                     </ChartContainer>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className=" grid-cols-2 gap-4 hidden">
                       <div>
                         <div className="text-sm font-medium">
-                          Tilgjengelig (NOK)
+                          Total investert (NOK)
                         </div>
                         <div className="text-xl font-bold">2 000</div>
                       </div>
                       <div>
-                        <div className="text-sm font-medium">Kreditt (NOK)</div>
+                        <div className="text-sm font-medium">Tjent (NOK)</div>
                         <div className="text-xl font-bold">0</div>
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-
-              <Card className="md:col-span-3">
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle>Mine hendelser</CardTitle>
-                    <Button variant="outline">
-                      <BarChart className="mr-2 h-4 w-4" /> Sammenlign
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue="kommende">
-                    <TabsList>
-                      <TabsTrigger value="kommende">Kommende</TabsTrigger>
-                      <TabsTrigger value="historiske">Historiske</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="kommende">
-                      <p className="text-sm text-muted-foreground">
-                        For øyeblikket har du ingen kommende hendelser
-                      </p>
-                    </TabsContent>
-                    <TabsContent value="historiske">
-                      <p className="text-sm text-muted-foreground">
-                        Ingen historiske hendelser å vise
-                      </p>
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-
-              <Card className="md:col-span-3">
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle>Marked</CardTitle>
-                    <div className="text-sm text-muted-foreground">
-                      Børsen i dag
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue="nyheter">
-                    <TabsList>
-                      <TabsTrigger value="nyheter">Nyheter</TabsTrigger>
-                      <TabsTrigger value="oversikt">Oversikt</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="nyheter">
-                      <p className="text-sm text-muted-foreground">
-                        Ingen nyheter å vise for øyeblikket
-                      </p>
-                    </TabsContent>
-                    <TabsContent value="oversikt">
-                      <p className="text-sm text-muted-foreground">
-                        Ingen markedsoversikt tilgjengelig
-                      </p>
-                    </TabsContent>
-                  </Tabs>
-                  <div className="flex justify-end mt-4">
-                    <Button>Vis alle</Button>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="tracker">
+          <div className="container mx-auto p-4 my-12">
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <h2 className="text-2xl font-semibold text-gray-700">
+                    Tracker
+                  </h2>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {investmentData.map((item, index) => (
+                    <Card
+                      key={index}
+                      className={`${item.bgColor} border-none shadow-sm`}
+                    >
+                      <CardContent className="p-4">
+                        <h3 className="text-sm font-medium text-gray-600 mb-1">
+                          {item.title}
+                        </h3>
+                        <p className="text-lg font-semibold text-gray-800 mb-2">
+                          {item.value}
+                        </p>
+                        {item.button && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={item.button.action}
+                            className="w-full mt-2"
+                          >
+                            {item.button.text}
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        <TabsContent value="transactions">
+          <div className="container mx-auto p-4 my-12">
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <h2 className="text-2xl font-semibold text-gray-700">
+                    Transactions
+                  </h2>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DataTable columns={columns} data={tableData} />
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
       </Tabs>

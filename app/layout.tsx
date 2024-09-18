@@ -1,7 +1,6 @@
 //Nextjs
 import type { Metadata } from "next";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
-import Head from "next/head";
 
 //Uploadthing
 import { extractRouterConfig } from "uploadthing/server";
@@ -17,8 +16,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthWrapper } from "./hooks/AuthContext";
 
 //Analytics
-import { Analytics } from "@vercel/analytics/react";
 import StarterAnalytics from "@/analytics";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 //Public
 import { Inter } from "next/font/google";
@@ -76,6 +76,9 @@ export default function RootLayout({
             routerConfig={extractRouterConfig(ourFileRouter)}
           />
           {children}
+          {/* Vercel Speed Insights */}
+          <SpeedInsights />
+          {/* Vercel Analytics */}
           <Analytics />
         </AuthWrapper>
         <Toaster />

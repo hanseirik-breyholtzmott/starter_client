@@ -2,13 +2,12 @@ import Link from "next/link";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Switch } from "@/components/ui/switch";
 
 //Icons
 import {
@@ -17,9 +16,7 @@ import {
   Zap,
   ChartPie,
   User,
-  SunMoon,
   LogOut,
-  ArrowLeftRight,
   Settings,
 } from "lucide-react";
 import {} from "lucide-react";
@@ -68,12 +65,19 @@ export default function Navbar() {
             <Globe size={20} />
             <span className="ml-1">US</span>
           </Button>
-          <Button variant="ghost" size="icon">
-            <Zap size={20} />
-          </Button>
-          <Button variant="ghost" size="icon">
-            <ChartPie size={20} />
-          </Button>
+
+          <Link href={"/folkekraft/portfolio"}>
+            <Button variant="ghost" size="icon">
+              <Zap size={20} />
+            </Button>
+          </Link>
+
+          <Link href={"/folkekraft/portfolio"}>
+            <Button variant="ghost" size="icon">
+              <ChartPie size={20} />
+            </Button>
+          </Link>
+
           <Popover>
             <PopoverTrigger>
               <div className="flex items-center space-x-2 h-10 w-10 bg-blue-600 text-white rounded-md"></div>
@@ -81,35 +85,28 @@ export default function Navbar() {
             <PopoverContent>
               <div>
                 <ul className="flex flex-col gap-2">
-                  <Link href={"/dashboard/profile"} className={"hidden"}>
-                    <li className="flex flex-row text-sm">
-                      <User size={20} /> <p className="ml-2">Profile</p>
+                  <Link href={"/folkekraft/profile"}>
+                    <li className="flex flex-row text-lg items-center p-2">
+                      <User size={20} />{" "}
+                      <p className="ml-2 text-md">My Profile</p>
                     </li>
                   </Link>
-                  <Link href={"/dashboard/transactions"}>
-                    <li className="flex flex-row text-sm">
-                      <ArrowLeftRight size={20} />{" "}
-                      <p className="ml-2">Transactions</p>
+                  <Link href={"/dashboard"}>
+                    <li className="flex flex-row text-lg items-center p-2">
+                      <Settings size={20} /> <p className="ml-2">Verve lenke</p>
                     </li>
                   </Link>
-                  <Link href={"/dashboard"} className="hidden">
-                    <li className="flex flex-row text-sm">
-                      <Settings size={20} /> <p className="ml-2">Settings</p>
+                  <Link href={"folkekraft/settings"}>
+                    <li className="flex flex-row text-lg items-center p-2">
+                      <Settings size={20} />{" "}
+                      <p className="ml-2">Innstillinger</p>
                     </li>
                   </Link>
-                  <a href="" className="text-sm">
-                    <li className="flex flex-row justify-between items-center text-sm">
-                      <div className="flex flex-row">
-                        <SunMoon size={20} /> <p className="ml-2">Dark mode</p>
-                      </div>
-                      <Switch checked={true} />
-                    </li>
-                  </a>
-                  <button>
-                    <li className="flex flex-row text-sm text-red-500">
+                  <Link href={"/dashboard"}>
+                    <li className="flex flex-row text-lg items-center p-2 text-red-500">
                       <LogOut size={20} /> <p className="ml-2">Log out</p>
                     </li>
-                  </button>
+                  </Link>
                 </ul>
               </div>
             </PopoverContent>

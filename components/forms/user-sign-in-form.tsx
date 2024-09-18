@@ -1,7 +1,7 @@
 "use client";
 
 import { z } from "zod";
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuthContext } from "@/app/hooks/AuthContext";
@@ -30,6 +30,7 @@ type Props = {};
 const UserSignInForm = (props: Props) => {
   const { toast } = useToast();
   const { login } = useAuthContext();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,9 +41,23 @@ const UserSignInForm = (props: Props) => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    login(values.email, values.password);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await login(values.email, values.password);
+    } catch (error) {
+      console.error("Login error:", error);
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: "Please check your credentials and try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
+
   return (
     <>
       <Form {...form}>
@@ -80,8 +95,8 @@ const UserSignInForm = (props: Props) => {
             )}
           />
 
-          <Button className="mt-4" type="submit">
-            Sign in
+          <Button className="mt-4" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Signing in..." : "Sign in"}
           </Button>
         </form>
       </Form>

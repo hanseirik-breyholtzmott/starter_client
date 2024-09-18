@@ -33,6 +33,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { DataTableViewOptions } from "./data-table-view-options";
+
 import { DataTablePagination } from "./data-table-pagination";
 
 interface DataTableProps<TData, TValue> {
@@ -82,7 +84,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-
+        <DataTableViewOptions table={table} />
         <div className="hidden">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

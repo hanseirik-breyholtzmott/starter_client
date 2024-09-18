@@ -419,14 +419,17 @@ const FolkeinvestInvest = () => {
             </div>
           </TabsContent>
           <TabsContent value="emisjon" className=" h-fit">
-            <div className="bg-white rounded-xl h-[400px] p-4 relative">
-              <div className="w-full h-full relative overflow-hidden rounded-xl">
+            <div className="bg-white rounded-xl min-h-[400px] p-4 relative text-center">
+              <h3 className="text-xl font-bold mb-4">
+                Casegjennomgang: Hva har skjedd siden forrige emisjon?
+              </h3>
+              <div className="w-full relative overflow-hidden rounded-xl text-center h-[400px]">
                 <iframe
                   src="https://player.vimeo.com/video/1010022518?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
                   style={{ border: "none" }}
                   allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
                   title="Vi har ikke vært gode nok"
-                  className="absolute top-0 left-0 w-full h-full"
+                  className="absolute top-0 left-0 bottom-0 right-0 w-full h-full"
                 ></iframe>
               </div>
             </div>

@@ -91,7 +91,7 @@ const Settings = (props: Props) => {
               <p className="text-sm text-gray-500 mb-4">
                 Displayed on your profile and across Republic. Must be your real
                 name. The full legal name to be signed on your securities is
-                collected below under "Identity verification".
+                collected below under &quot;Identity verification&quot;.
               </p>
               <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                 Update

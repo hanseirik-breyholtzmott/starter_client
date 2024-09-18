@@ -28,7 +28,7 @@ const tabsData = [
 
 type Props = {};
 
-export default function index({}: Props) {
+export default function TabsComponent({}: Props) {
   const [activeTab, setActiveTab] = useState("about");
 
   return (

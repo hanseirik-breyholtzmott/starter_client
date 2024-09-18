@@ -69,7 +69,7 @@ interface CampaignHeaderProps {
   campaignData: Campaign | null;
 }
 
-export default function campaignInfo({ campaignData }: CampaignHeaderProps) {
+export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
   //useState
   const [isCopied, setIsCopied] = useState(false);
 

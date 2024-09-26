@@ -97,13 +97,13 @@ export default function Navbar() {
                       <p className="ml-2 text-md">Min profil</p>
                     </li>
                   </Link>
-                  <Link href={"/dashboard"}>
+                  <Link href={"/folkekraft/portfolio"}>
                     <li className="flex flex-row text-lg items-center p-2">
                       <ChartPie size={20} />{" "}
                       <p className="ml-2">Min portefølje</p>
                     </li>
                   </Link>
-                  <Link href={"folkekraft/settings"}>
+                  <Link href={"folkekraft/invest"}>
                     <li className="flex flex-row text-lg items-center p-2">
                       <Zap size={20} /> <p className="ml-2">Investere</p>
                     </li>

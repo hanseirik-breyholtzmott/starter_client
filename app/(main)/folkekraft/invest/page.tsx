@@ -12,25 +12,26 @@ const getInvestmentData = async () => {
       "/api/campaign/1/investment-details"
     );
 
-    if (response.status != 200) {
+    if (response.status !== 200) {
       console.log("Failed to fetch data");
       throw new Error("Failed to fetch data");
-    } else {
-      console.log("Data fetched successfully");
     }
 
     const data = response.data;
 
-    console.log(data);
-
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching investment data:", error);
+    return null;
   }
 };
 
 export default async function InvestPage() {
   const investmentData = await getInvestmentData();
+
+  if (!investmentData) {
+    return <div>Failed to load investment data. Please try again later.</div>;
+  }
 
   return <InvestmentLayout investmentData={investmentData} />;
 }

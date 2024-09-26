@@ -6,6 +6,9 @@ import PortfolioLayout from "./_components/page/portfolioLayout";
 //Cookies
 import { getCookieValue } from "@/lib/cookies";
 
+//Dynamic
+export const dynamic = "force-dynamic";
+
 //Crypto
 import { decrypt } from "@/lib/auth";
 

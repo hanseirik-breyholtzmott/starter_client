@@ -1,5 +1,10 @@
 import React from "react";
+
+//Nextjs
 import Link from "next/link";
+import Image from "next/image";
+
+//Icons
 import {
   Facebook,
   Instagram,
@@ -26,16 +31,25 @@ export default function Footer() {
               Opplev medeierskap med Folkekraft - mer enn bare strøm.
             </p>
             <div className="flex space-x-4">
-              <Link href="#" className="hover:text-white">
+              <Link
+                href="https://www.facebook.com/folkekraft"
+                className="hover:text-white"
+              >
                 <Facebook size={20} />
               </Link>
-              <Link href="#" className="hover:text-white">
+              <Link
+                href="https://www.instagram.com/folkekraft"
+                className="hover:text-white"
+              >
                 <Instagram size={20} />
               </Link>
               <Link href="#" className="hover:text-white hidden">
                 <Twitter size={20} />
               </Link>
-              <Link href="#" className="hover:text-white">
+              <Link
+                href="https://www.linkedin.com/company/folkekraft/"
+                className="hover:text-white"
+              >
                 <Linkedin size={20} />
               </Link>
               <Link href="#" className="hover:text-white hidden">
@@ -63,7 +77,7 @@ export default function Footer() {
               </Link>
             </div>
           </div>
-          <div>
+          <div className="hidden">
             <h3 className="text-white font-semibold mb-4">For investorer</h3>
             <ul className="space-y-2">
               {[
@@ -84,7 +98,7 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-          <div>
+          <div className="hidden">
             <h3 className="text-white font-semibold mb-4">Dokumenter</h3>
             <ul className="space-y-2">
               {["doc1", "doc2", "doc3", "doc4", "doc5"].map((item) => (
@@ -96,7 +110,7 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-          <div>
+          <div className="hidden">
             <h3 className="text-white font-semibold mb-4">Company</h3>
             <ul className="space-y-2">
               {["About", "Journal", "Events", "Contact", "We're hiring!"].map(
@@ -119,20 +133,32 @@ export default function Footer() {
           <div className="flex items-center space-x-4">
             <span className="hidden">Invest in the app</span>
             <Link
-              href="#"
-              className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-300"
+              href="https://apps.apple.com/no/app/folkekraft/id6482291097?l=nb"
+              target="_blank"
+              className="bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-300"
             >
-              GET IT ON Google Play
+              <Image
+                src="https://utfs.io/f/1c66qeb7SCm5Et1bh7mKfVgdAmMa5tkqFhlrIi7SDGB9n6vj"
+                alt="App Store"
+                width={150}
+                height={125}
+              />
             </Link>
             <Link
-              href="#"
-              className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-300"
+              href="https://play.google.com/store/apps/details?id=com.utilitycloud.folkekraft.mypage.prod&hl=NO"
+              target="_blank"
+              className="bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-300"
             >
-              Download on the App Store
+              <Image
+                src="https://utfs.io/f/1c66qeb7SCm5Paa0X8jhC8L3oIdGxkT4DARaBrcs0EqvWiOn"
+                alt="Google Play"
+                width={150}
+                height={125}
+              />
             </Link>
           </div>
         </div>
-        <div className="mt-8 text-xs text-gray-500">
+        <div className="mt-8 text-xs text-gray-500 hidden">
           <p>
             Lorem ipsum dolor sit, amet consectetur adipisicing elit.
             Consequuntur dolores perferendis aliquid aut omnis vel ut quam

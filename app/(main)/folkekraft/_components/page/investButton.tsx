@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 
+//Nextjs
+import Link from "next/link";
+
 //Shadcn
 import { Button } from "@/components/ui/button";
 
@@ -22,25 +25,27 @@ export default function InvestButton({}: Props) {
 
   return (
     <>
-      {/* Mobile button */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 w-full bg-white p-2 border-t border-gray-200 md:hidden block">
-        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xl h-12">
-          Invester i Folkekraft
-        </Button>
-        <p className="text-center text-gray-600 m-2 text-sm">
-          Minstetegning er <strong>2 400kr</strong>
-        </p>
-      </div>
-      {/* Desktop button */}
-      <Button
-        className={`
-    fixed bottom-6 bg-blue-600 hover:bg-blue-700 px-8 h-16 rounded-xl text-xl text-white z-50 hidden md:block
+      <Link href="/folkekraft/invest">
+        {/* Mobile button */}
+        <div className="fixed bottom-0 left-0 right-0 z-50 w-full bg-white p-2 border-t border-gray-200 md:hidden block">
+          <Button className="w-full bg-[#00263D] hover:bg-[#00263D]/80 text-[#59C9B9] text-xl h-12">
+            Invester i Folkekraft
+          </Button>
+          <p className="text-center text-gray-600 m-2 text-sm">
+            Minstetegning er <strong>2 400kr</strong>
+          </p>
+        </div>
+        {/* Desktop button */}
+        <Button
+          className={`
+    fixed bottom-6 bg-[#00263D] hover:bg-[#00263D]/80 px-8 h-16 rounded-xl text-xl text-[#59C9B9] z-50 hidden md:block
     transition-all duration-300 ease-in-out
     ${showButton ? "right-6" : "-right-full"}
   `}
-      >
-        Invester i Folkekraft
-      </Button>
+        >
+          Invester i Folkekraft
+        </Button>
+      </Link>
     </>
   );
 }

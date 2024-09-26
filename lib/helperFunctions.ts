@@ -28,13 +28,49 @@ export const covertToPercentage = (value: number): string => {
   return `${percentage} %`;
 };
 
-export const formatCurrency = (value: number): string => {
-  const forrmattedNumber = value.toFixed(2);
+export const formatCurrency = (
+  value: number,
+  toFixed: number = 2,
+  showDecimal: boolean = true
+): string => {
+  // Format the number with the specified decimal points
+  const formattedNumber = showDecimal
+    ? value.toFixed(toFixed)
+    : Math.round(value).toString();
 
-  const parts = forrmattedNumber.split(".");
+  // Split the number into integer and decimal parts
+  const parts = formattedNumber.split(".");
   const integerPartWithSpaces = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
-  const formattedString = `${integerPartWithSpaces}.${parts[1]} kr`;
+  // Construct the formatted string
+  const formattedString =
+    showDecimal && parts[1]
+      ? `${integerPartWithSpaces}.${parts[1]} kr`
+      : `${integerPartWithSpaces} kr`;
+
+  return formattedString;
+};
+
+export const formatValue = (
+  value: number,
+  toFixed: number = 0,
+  showDecimal: boolean = true,
+  unit: string = ""
+): string => {
+  // Format the number with the specified decimal points
+  const formattedNumber = showDecimal
+    ? value.toFixed(toFixed)
+    : Math.round(value).toString();
+
+  // Split the number into integer and decimal parts
+  const parts = formattedNumber.split(".");
+  const integerPartWithSpaces = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+  // Construct the formatted string
+  const formattedString =
+    showDecimal && parts[1]
+      ? `${integerPartWithSpaces}.${parts[1]}${unit ? ` ${unit}` : ""}`
+      : `${integerPartWithSpaces}${unit ? ` ${unit}` : ""}`;
 
   return formattedString;
 };
@@ -63,4 +99,14 @@ export const handleCopy = (text: string) => {
     .catch((err) => {
       return false; // Return failure
     });
+};
+
+export const calculateDaysRemaining = (date: string | Date) => {
+  const currentDate = new Date();
+  const targetDate = new Date(date);
+
+  const differenceInTime = targetDate.getTime() - currentDate.getTime();
+  const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+
+  return differenceInDays;
 };

@@ -6,47 +6,68 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
+//Helper functions
+import { formatValue } from "@/lib/helperFunctions";
+
 //Icons
 import { ArrowUpDown } from "lucide-react";
 
-// You can use a Zod schema here if you want.
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
+type Investor = {
+  userId: string;
+  totalShares: number;
+  name: string;
   email: string;
+  ownershipPercentage: number;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Investor>[] = [
   {
-    accessorKey: "status",
-    header: "Status",
-  },
-  {
-    accessorKey: "email",
+    accessorKey: "name",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Navn
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       );
     },
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "totalShares",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Aksjer
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
+      const totalShares = row.getValue("totalShares");
+      const formatted = formatValue(totalShares as number, 0, false);
+      return <div className="text-center font-medium">{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "ownershipPercentage",
+    header: () => <div className="text-center">Eierandel %</div>,
+    cell: ({ row }) => {
+      const ownershipPercentage = parseFloat(
+        row.getValue("ownershipPercentage")
+      );
+      const formatted = `${ownershipPercentage.toFixed(2)}%`;
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-center font-medium">{formatted}</div>;
     },
   },
 ];

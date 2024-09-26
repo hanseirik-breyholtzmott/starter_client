@@ -24,7 +24,7 @@ const Dashboard = (props: Props) => {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/dashboard/folkekraft");
+    router.push("/folkekraft");
   }, [router]);
 
   return (

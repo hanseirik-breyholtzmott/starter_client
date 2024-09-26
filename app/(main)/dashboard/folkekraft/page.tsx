@@ -58,6 +58,10 @@ const FolkeinvestInvest = () => {
   const [sharesAvailable, setSharesAvailable] = useState<number>(0);
 
   useEffect(() => {
+    router.push("/folkekraft");
+  }, [router]);
+
+  useEffect(() => {
     setData(capTableData);
 
     // Only fetch share data if the user is defined

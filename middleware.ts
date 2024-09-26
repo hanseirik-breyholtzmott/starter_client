@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
   // Define public routes that do not require authentication
-  const publicRoutes = ["/about", "/contact", "/coming-soon"]; // Add more public routes as needed
+  const publicRoutes = ["/about", "/contact", "/coming-soon", "/bestill"]; // Add more public routes as needed
   // Define authentication-related routes
   const authRoutes = [
     "/sign-in",
@@ -36,7 +36,7 @@ export function middleware(req: NextRequest) {
   const loginUrl = new URL("/sign-in", req.url);
 
   // Define the dashboard URL
-  const dashboardUrl = new URL("/dashboard", req.url);
+  const dashboardUrl = new URL("/folkekraft", req.url);
 
   // Redirect logic
   if (sessionCookie) {
@@ -47,7 +47,7 @@ export function middleware(req: NextRequest) {
       }
     }
     // Allow access to the dashboard if authenticated
-    if (req.nextUrl.pathname.startsWith("/dashboard")) {
+    if (req.nextUrl.pathname.startsWith("/folkekraft")) {
       return NextResponse.next();
     }
   } else {

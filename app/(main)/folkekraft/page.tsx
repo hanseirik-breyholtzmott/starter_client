@@ -11,49 +11,6 @@ import InvestButton from "./_components/page/investButton";
 //Helper functions
 import axiosInstance from "@/lib/axiosInstance";
 
-// Define the types for the API response
-type CompanyInfo = {
-  name: string;
-  description: string;
-  tags: string[];
-};
-
-type InvestmentDetails = {
-  totalInvestors: number;
-  totalInvestedAmount: number;
-  minimumInvestment: number;
-  sharesPurchasedInPercent: number;
-  status: string;
-  closingDate: string | null;
-};
-
-type Perk = {
-  name: string;
-  actionText: string;
-  boldText: string;
-  description: string;
-  button: {
-    text: string;
-    link: string;
-  };
-};
-
-type DisplayImage = {
-  image: string;
-  alt: string;
-};
-
-type Campaign = {
-  companyInfo: CompanyInfo;
-  investmentDetails: InvestmentDetails;
-  perks: Perk[];
-  displayImages: DisplayImage[];
-};
-
-type Caplist = {
-  investors: any[]; // Replace with a more specific type if available
-};
-
 const getCampaignData = async () => {
   try {
     const response = await axiosInstance.get("/api/campaign/1");
@@ -89,7 +46,7 @@ export default async function CampaignPage() {
 
   return (
     <main className="min-h-[2000px] relative">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto w-full px-0 md:px-4 py-8">
         {/* Header */}
         <CampaignHeader campaignData={campaignData.campaign} />
 
@@ -100,7 +57,11 @@ export default async function CampaignPage() {
         <CampaignInfo campaignData={campaignData.campaign} />
 
         {/* Tabs */}
-        <Tabs />
+        <Tabs
+          caplist={campaignData.caplist.investors}
+          documents={campaignData.campaign.documents}
+          perks={campaignData.campaign.perks}
+        />
       </div>
     </main>
   );

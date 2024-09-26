@@ -13,7 +13,7 @@ type CompanyInfo = {
 };
 
 type InvestmentDetails = {
-  totalInvestors: number;
+  totalInvestments: number;
   totalInvestedAmount: number;
   minimumInvestment: number;
   sharesPurchasedInPercent: number;
@@ -37,11 +37,18 @@ type DisplayImage = {
   alt: string;
 };
 
+type Documents = {
+  title: string;
+  description: string;
+  link: string;
+};
+
 type Campaign = {
   companyInfo: CompanyInfo;
   investmentDetails: InvestmentDetails;
   perks: Perk[];
   displayImages: DisplayImage[];
+  documents: Documents[];
 };
 
 interface CampaignHeaderProps {
@@ -54,10 +61,10 @@ export default function CampaignHeader({ campaignData }: CampaignHeaderProps) {
   const { companyInfo, investmentDetails, perks, displayImages } = campaignData;
 
   return (
-    <header className=" mb-4">
+    <header className=" mb-4 px-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center">
-          <div className="w-8 h-8 bg-blue-500 text-white flex items-center justify-center font-bold rounded mr-2">
+          <div className="w-8 h-8 bg-[#00263D] text-white flex items-center justify-center font-bold rounded mr-2">
             F
           </div>
           <h1 className="text-3xl font-bold">{companyInfo.name}</h1>

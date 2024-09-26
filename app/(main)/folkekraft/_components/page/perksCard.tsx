@@ -36,7 +36,7 @@ export default function perksCard({
           <span className="text-2xl ml-2">{boldText}</span>
         </p>
         <Link href={button.link}>
-          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg h-12 my-4">
+          <Button className="w-full bg-[#00263D] hover:bg-[#00263D]/80 text-[#59C9B9] text-lg h-12 my-4">
             {button.text}
           </Button>
         </Link>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 //Nextjs
 import Link from "next/link";
+import Image from "next/image";
 
 //Shadcn
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -10,9 +11,22 @@ import { Button } from "@/components/ui/button";
 //Components
 import PerksCard from "../perksCard";
 
-type Props = {};
+type Perk = {
+  title: string;
+  actionText: string;
+  boldText: string;
+  description: string;
+  button: {
+    text: string;
+    link: string;
+  };
+};
 
-export default function About({}: Props) {
+interface PerkProps {
+  perks: Perk[];
+}
+
+export default function About({ perks }: PerkProps) {
   const [showButton, setShowButton] = useState(true);
 
   return (
@@ -90,7 +104,7 @@ export default function About({}: Props) {
       </div>
 
       {/* Main content area */}
-      <div className="flex-grow flex md:flex-row gap-8 flex-col-reverse">
+      <div className="flex-grow flex md:flex-row items-center md:items-start gap-8 flex-col">
         <div className="h-full flex flex-col gap-10">
           <div>
             <h3 id="konsept" className="text-2xl font-bold mb-4">
@@ -148,14 +162,26 @@ export default function About({}: Props) {
               utover høyere sluttkostnader.
             </p>
           </div>
-          <div>
+          <div className="">
             <h3 id="utfordring" className="text-2xl font-bold mb-4">
               Strømavtalen i Folkekraft
             </h3>
-            <p className="mb-4">
+            <p className="mb-6">
               Aksjeverdi: Alt vi estimerer å tjene på kunden gis i aksjer første
               året. Det tilsvarer ca. 1000 kr i aksjeverdi.
             </p>
+            <div className="max-w-[800px] mx-auto rounded-lg overflow-hidden">
+              <Image
+                src="https://utfs.io/f/1c66qeb7SCm5GcwCvsw0asLcm8Djn3uxXCWtE5I7ypeVUrb4"
+                alt="Strømavtalen"
+                layout="responsive" // Use layout responsive instead of fill
+                width={800} // Width in pixels for responsive layout
+                height={500} // Height in pixels for responsive layout
+                objectFit="contain" // Ensure the image is contained without overflow
+                sizes="(max-width: 800px) 100vw, 800px"
+                className="w-full h-auto"
+              />
+            </div>
           </div>
           <div>
             <h3 id="utfordring" className="text-2xl font-bold mb-4">
@@ -186,41 +212,41 @@ export default function About({}: Props) {
               denne emisjonen vil i så tilfelle gi 7 ganger tilbake på investert
               beløp.
             </p>
+            <div className="max-w-[800px] mx-auto rounded-lg overflow-hidden">
+              <Image
+                src="https://utfs.io/f/1c66qeb7SCm5h9wXxADo8VErKxMCa7GPDNRYc0W49Ln1QFpe"
+                alt="Strømavtalen"
+                layout="responsive" // Use layout responsive instead of fill
+                width={800} // Width in pixels for responsive layout
+                height={500} // Height in pixels for responsive layout
+                objectFit="contain" // Ensure the image is contained without overflow
+                sizes="(max-width: 800px) 100vw, 800px"
+                className="w-full h-auto"
+              />
+            </div>
           </div>
           <div>
             <h3 id="utfordring" className="text-2xl font-bold mb-4">
               Om pågående emisjon
             </h3>
-            <div className="bg-blue-500 max-h-[800px] max-w-[800px] w-full h-full rounded-lg">
-              f
+            <div className="max-w-[800px] mx-auto rounded-lg overflow-hidden">
+              <Image
+                src="https://utfs.io/f/1c66qeb7SCm5U0IyQUhK9DFI27TyPikVXGMclz50mNB6prEC"
+                alt="Strømavtalen"
+                layout="responsive" // Use layout responsive instead of fill
+                width={800} // Width in pixels for responsive layout
+                height={500} // Height in pixels for responsive layout
+                objectFit="contain" // Ensure the image is contained without overflow
+                sizes="(max-width: 800px) 100vw, 800px"
+                className="w-full h-auto"
+              />
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-6 max-w-[320px]">
-          <PerksCard
-            title="Bli Folkekraft kunde"
-            actionText="Du vil få i aksjer"
-            boldText="1 000kr"
-            description="Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolore
-                voluptas vitae incidunt."
-            button={{ text: "Bli kunde", link: "#" }}
-          />
-          <PerksCard
-            title="Verv Folkekraft"
-            actionText="Du vil få i aksjer"
-            boldText="300kr"
-            description="Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolore
-                voluptas vitae incidunt."
-            button={{ text: "Kopier verve lenke", link: "#" }}
-          />
-          <PerksCard
-            title="Investor tilbud"
-            actionText="Investerer du mer enn"
-            boldText="10.000kr"
-            description="Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolore
-                voluptas vitae incidunt."
-            button={{ text: "Kopier verve lenke", link: "#" }}
-          />
+        <div className="flex flex-col justify-center gap-6 max-w-[320px]">
+          {perks.map((perk, index) => (
+            <PerksCard key={index} {...perk} />
+          ))}
         </div>
       </div>
     </div>

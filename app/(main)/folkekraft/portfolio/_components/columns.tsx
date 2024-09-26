@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
+
+//Helper functions
+import { formatCurrency, formatDateString } from "@/lib/helperFunctions";
 
 import {
   DropdownMenu,
@@ -19,39 +21,20 @@ import {
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = {
+export type Transactions = {
   id: string;
+  paymentId: string;
+  date: string;
   amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
+  status: string;
 };
 
-export const columns: ColumnDef<Payment>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+export const columns: ColumnDef<Transactions>[] = [
   {
     accessorKey: "status",
-    header: "Status",
+    header: ({ column }) => {
+      return <div className="text-center">Status</div>;
+    },
     cell: ({ row }) => {
       const status = (row.getValue("status") as string).toLowerCase();
 
@@ -80,57 +63,74 @@ export const columns: ColumnDef<Payment>[] = [
     },
   },
   {
-    accessorKey: "email",
+    accessorKey: "date",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="text-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Dato
+            <ArrowUpDown className="ml-2 h-4 w-4 " />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <div className="text-center font-medium">
+          {formatDateString(row.getValue("date"))}
+        </div>
       );
     },
   },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    header: () => <div className="text-center">Beløp</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
+      return (
+        <div className="text-center font-medium">
+          {formatCurrency(row.getValue("amount"), 0, false)}
+        </div>
+      );
     },
   },
   {
+    accessorKey: "paymentId",
+    header: () => <div className="text-center">KID/Melding</div>,
+    cell: ({ row }) => {
+      return <div className="text-center">{row.getValue("paymentId")}</div>;
+    },
+  },
+  {
+    accessorKey: "id",
+    header: () => <div className="text-center">Banknr</div>,
+    cell: ({ row }) => {
+      return <div className="text-center font-medium">3208.27.99299</div>;
+    },
+  },
+
+  {
     id: "actions",
+    header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
       const user = row.original;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
-            >
-              Copy user ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="text-center px-4 py-2">
+              Kommer snart . . .
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       );
     },
   },

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 import { Input } from "@/components/ui/input";
@@ -21,29 +23,33 @@ import {
 } from "lucide-react";
 import {} from "lucide-react";
 
+import { useAuthContext } from "@/app/hooks/AuthContext";
+
 export default function Navbar() {
+  const { logout } = useAuthContext();
   return (
     <div className="w-full bg-white border-b">
       <nav className="flex items-center justify-between p-4  container mx-auto">
-        <div className="flex items-center space-x-8">
-          <Link href="/" className=" items-center space-x-2 hidden">
-            <div className="w-8 h-8 bg-blue-600 text-white flex items-center justify-center font-bold rounded">
-              R
+        <div className=" items-center space-x-8 flex">
+          <Link href="/folkekraft" className="flex items-center space-x-2 ">
+            <div className="w-8 h-8 bg-[#00263D] text-white hidden items-center justify-center font-bold rounded md:flex">
+              F
             </div>
-            <span className="text-xl font-semibold">Republic</span>
+
+            <p className="text-3xl font-bold">Folkekraft</p>
           </Link>
-          <div className="hidden space-x-6">
+          <div className=" space-x-6 flow-row items-center hidden md:flex">
             <Link
-              href="/investors"
+              href="/folkekraft"
               className="text-gray-600 hover:text-gray-900"
             >
-              Investors
+              Emisjon
             </Link>
             <Link
-              href="/businesses"
+              href="/folkekraft/invest"
               className="text-gray-600 hover:text-gray-900"
             >
-              Businesses
+              Invest
             </Link>
           </div>
         </div>
@@ -56,7 +62,7 @@ export default function Navbar() {
             <Input
               type="text"
               placeholder="Search"
-              className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 focus:bg-white focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 focus:bg-[#59C9B9] focus:ring-2 focus:ring-[#00263D]"
             />
           </div>
         </div>
@@ -66,7 +72,7 @@ export default function Navbar() {
             <span className="ml-1">US</span>
           </Button>
 
-          <Link href={"/folkekraft/portfolio"}>
+          <Link href={"/folkekraft/invest"}>
             <Button variant="ghost" size="icon">
               <Zap size={20} />
             </Button>
@@ -80,7 +86,7 @@ export default function Navbar() {
 
           <Popover>
             <PopoverTrigger>
-              <div className="flex items-center space-x-2 h-10 w-10 bg-blue-600 text-white rounded-md"></div>
+              <div className="flex items-center space-x-2 h-10 w-10 bg-[#00263D] text-white rounded-md"></div>
             </PopoverTrigger>
             <PopoverContent>
               <div>
@@ -88,25 +94,25 @@ export default function Navbar() {
                   <Link href={"/folkekraft/profile"}>
                     <li className="flex flex-row text-lg items-center p-2">
                       <User size={20} />{" "}
-                      <p className="ml-2 text-md">My Profile</p>
+                      <p className="ml-2 text-md">Min profil</p>
                     </li>
                   </Link>
                   <Link href={"/dashboard"}>
                     <li className="flex flex-row text-lg items-center p-2">
-                      <Settings size={20} /> <p className="ml-2">Verve lenke</p>
+                      <ChartPie size={20} />{" "}
+                      <p className="ml-2">Min portefølje</p>
                     </li>
                   </Link>
                   <Link href={"folkekraft/settings"}>
                     <li className="flex flex-row text-lg items-center p-2">
-                      <Settings size={20} />{" "}
-                      <p className="ml-2">Innstillinger</p>
+                      <Zap size={20} /> <p className="ml-2">Investere</p>
                     </li>
                   </Link>
-                  <Link href={"/dashboard"}>
+                  <div onClick={logout} className="cursor-pointer">
                     <li className="flex flex-row text-lg items-center p-2 text-red-500">
                       <LogOut size={20} /> <p className="ml-2">Log out</p>
                     </li>
-                  </Link>
+                  </div>
                 </ul>
               </div>
             </PopoverContent>

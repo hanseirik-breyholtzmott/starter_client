@@ -146,7 +146,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         setAccessToken(accessToken);
         setUser(user);
 
-        router.push("/dashboard");
+        return router.push("/folkekraft");
       }
     } catch (error) {
       handleApiError(error, "Login Failed");
@@ -258,7 +258,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       setAccessToken(accessToken);
       await setServerCookie("session", refreshToken, expiresAt);
 
-      router.push("/dashboard");
+      router.push("/folkekraft");
     } catch (error) {
       handleApiError(error, "Error verifying email");
     }

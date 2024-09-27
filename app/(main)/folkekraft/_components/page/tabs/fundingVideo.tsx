@@ -22,82 +22,8 @@ interface PerkProps {
 }
 
 export default function About({ perks }: PerkProps) {
-  const [showButton, setShowButton] = useState(true);
-
   return (
     <div className=" py-8 mt-6 flex">
-      {/* Sticky hyperlinks column */}
-      <div
-        className={`
-            w-48 mr-8 fixed top-64 self-start hidden 
-            transition-all duration-300 ease-in-out
-            ${showButton ? "left-44" : "-left-full"}
-          `}
-      >
-        <div className="max-h-[calc(100vh-4rem)] overflow-y-auto">
-          <h2 className="font-bold mb-4">Meny</h2>
-          <ul className="space-y-2">
-            <li>
-              <Link
-                href="#konsept"
-                className="text-primary hover:underline block py-1"
-              >
-                Konsept
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#utfordring"
-                className="text-primary hover:underline block py-1"
-              >
-                Utfordring
-              </Link>
-            </li>
-            {/* ... other list items ... */}
-            <li>
-              <Link
-                href="#markedsmulighet"
-                className="text-primary hover:underline block py-1"
-              >
-                Markedsmulighet
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#strømavtalen"
-                className="text-primary hover:underline block py-1"
-              >
-                Strømavtalen
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#restrukturering"
-                className="text-primary hover:underline block py-1"
-              >
-                Restrukturering
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#kapital"
-                className="text-primary hover:underline block py-1"
-              >
-                Kapital
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#emisjon"
-                className="text-primary hover:underline block py-1"
-              >
-                Emisjon
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-
       {/* Main content area */}
       <div className="flex-grow flex md:flex-row items-center md:items-start gap-8 flex-col">
         <div className="h-full flex flex-col gap-10 w-full">

@@ -1,12 +1,17 @@
 import React from "react";
 
 //NextJS
+import dynamic from "next/dynamic";
 
 //Components
 import CampaignHeader from "./_components/page/campaignHeader";
-import CampaignInfo from "./_components/page/campaignInfo";
 import Tabs from "./_components/page/tabs";
 import InvestButton from "./_components/page/investButton";
+
+//Dynamic imports
+const CampaignInfo = dynamic(() => import("./_components/page/campaignInfo"), {
+  ssr: false,
+});
 
 //Helper functions
 import axiosInstance from "@/lib/axiosInstance";
@@ -37,8 +42,6 @@ const getCampaignData = async () => {
 
 export default async function CampaignPage() {
   const campaignData = await getCampaignData();
-
-  console.log(campaignData);
 
   if (!campaignData) {
     return <div>Error loading campaign data</div>;

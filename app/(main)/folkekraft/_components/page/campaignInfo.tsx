@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 //Nextjs
 import Link from "next/link";
@@ -14,15 +14,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 //Icons
 import { FaFacebook, FaLinkedin } from "react-icons/fa";
 import { Copy } from "lucide-react";
@@ -32,7 +23,6 @@ import {
   handleCopy,
   formatCurrency,
   calculateDaysRemaining,
-  formatDateString,
 } from "@/lib/helperFunctions";
 
 type CompanyInfo = {
@@ -87,6 +77,7 @@ interface CampaignHeaderProps {
 export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
   //useState
   const [isCopied, setIsCopied] = useState(false);
+  const [isMounted, setIsMounted] = useState(true);
 
   if (!campaignData) {
     return <div>No campaign data available</div>;
@@ -103,16 +94,27 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
     urlToShare
   )}`;
 
+  //useEffect
+  useEffect(() => {
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
+
   //Functions
-  const copyToClipboard = async () => {
+  const copyToClipboard = useCallback(async () => {
     console.log("copying to clipboard");
     const success = await handleCopy(urlToShare);
-    if (success) {
+    if (success && isMounted) {
       console.log("copied to clipboard");
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+      setTimeout(() => {
+        if (isMounted) {
+          setIsCopied(false);
+        }
+      }, 2000);
     }
-  };
+  }, [urlToShare, isMounted]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-4">

@@ -6,9 +6,6 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 
-//config
-import { applicationName } from "@/config";
-
 //Shadn
 import { Toaster } from "@/components/ui/toaster";
 
@@ -27,19 +24,24 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: applicationName,
-  icons: [
-    { rel: "icon", type: "image/png", sizes: "48x48", url: "/favicon.ico" },
-  ],
-  keywords:
-    "next.js, starter kit, saas, ecommerce, digital products, saas code kit, indie hacking, indie hacker kit, micro saas, entrepreneurship, Code Starter Kit, SaaS Product Launch, Code Documentation Tutorial, Beginner Coding Kit, Start-up SaaS Kit, Coding Guides and Resources, Video Tutorials for Coding, Beginner SaaS Guide, Launch your First SaaS, Step-by-step Coding Kit, SaaS Launch Kit, Software as a Service Starter, Easy Code Launch Kit, Coding Skills for SaaS, Starter Kit for SaaS, Code, Document, Launch, Comprehensive Coding Starter Kit, Master SaaS Product Launch, SaaS Documentation Tutorial, First-Time Coders Kit, SaaS coding course, Initiate SaaS Journey, Seamless SaaS Launch Guide, First SaaS Product Guidance, Bootstrap SaaS Tutorial, Ultimate SaaS Starter Pack, Learning Guide for SaaS, DIY SaaS Kit, Code your SaaS Product, All-in-one Coding Starter Kit",
+  title: process.env.NEXT_PUBLIC_SEO_TITLE,
+  icons: {
+    icon: process.env.NEXT_PUBLIC_SEO_ICON,
+    shortcut: process.env.NEXT_PUBLIC_SEO_SHORTCUT_ICON,
+    apple: process.env.NEXT_PUBLIC_SEO_APPLE_ICON,
+    other: {
+      rel: "apple-touch-icon-precomposed",
+      url: "/apple-touch-icon-precomposed.png",
+    },
+  },
+  keywords: process.env.NEXT_PUBLIC_SEO_KEYWORDS,
   description:
     "The code kit to help you quickly setup an online store and sell your digital assets without a middleman skipping off the top of your profits.",
   openGraph: {
-    url: process.env.NEXT_PUBLIC_URL_BASE,
+    url: process.env.NEXT_PUBLIC_URL_BASE + "/bestill",
     type: "website",
-    title: "Your Page Title for LinkedIn", //LinkedIn page title
-    description: "This is a premade description for LinkedIn.", //LinkedIn page description
+    title: process.env.NEXT_PUBLIC_SEO_TITLE,
+    description: process.env.NEXT_PUBLIC_SEO_DESCRIPTION,
     images: [
       {
         url: "https://www.yourwebsite.com/image.jpg", //LinkedIn page image

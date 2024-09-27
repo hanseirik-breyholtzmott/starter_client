@@ -79,21 +79,6 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
   const [isCopied, setIsCopied] = useState(false);
   const [isMounted, setIsMounted] = useState(true);
 
-  if (!campaignData) {
-    return <div>No campaign data available</div>;
-  }
-
-  //Contants
-  const { companyInfo, investmentDetails, perks, displayImages } = campaignData;
-
-  const urlToShare = "https://invest.folkekraft.no/emisjon"; // The URL you want to share
-  const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-    urlToShare
-  )}`;
-  const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-    urlToShare
-  )}`;
-
   //useEffect
   useEffect(() => {
     return () => {
@@ -101,7 +86,7 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
     };
   }, []);
 
-  //Functions
+  //useCallback
   const copyToClipboard = useCallback(async () => {
     console.log("copying to clipboard");
     const success = await handleCopy(urlToShare);
@@ -114,7 +99,23 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
         }
       }, 2000);
     }
-  }, [urlToShare, isMounted]);
+  }, [isMounted]);
+
+  // Move this check after the hooks
+  if (!campaignData) {
+    return <div>No campaign data available</div>;
+  }
+
+  //Constants
+  const { companyInfo, investmentDetails, perks, displayImages } = campaignData;
+
+  const urlToShare = "https://invest.folkekraft.no/emisjon"; // The URL you want to share
+  const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+    urlToShare
+  )}`;
+  const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+    urlToShare
+  )}`;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-4">

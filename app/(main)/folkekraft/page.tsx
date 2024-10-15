@@ -19,7 +19,7 @@ import axiosInstance from "@/lib/axiosInstance";
 const getCampaignData = async () => {
   try {
     const response = await axiosInstance.get(
-      "/api/campaign/670e67d3ec2f5071f5bde15b"
+      "/api/campaign/670edfb1a444b509203c7cd7"
     );
 
     if (response.status != 200) {

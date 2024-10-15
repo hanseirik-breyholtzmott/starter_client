@@ -23,10 +23,10 @@ import {
 } from "lucide-react";
 import {} from "lucide-react";
 
-import { useAuthContext } from "@/app/hooks/AuthContext";
+import { auth } from "@/app/hooks/AuthContext";
 
 export default function Navbar() {
-  const { logout } = useAuthContext();
+  const { signOut } = auth();
   return (
     <div className="w-full bg-white border-b">
       <nav className="flex items-center justify-between p-4  container mx-auto">
@@ -108,7 +108,7 @@ export default function Navbar() {
                       <Zap size={20} /> <p className="ml-2">Investere</p>
                     </li>
                   </Link>
-                  <div onClick={logout} className="cursor-pointer">
+                  <div onClick={signOut} className="cursor-pointer">
                     <li className="flex flex-row text-lg items-center p-2 text-red-500">
                       <LogOut size={20} /> <p className="ml-2">Log out</p>
                     </li>

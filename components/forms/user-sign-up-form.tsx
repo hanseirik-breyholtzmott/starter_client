@@ -1,17 +1,23 @@
 "use client";
 
-import { z } from "zod";
 import React, { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
+
+//Nextjs
+import Image from "next/image";
+
+//Form
+import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { useAuthContext } from "@/app/hooks/AuthContext";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+//Auth
+import { auth } from "@/app/hooks/AuthContext";
 
 //Shadn
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,6 +25,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+
+//Icons
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -31,8 +40,10 @@ type Props = {};
 
 const UserSignUpForm = (props: Props) => {
   const { toast } = useToast();
-  const { register } = useAuthContext();
+  const { signUp } = auth();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,7 +59,8 @@ const UserSignUpForm = (props: Props) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
-      await register(
+      await signUp(
+        "email",
         values.firstname,
         values.lastname,
         values.email,
@@ -67,22 +79,39 @@ const UserSignUpForm = (props: Props) => {
   }
 
   return (
-    <div className="flex w-full">
+    <div className="flex flex-col space-y-4">
+      <Button
+        className="mt-4 w-full h-12 text-lg bg-[#FF5B24] hover:bg-[#FF5B24] flex items-center justify-center"
+        onClick={() => signUp("vipps")}
+      >
+        Opprett konto med{" "}
+        <Image
+          src="https://utfs.io/f/1c66qeb7SCm5Y0UTGtybcQKOgLiwrEyTUDXzp5sHV1kNR4d9"
+          alt="Vipps"
+          width={80}
+          height={80}
+        />
+      </Button>
+      <div className="flex items-center justify-center text-gray-600 text-sm">
+        eller
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex flex-col w-full relative">
-            <div className="flex flex-row gap-4">
+          <div className="flex flex-col w-full relative space-y-4">
+            <div className="flex flex-row gap-4 ">
               <FormField
                 control={form.control}
                 name="firstname"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel className="text-gray-600 mb-4 text-lg font-normal">
+                      Fornavn
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="First name"
+                        placeholder="Fornavn"
                         type="text"
-                        className="w-full"
+                        className="mb-2 text-lg px-4 py-4 h-12 rounded-lg w-full"
                         {...field}
                       />
                     </FormControl>
@@ -95,12 +124,14 @@ const UserSignUpForm = (props: Props) => {
                 name="lastname"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel className="text-gray-600 mb-4 text-lg font-normal">
+                      Etternavn
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Last Name"
+                        placeholder="Etternavn"
                         type="text"
-                        className="w-full"
+                        className="mb-2 text-lg px-4 py-4 h-12 rounded-lg w-full"
                         {...field}
                       />
                     </FormControl>
@@ -114,12 +145,14 @@ const UserSignUpForm = (props: Props) => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-gray-600 mb-4 text-lg font-normal">
+                    Epost
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="your@email.com"
+                      placeholder="din@epost.com"
                       type="email"
-                      className="w-full"
+                      className="mb-2 text-lg px-4 py-4 h-12 rounded-lg w-full"
                       {...field}
                     />
                   </FormControl>
@@ -132,17 +165,41 @@ const UserSignUpForm = (props: Props) => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-gray-600 mb-4 text-lg font-normal">
+                    Passord
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="password" type="password" {...field} />
+                    <div className="relative">
+                      <Input
+                        placeholder="passord"
+                        type={showPassword ? "text" : "password"}
+                        className="mb-2 text-lg px-4 py-4 h-12 rounded-lg w-full"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5 text-gray-400" />
+                        ) : (
+                          <Eye className="h-5 w-5 text-gray-400" />
+                        )}
+                      </button>
+                    </div>
                   </FormControl>
 
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button className="mt-4" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating account..." : "Create account"}
+            <Button
+              className="mt-4 w-full h-12 text-lg bg-[#00263D]"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Oppretter konto..." : "Opprett konto"}
             </Button>
           </div>
         </form>

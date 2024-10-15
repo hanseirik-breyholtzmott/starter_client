@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 //Shadcn
 import { Checkbox } from "@/components/ui/checkbox";
@@ -21,6 +21,9 @@ type Props = {
 };
 
 export default function Addons({ activePerks }: Props) {
+  const [isCustomer, setIsCustomer] = useState(
+    activePerks.some((perk) => perk.value === 0)
+  );
   return (
     <div className="">
       <h2 className="text-3xl font-bold mb-2">
@@ -44,8 +47,10 @@ export default function Addons({ activePerks }: Props) {
           <Checkbox
             id="customer"
             className="w-4 h-4"
-            checked={activePerks.some((perk) => perk.value === 0)}
-            disabled
+            checked={isCustomer}
+            onCheckedChange={() => {
+              setIsCustomer(!isCustomer);
+            }}
           />
           <label
             htmlFor="customer"
@@ -62,7 +67,10 @@ export default function Addons({ activePerks }: Props) {
             </h3>
             <p className="text-sm text-gray-600">
               Vi oppfordrer alle investorer til å{" "}
-              <a href="#" className="text-blue-600 hover:underline">
+              <a
+                href={process.env.NEXT_PUBLIC_URL_BASE + "/bestill"}
+                className="text-blue-600 hover:underline"
+              >
                 kunder
               </a>{" "}
               for å oppleve endringer og kontinuerlig forbedringer vi

@@ -1,10 +1,18 @@
 "use client";
 
-import { z } from "zod";
 import React, { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
+
+//Nextjs
+import Image from "next/image";
+import Link from "next/link";
+
+//Form
+import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { useAuthContext } from "@/app/hooks/AuthContext";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+//Auth
+import { auth } from "@/app/hooks/AuthContext";
 
 //Shadn
 import { Button } from "@/components/ui/button";
@@ -25,12 +33,16 @@ const formSchema = z.object({
   password: z.string().min(8).max(50),
 });
 
+//Icons
+import { Eye, EyeOff } from "lucide-react";
+
 type Props = {};
 
 const UserSignInForm = (props: Props) => {
   const { toast } = useToast();
-  const { login } = useAuthContext();
+  const { signIn } = auth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,7 +57,7 @@ const UserSignInForm = (props: Props) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
-      await login(values.email, values.password);
+      await signIn("email", values.email, values.password);
     } catch (error) {
       console.error("Login error:", error);
       toast({
@@ -59,20 +71,38 @@ const UserSignInForm = (props: Props) => {
   }
 
   return (
-    <>
+    <div className="flex flex-col space-y-4">
+      <Button
+        className="mt-4 w-full h-12 text-lg bg-[#FF5B24] hover:bg-[#FF5B24] flex items-center justify-center"
+        onClick={() => signIn("vipps")}
+      >
+        Logg inn med{" "}
+        <Image
+          src="https://utfs.io/f/1c66qeb7SCm5Y0UTGtybcQKOgLiwrEyTUDXzp5sHV1kNR4d9"
+          alt="Vipps"
+          width={80}
+          height={80}
+        />
+      </Button>
+      <div className="flex items-center justify-center text-gray-600 text-sm">
+        eller
+      </div>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-gray-600 mb-2 text-lg font-normal">
+                  Epost
+                </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="your@email.com"
+                    placeholder="din@epost.no"
                     type="email"
-                    className="w-full"
+                    className="mb-2 text-lg px-4 py-4 h-12 rounded-lg w-full"
                     {...field}
                   />
                 </FormControl>
@@ -85,22 +115,53 @@ const UserSignInForm = (props: Props) => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-gray-600 mb-2  font-normal flex flex-row justify-between items-center">
+                  <span className="text-lg font-normal">Passord</span>
+                  <Link
+                    href="/forgot-password"
+                    className="underline underline-offset-4 hover:text-primary mb-2"
+                  >
+                    Glemt passord?
+                  </Link>
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="password" type="password" {...field} />
+                  <div className="relative">
+                    <Input
+                      placeholder="passord"
+                      type={showPassword ? "text" : "password"}
+                      {...field}
+                      className="mb-2 text-lg px-4 py-4 h-12 rounded-lg w-full"
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
 
                 <FormMessage />
               </FormItem>
             )}
           />
+          <div></div>
 
-          <Button className="mt-4" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Signing in..." : "Sign in"}
+          <Button
+            className="mt-4 w-full h-12 text-lg bg-[#00263D]"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Logg inn..." : "Logg inn"}
           </Button>
         </form>
       </Form>
-    </>
+    </div>
   );
 };
 

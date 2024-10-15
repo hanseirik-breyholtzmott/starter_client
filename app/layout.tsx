@@ -10,7 +10,7 @@ import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { Toaster } from "@/components/ui/toaster";
 
 //Provider
-import { AuthWrapper } from "./hooks/AuthContext";
+import { AuthWrapper } from "@/app/hooks/AuthContext";
 
 //Analytics
 import StarterAnalytics from "@/analytics";
@@ -26,12 +26,12 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_SEO_TITLE,
   icons: {
-    icon: process.env.NEXT_PUBLIC_SEO_ICON,
-    shortcut: process.env.NEXT_PUBLIC_SEO_SHORTCUT_ICON,
-    apple: process.env.NEXT_PUBLIC_SEO_APPLE_ICON,
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.jpg",
     other: {
       rel: "apple-touch-icon-precomposed",
-      url: "/apple-touch-icon-precomposed.png",
+      url: "/apple-icon.jpg",
     },
   },
   keywords: process.env.NEXT_PUBLIC_SEO_KEYWORDS,
@@ -67,6 +67,11 @@ export default function RootLayout({
     <html lang="en">
       <StarterAnalytics />
       <body className={inter.className}>
+        {process.env.NODE_ENV === "development" && (
+          <div className="w-[300px] h-fit py-2 fixed bg-red-700 top-16 left-16 -rotate-45 -translate-x-1/2 -translate-y-1/2 text-white text-center font-bold z-50">
+            Demo
+          </div>
+        )}
         <AuthWrapper>
           <NextSSRPlugin
             /**

@@ -1,115 +1,64 @@
 import React from "react";
 
-//Components
-import PortfolioLayout from "./_components/page/portfolioLayout";
+//Nextjs
+import Link from "next/link";
+
+//Shadcn
+import { cn } from "@/lib/utils";
 
 //Cookies
-import { getCookieValue } from "@/lib/cookies";
+import {
+  getCookieValue,
+  validateSessionCookie,
+  getUserId,
+} from "@/lib/cookies";
 
 //Dynamic
 export const dynamic = "force-dynamic";
 
 //Crypto
-import { decrypt } from "@/lib/auth";
+
+//Components
+import DataTable from "./_components/data-table";
+import { columns } from "./_components/columns";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 //Axios
-import axiosInstance from "@/lib/axiosInstance";
+import axiosInstance, { setAuthorizationHeader } from "@/lib/axiosInstance";
 
-interface ShareDetails {
-  total: number; // Total number of shares
-  value: number; // Current value of the shares
-}
-
-interface CurrentValue {
-  totalAmount: number; // Total current value of all shares
-  percentageChange: number; // Percentage change in value from initial investment
-}
-
-interface Investments {
-  totalShares: number; // Total number of shares acquired from investments
-  totalValue: number; // Total current value of those shares
-  customerShares: ShareDetails; // Details of customer-owned shares
-  referralShares: ShareDetails; // Details of referral-acquired shares
-}
-
-interface PortfolioSummary {
-  investorSharesValue: number; // Total value of investor-acquired shares
-  customerSharesValue: number; // Total value of customer-owned shares
-  referralSharesValue: number; // Total value of shares acquired from referrals
-  accountDetails: any[]; // Array of account data for further details
-}
-
-interface TransactionMetadata {
-  campaignId: string;
-  shareNumber: string;
-  ssn: string;
-}
-
-interface Transaction {
-  _id: string; // Unique identifier for the transaction
-  userId: string; // User ID associated with the transaction
-  stripePaymentId: string; // Payment ID used in Stripe or other payment systems
-  transactionType: "shares" | "other"; // Type of transaction (add other types as needed)
-  paymentMethod: "bank_transfer" | "credit_card" | "paypal"; // Payment method used
-  amount: number; // Transaction amount
-  currency: string; // Currency of the transaction (e.g., 'NOK')
-  status: "pending" | "completed" | "failed"; // Status of the transaction
-  taxAmount: number; // Amount of tax applied to the transaction
-  taxRate: number; // Tax rate applied
-  discount: number; // Discount applied to the transaction
-  metadata: TransactionMetadata; // Additional metadata related to the transaction
-  transactionDate: string; // Date and time of the transaction (ISO string)
-  products: any[]; // Array of products associated with the transaction
-  createdAt: string; // Date and time when the transaction was created (ISO string)
-  updatedAt: string; // Date and time when the transaction was last updated (ISO string)
-  __v: number; // Version key used by Mongoose for document versioning
-}
-
-// Main data structure interface
-interface Data {
-  totalInvested: number; // Total amount invested by the user
-  totalShares: number; // Total number of shares owned by the user
-  currentValue: CurrentValue; // Current value of the shares and percentage change
-  investments: Investments; // Investment details including shares and values
-  portfolioSummary: PortfolioSummary; // Summary of the user's portfolio
-  transactions: Transaction[]; // Array of user transaction details
-}
-
-interface DecryptedSession {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  iat: number;
-  exp: number;
-}
+//Data
+const tabsData = [
+  {
+    id: "/folkekraft/portfolio/",
+    label: "Mine investeringer",
+    count: null,
+    active: true,
+  },
+  {
+    id: "/folkekraft/portfolio/transactions",
+    label: "Transaksjoner",
+    count: 1,
+    active: false,
+  },
+];
 
 type Props = {};
 
 const getPortfolioData = async () => {
+  const userId = await getUserId();
+
+  if (!userId) {
+    return null;
+  }
+
+  await setAuthorizationHeader();
+
+  const response = await axiosInstance.get(
+    "/api/user/" + userId + "/portfolio"
+  );
+
+  return response.data;
   try {
-    const session = await getCookieValue("session");
-
-    const decryptedSession = decrypt(session as string);
-
-    const response = await axiosInstance.get(
-      "/api/portfolio/" + (decryptedSession as DecryptedSession).id
-    );
-
-    if (response.status != 200) {
-      console.log("Failed to fetch data");
-      throw new Error("Failed to fetch data");
-    } else {
-      console.log("Data fetched successfully");
-    }
-
-    const data = response.data.data;
-
-    return {
-      portfolio: data,
-      portfolioSummary: data.portfolioSummary,
-      transactions: data.transactions,
-    };
   } catch (error) {
     console.log(error);
   }
@@ -119,16 +68,43 @@ export default async function PortfolioPage({}: Props) {
   const portfolioData = await getPortfolioData();
 
   if (!portfolioData) {
+    console.log("Error loading portfolio data");
     return <div>Error loading portfolio data</div>;
   }
 
-  const { portfolio, portfolioSummary, transactions } = portfolioData;
-
   return (
-    <PortfolioLayout
-      portfolioData={portfolio}
-      portfolioSummary={portfolioSummary}
-      transactions={transactions} // Ensure this is passed
-    />
+    <section className="container mx-auto">
+      <div className="text-7xl font-black mt-8">
+        <h1>Min portefølje</h1>
+      </div>
+      <div>
+        <Tabs value="investments" className="w-full sm:w-auto">
+          <TabsList className="h-auto p-0 bg-transparent flex flex-col lg:flex-row gap-8 mt-10 border-b border-gray-200 justify-between">
+            <div className="flex flex-col lg:flex-row gap-8">
+              {tabsData.map((tab) => (
+                <Link
+                  key={tab.id}
+                  href={tab.id}
+                  className={cn(
+                    "px-1 sm:px-3 py-2 text-xl font-medium text-gray-500 hover:text-gray-700 border-b-4 border-transparent rounded-none",
+                    tab.active && "active:text-[#00263D] border-[#59C9B9]"
+                  )}
+                >
+                  {tab.label}
+                  {tab.count !== null && (
+                    <span className="ml-2 text-xs font-normal text-gray-400 hidden">
+                      {tab.count}
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </TabsList>
+        </Tabs>
+      </div>
+      <div className="mt-16 mb-20">
+        <DataTable data={portfolioData.processedData} columns={columns} />
+      </div>
+    </section>
   );
 }

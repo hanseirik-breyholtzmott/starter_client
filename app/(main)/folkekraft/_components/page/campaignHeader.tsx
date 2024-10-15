@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 //Icons
 import { Star, Share2 } from "lucide-react";
 
-type CompanyInfo = {
+type CampaignInfo = {
   name: string;
   description: string;
   tags: string[];
@@ -44,7 +44,7 @@ type Documents = {
 };
 
 type Campaign = {
-  companyInfo: CompanyInfo;
+  campaignInfo: CampaignInfo;
   investmentDetails: InvestmentDetails;
   perks: Perk[];
   displayImages: DisplayImage[];
@@ -58,7 +58,8 @@ interface CampaignHeaderProps {
 export default function CampaignHeader({ campaignData }: CampaignHeaderProps) {
   if (!campaignData) return <div>Loading...</div>;
 
-  const { companyInfo, investmentDetails, perks, displayImages } = campaignData;
+  const { campaignInfo, investmentDetails, perks, displayImages } =
+    campaignData;
 
   return (
     <header className=" mb-4 px-4">
@@ -67,7 +68,7 @@ export default function CampaignHeader({ campaignData }: CampaignHeaderProps) {
           <div className="w-8 h-8 bg-[#00263D] text-white flex items-center justify-center font-bold rounded mr-2">
             F
           </div>
-          <h1 className="text-3xl font-bold">{companyInfo.name}</h1>
+          <h1 className="text-3xl font-bold">{campaignInfo.name}</h1>
         </div>
         <div className="flex space-x-2">
           <Button variant="ghost" size="icon">
@@ -81,12 +82,12 @@ export default function CampaignHeader({ campaignData }: CampaignHeaderProps) {
 
       {/* Header Description */}
       <p className="text-gray-600 mb-4">
-        {campaignData.companyInfo.description}
+        {campaignData.campaignInfo.description}
       </p>
 
       {/* Tags */}
       <div className="flex flex-wrap gap-1 sm:gap-2 mb-4">
-        {campaignData.companyInfo.tags.map((tag) => (
+        {campaignData.campaignInfo.tags.map((tag) => (
           <span
             key={tag}
             className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-sm whitespace-nowrap uppercase"

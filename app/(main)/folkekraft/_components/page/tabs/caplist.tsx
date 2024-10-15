@@ -15,7 +15,7 @@ type Investor = {
   totalShares: number;
   name: string;
   email: string;
-  ownershipPercentage: number;
+  percentageOwnership: number;
 };
 
 type Perk = {

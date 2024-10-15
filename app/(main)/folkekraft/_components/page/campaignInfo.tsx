@@ -25,19 +25,24 @@ import {
   calculateDaysRemaining,
 } from "@/lib/helperFunctions";
 
-type CompanyInfo = {
+type CampaignInfo = {
   name: string;
   description: string;
   tags: string[];
 };
 
 type InvestmentDetails = {
-  totalInvestments: number;
-  totalInvestedAmount: number;
   minimumInvestment: number;
-  sharesPurchasedInPercent: number;
-  status: string;
+  maximumInvestment: number;
+  shareClassId: string;
+  sharePrice: number;
+  startDate: string;
   closingDate: string | null;
+  status: string;
+  startAmount: number;
+  targetAmount: number;
+  availableShares: number;
+  investmentCount: number;
 };
 
 type Perk = {
@@ -63,7 +68,7 @@ type Documents = {
 };
 
 type Campaign = {
-  companyInfo: CompanyInfo;
+  campaignInfo: CampaignInfo;
   investmentDetails: InvestmentDetails;
   perks: Perk[];
   displayImages: DisplayImage[];
@@ -107,7 +112,8 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
   }
 
   //Constants
-  const { companyInfo, investmentDetails, perks, displayImages } = campaignData;
+  const { campaignInfo, investmentDetails, perks, displayImages } =
+    campaignData;
 
   const urlToShare = "https://invest.folkekraft.no/emisjon"; // The URL you want to share
   const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
@@ -155,20 +161,26 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
             </Popover>
           </div>
           <h3 className="text-4xl font-bold my-4 ">
-            {formatCurrency(investmentDetails.totalInvestedAmount, 0, false)}
+            {formatCurrency(investmentDetails.startAmount, 0, false)}
           </h3>
           <p className="text-gray-600 mb-2">
-            {investmentDetails.sharesPurchasedInPercent} % samlet inn av
-            maksbeløpet på 8 millioner
+            {(
+              (investmentDetails.startAmount / investmentDetails.targetAmount) *
+              100
+            ).toFixed(0)}
+            % samlet inn av maksbeløpet på 8 millioner
           </p>
           <Progress
-            value={investmentDetails.sharesPurchasedInPercent}
+            value={
+              (investmentDetails.startAmount / investmentDetails.targetAmount) *
+              100
+            }
             className="mb-4"
           />
           <div className="grid grid-cols-2 gap-4 my-4 py-8 rounded-lg">
             <div>
               <h4 className="text-3xl font-bold">
-                {investmentDetails.totalInvestments}
+                {investmentDetails.investmentCount}
               </h4>
               <p className="text-gray-600">Antall investeringer</p>
             </div>
@@ -176,7 +188,8 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
               <h4 className="text-3xl font-bold">
                 {calculateDaysRemaining(
                   campaignData.investmentDetails.closingDate as string
-                )}
+                )}{" "}
+                dager
               </h4>
               <p className="text-gray-600">igjen for å investere</p>
             </div>
@@ -201,7 +214,14 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
                 </Button>
               </Link>
             </div>
-            <div className="w-full">
+            <div className="w-full ">
+              <Link href="/bestill">
+                <Button className="w-full bg-[#00263D] hover:bg-[#00263D]/80 text-[#59C9B9] text-lg h-12">
+                  Hent verve lenke
+                </Button>
+              </Link>
+            </div>
+            <div className="w-full hidden">
               <Popover>
                 <PopoverTrigger className="w-full  text-white text-lg h-12">
                   <div className="w-full text-semibold bg-[#00263D] hover:bg-[#00263D]/80 text-[#59C9B9] text-lg h-12 rounded-md flex items-center justify-center">

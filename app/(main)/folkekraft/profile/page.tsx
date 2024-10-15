@@ -14,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Facebook, Instagram, Link, Settings } from "lucide-react";
 
 //Auth
-import { useAuthContext } from "@/app/hooks/AuthContext";
+import { auth } from "@/app/hooks/AuthContext";
 
 //Data
 const cardData = [
@@ -48,7 +48,8 @@ const cardData = [
 ];
 
 export default function ProfilePage() {
-  const { user } = useAuthContext();
+  const { user } = auth();
+  console.log("user", user);
 
   const [buttonText, setButtonText] = useState("Rediger profil");
 

@@ -33,12 +33,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { DataTableViewOptions } from "./data-table-view-options";
+
+import { DataTablePagination } from "./data-table-pagination";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export default function DataTable<TData, TValue>({
+export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -151,6 +155,9 @@ export default function DataTable<TData, TValue>({
               )}
             </TableBody>
           </Table>
+        </div>
+        <div className="flex items-center space-x-2 py-4">
+          <DataTablePagination table={table} />
         </div>
       </div>
     </div>

@@ -60,6 +60,10 @@ const config: Config = withUt({
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        growShrink: {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.2)" },
+        },
         "caret-blink": {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
@@ -107,6 +111,7 @@ const config: Config = withUt({
         "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
         slide: "slide var(--speed) ease-in-out infinite alternate",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        growShrink: "growShrink 2s ease-in-out infinite",
       },
     },
   },

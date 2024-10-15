@@ -18,18 +18,17 @@ import axiosInstance from "@/lib/axiosInstance";
 
 const getCampaignData = async () => {
   try {
-    const response = await axiosInstance.get("/api/campaign/1");
+    const response = await axiosInstance.get(
+      "/api/campaign/670e67d3ec2f5071f5bde15b"
+    );
 
     if (response.status != 200) {
       console.log("Failed to fetch data");
       throw new Error("Failed to fetch data");
     } else {
-      console.log("Data fetched successfully");
     }
 
     const data = response.data;
-
-    console.log(data);
 
     return {
       campaign: data.campaign,

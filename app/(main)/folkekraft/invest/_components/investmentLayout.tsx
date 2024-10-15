@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 
 //Auth
-import { useAuthContext } from "@/app/hooks/AuthContext";
+import { auth } from "@/app/hooks/AuthContext";
 
 //Helper functions
 import axiosInstance from "@/lib/axiosInstance";
@@ -63,7 +63,7 @@ export default function InvestmentLayout({
   investmentData,
 }: InvestmentLayoutProps) {
   //Auth
-  const { user } = useAuthContext();
+  const { user } = auth();
 
   //Toast
   const { toast } = useToast();
@@ -117,7 +117,7 @@ export default function InvestmentLayout({
 
     try {
       const response = await axiosInstance.post(
-        "/api/campaign/1/purchase-shares",
+        "/api/campaign/670674479690c2e4ebb7ac5d/purchase-shares",
         data
       );
 

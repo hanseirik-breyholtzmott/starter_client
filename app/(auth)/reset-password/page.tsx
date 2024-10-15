@@ -1,127 +1,50 @@
-"use client";
+import React from "react";
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+//Nextjs
+import Image from "next/image";
 
-//Auth hooks
-import { useAuthContext } from "@/app/hooks/AuthContext";
-
-//Form
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-//Shadn
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-
-
-const FormSchema = z.object({
-  password: z
-    .string()
-    .min(8, "Your password has to be atleast 8 characters long."),
-  passwordConfirm: z
-    .string()
-    .min(8, "Your password has to be atleast 8 characters long."),
-});
+//Components
+import UserResetPasswordForm from "@/components/forms/user-reset-password-form";
 
 type Props = {};
 
 const ResetPassword = (props: Props) => {
-  const { resetPassword } = useAuthContext();
-  const { toast } = useToast();
-  const router = useRouter();
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const token = queryParams.get("token");
-
-    if (!token) {
-      router.push("/sign-in");
-    }
-  }, [router]);
-
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      password: "",
-      passwordConfirm: "",
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof FormSchema>) {
-    const queryParams = new URLSearchParams(window.location.search);
-    const token = queryParams.get("token");
-
-    if (values.password === values.passwordConfirm && token) {
-      resetPassword(values.password, token);
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Passwords don't match",
-        description: "Please make sure both passwords match.",
-      });
-    }
-  }
-
   return (
-    <section className="flex justify-center min-h-screen items-center">
-      <div className="w-full max-w-[560px] mx-auto border p-4 rounded-lg">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="w-2/3 flex flex-col mx-auto justify-center text-center space-y-8"
-          >
-            <h2 className="text-xl font-semibold">Reset password</h2>
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="mx-auto">
-                  <FormLabel>Create new password</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Create new password"
-                      type="password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="passwordConfirm"
-              render={({ field }) => (
-                <FormItem className="mx-auto">
-                  <FormLabel>Confirm password</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Confirm new password"
-                      type="password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button type="submit">Create new password</Button>
-          </form>
-        </Form>
+    <div className="relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
+        <div className="absolute inset-0 bg-[#00263D]" />
+        <div className="relative z-20 flex items-center text-lg font-medium">
+          <Image
+            src="https://utfs.io/f/1c66qeb7SCm5GckaVSl0asLcm8Djn3uxXCWtE5I7ypeVUrb4"
+            alt="Folkekraft Logo"
+            width={300}
+            height={300}
+          />
+        </div>
+        <div className="relative z-20 mt-auto">
+          <blockquote className="space-y-2">
+            <p className="text-lg">
+              &ldquo;Velkommen til Folkekraft emisjonsportal. Bygget fra grunnen
+              av for en sømløs og effektiv prosess. Folkekraft er stolte av å
+              tilby en skreddersydd løsning for våre aksjonærer.&rdquo;
+            </p>
+            <footer className="text-sm">Hans-Eirik Breyholtz-Mott</footer>
+          </blockquote>
+        </div>
       </div>
-    </section>
+      <section className="flex h-full items-center p-4 lg:p-8">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-4xl font-bold tracking-tight">
+              Glemt passord?
+            </h1>
+            <p className="text-sm text-muted-foreground">Lag en ny passord</p>
+          </div>
+
+          <UserResetPasswordForm />
+        </div>
+      </section>
+    </div>
   );
 };
 

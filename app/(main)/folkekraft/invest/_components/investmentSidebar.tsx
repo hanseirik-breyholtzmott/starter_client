@@ -52,9 +52,9 @@ export default function InvestmentSidebar({
   return (
     <div className="w-[320px] md:sticky block top-8 self-start">
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Perks</h2>
+        <h2 className="text-2xl font-semibold mb-2">Tilbud</h2>
         <p className="text-gray-600 mb-4">
-          Only available perks are shown. You can still invest any amount.
+          Ved å investere mer vil du få unike tilbud.
         </p>
         {/* Perks Card */}
         <div className="flex flex-col gap-6">

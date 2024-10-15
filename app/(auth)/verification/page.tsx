@@ -1,21 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+
+//Nextjs
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import jwt, { JwtPayload } from "jsonwebtoken";
 
 //Auth
-import { useAuthContext } from "@/app/hooks/AuthContext";
+import { auth } from "@/app/hooks/AuthContext";
 
 //Form
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-interface DecodedToken extends JwtPayload {
-  token?: string;
-}
 
 //Shadn
 import { Button } from "@/components/ui/button";
@@ -43,7 +40,7 @@ const FormSchema = z.object({
 type Props = {};
 
 const Verification = (props: Props) => {
-  const { verifyEmail } = useAuthContext();
+  const { verifyEmail } = auth();
   const [isResendDisabled, setIsResendDisabled] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
   const router = useRouter();
@@ -54,18 +51,17 @@ const Verification = (props: Props) => {
       pin: "",
     },
   });
-
+  /*
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const token = queryParams.get("token");
-
     if (token) {
       const decoded = jwt.decode(token) as DecodedToken;
       console.log(decoded);
       verifyEmail(decoded.token as string);
     }
   }, [verifyEmail]);
-
+*/
   /*
   const handleResendToken = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
@@ -83,7 +79,7 @@ const Verification = (props: Props) => {
   }*/
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    verifyEmail(data.pin);
+    //verifyEmail(data.pin);
   }
   return (
     <section className="flex justify-center min-h-screen items-center">

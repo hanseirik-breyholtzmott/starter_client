@@ -17,7 +17,7 @@ type Investor = {
   totalShares: number;
   name: string;
   email: string;
-  ownershipPercentage: number;
+  percentageOwnership: number;
 };
 
 export const columns: ColumnDef<Investor>[] = [
@@ -59,13 +59,13 @@ export const columns: ColumnDef<Investor>[] = [
     },
   },
   {
-    accessorKey: "ownershipPercentage",
+    accessorKey: "percentageOwnership",
     header: () => <div className="text-center">Eierandel %</div>,
     cell: ({ row }) => {
-      const ownershipPercentage = parseFloat(
-        row.getValue("ownershipPercentage")
+      const percentageOwnership = parseFloat(
+        row.getValue("percentageOwnership")
       );
-      const formatted = `${ownershipPercentage.toFixed(2)}%`;
+      const formatted = `${percentageOwnership.toFixed(2)}%`;
 
       return <div className="text-center font-medium">{formatted}</div>;
     },

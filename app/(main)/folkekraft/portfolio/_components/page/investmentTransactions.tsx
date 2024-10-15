@@ -4,8 +4,8 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 //Data table
-import { DataTable } from "../data-table";
-import { Transactions, columns } from "../columns";
+import { DataTable } from "../../transactions/_components/data-table";
+import { Transactions, columns } from "../../transactions/_components/columns";
 
 type Props = {
   transactions: any[];

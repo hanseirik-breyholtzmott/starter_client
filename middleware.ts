@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(req: NextRequest) {
+import { validateSessionCookie } from "./lib/cookies";
+
+export async function middleware(req: NextRequest) {
   // Define public routes that do not require authentication
   const publicRoutes = ["/about", "/contact", "/coming-soon", "/bestill"]; // Add more public routes as needed
   // Define authentication-related routes
@@ -13,9 +15,6 @@ export function middleware(req: NextRequest) {
   ];
 
   const uploadthingRoutes = ["/api/uploadthing"];
-
-  // Get the session cookie
-  const sessionCookie = req.cookies.get("session");
 
   // Check if the current request path is a public route
   const isPublicRoute = publicRoutes.some((route) =>
@@ -39,18 +38,27 @@ export function middleware(req: NextRequest) {
   const dashboardUrl = new URL("/folkekraft", req.url);
 
   // Redirect logic
-  if (sessionCookie) {
+  const sessionCookie = req.cookies.get("session");
+  const isSessionPresent = !!sessionCookie;
+  console.log("Session present:", isSessionPresent);
+
+  // Redirect logic
+  if (isSessionPresent) {
+    console.log("Session is present, user should be authenticated");
     // If authenticated and trying to access an auth route, redirect to the dashboard
     if (isAuthRoute) {
+      console.log("Authenticated user on auth route, redirecting to dashboard");
       if (req.nextUrl.pathname !== dashboardUrl.pathname) {
         return NextResponse.redirect(dashboardUrl);
       }
     }
     // Allow access to the dashboard if authenticated
     if (req.nextUrl.pathname.startsWith("/folkekraft")) {
+      console.log("Allowing access to folkekraft");
       return NextResponse.next();
     }
   } else {
+    console.log("No session present, user is not authenticated");
     // If not authenticated and trying to access a protected route, redirect to login
     if (!isPublicRoute && !isAuthRoute && !isUploadthingRoute) {
       if (req.nextUrl.pathname !== loginUrl.pathname) {

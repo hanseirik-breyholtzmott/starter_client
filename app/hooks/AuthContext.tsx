@@ -2,28 +2,30 @@
 
 import React, {
   createContext,
-  useState,
   useContext,
+  useState,
   useEffect,
-  useCallback,
+  useLayoutEffect,
 } from "react";
-import axios from "axios";
-import Link from "next/link";
+
+//Nextjs
 import { useRouter } from "next/navigation";
 
+//Auth Providers
+import AuthProviderFactory from "@/app/providers/AuthProviderFactory";
+import { AuthProvider } from "@/app/providers/AuthProvider";
+
 //Utils
-import {
-  setServerCookie,
-  getServerCookie,
-  deleteServerCookie,
-} from "./authUtils";
-import axiosInstance from "@/lib/axiosInstance";
+import { setCookie, deleteCookie } from "@/lib/cookies";
+import { fifteenMinutesFromNow, oneMonthFromNow } from "@/lib/date";
+import axiosInstance, { setAuthorizationHeader } from "@/lib/axiosInstance";
 
 //Shadcn
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
 
-// User interface
+//Loading
+import LoadingPage from "@/app/loading";
+
 interface User {
   id: string;
   firstName: string;
@@ -31,327 +33,326 @@ interface User {
   email: string;
 }
 
-// AuthContext interface
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string
+  isAuthenticated: boolean;
+  signIn: (
+    provider: string,
+    email?: string,
+    password?: string
   ) => Promise<void>;
-  logout: () => Promise<void>;
-  verifyEmail: (token: string) => Promise<void>;
+  signUp: (
+    provider: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string,
+    password?: string
+  ) => Promise<void>;
+  signOut: () => Promise<void>;
+  verifyEmail: (code: string, email: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
-  resetPassword: (password: string, token: string) => Promise<void>;
+  resetPassword: (password: string, code: string) => Promise<void>;
+  accessToken: string | null;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+export const auth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
+
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const router = useRouter();
   const { toast } = useToast();
+  const router = useRouter();
 
-  const handleApiError = useCallback(
-    (error: any, message: string) => {
-      console.error(message, error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: message,
-      });
-    },
-    [toast]
-  ); // Memoize handleApiError and add dependencies
+  const getProviderInstance = (providerType: string): AuthProvider => {
+    return AuthProviderFactory(providerType);
+  };
 
-  const checkAuth = useCallback(async () => {
-    setLoading(true);
-    try {
-      const session = await getServerCookie("session");
+  // Check if the user is authenticated when the app loads
+  useLayoutEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await axiosInstance.get("/auth/refresh");
 
-      if (session) {
-        const response = await axiosInstance.post("/api/refresh-token", {
-          refreshToken: session,
-          withCredentials: true,
-        });
+        const { user, accessToken, refreshToken, status, message, success } =
+          response.data;
 
-        const { accessToken, user, success } = response.data;
+        // Check user authentication status
 
-        if (!success) {
-          deleteServerCookie("session");
-          setUser(null);
-          setAccessToken(null);
-          localStorage.removeItem("accessToken");
-          return router.push("/sign-in");
-        }
-
-        if (accessToken && user) {
-          setAccessToken(accessToken);
+        if (success) {
+          // Set user and authentication state
           setUser(user);
+          setIsAuthenticated(true);
+
+          // Store the accessToken in state
+          setAccessToken(accessToken);
+
+          // Set the accessToken in the Authorization header
+          setAuthorizationHeader(accessToken);
+
+          //create a cookie with the refreshToken
+          await setCookie(
+            "accessToken",
+            accessToken as string,
+            fifteenMinutesFromNow()
+          );
         } else {
           setUser(null);
+          setIsAuthenticated(false);
           setAccessToken(null);
+          setAuthorizationHeader("");
+          await deleteCookie("session");
+          await deleteCookie("accessToken");
+          return;
         }
-      } else {
-        setUser(null);
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      handleApiError(error, "Error checking authentication");
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [handleApiError, router]);
+    };
 
-  useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+  }, []);
 
-  const login = async (email: string, password: string) => {
+  const signIn = async (
+    provider: string,
+    email?: string,
+    password?: string
+  ) => {
+    setLoading(true);
     try {
-      // API call to server for login
-      const response = await axiosInstance.post("/api/login", {
-        email,
-        password,
-      });
+      const authProvider = getProviderInstance(provider);
 
-      const { refreshToken, accessToken, user, message, success } =
-        response.data;
+      const response = await authProvider.login(email, password);
 
-      if (!success) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: message,
-          action: (
-            <Link href={"/sign-up"}>
-              <ToastAction altText="Sign up">Sign up</ToastAction>
-            </Link>
-          ),
-        });
+      const { user, accessToken, refreshToken, message, success } = response;
+
+      console.log(response.redirectUrl);
+
+      if (response.redirectUrl) {
+        console.log("Redirecting to:", response.redirectUrl);
+        router.push(response.redirectUrl);
         return;
       }
-
-      const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
       if (success) {
-        setServerCookie("session", refreshToken, expiresAt);
+        setUser(response.user);
+        setIsAuthenticated(true);
+        setAccessToken(response.accessToken);
+        setAuthorizationHeader(response.accessToken as string);
 
-        setAccessToken(accessToken);
-        setUser(user);
+        //create a cookie with the refreshToken
+        await setCookie(
+          "accessToken",
+          response.accessToken as string,
+          fifteenMinutesFromNow()
+        );
 
-        return router.push("/folkekraft");
+        await setCookie(
+          "session",
+          response.accessToken as string,
+          oneMonthFromNow()
+        );
+
+        console.log("Redirect initiated");
+        //Redirect to dashboard or home page
+
+        // Redirect to the dashboard
+        router.push("/folkekraft");
+        console.log("Refreshing page");
+        // Force a full page reload to trigger middleware
+        window.location.reload();
+        return;
+      } else {
+        // Handle login failure
+        console.error("Login failed:", response.message);
       }
     } catch (error) {
-      handleApiError(error, "Login Failed");
-      setUser(null);
+      console.error("Sign in failed:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string
+  const signUp = async (
+    provider: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string,
+    password?: string
   ) => {
+    setLoading(true);
     try {
-      // API call to server for registration
-      const response = await axiosInstance.post("/api/register", {
-        firstName,
-        lastName,
-        email,
-        password,
-      });
+      const authProvider = getProviderInstance(provider);
 
-      const {
-        refreshToken,
-        accessToken,
-        user,
-        message,
-        verificationToken,
-        success,
-      } = response.data;
+      const { user, accessToken, message, success, refreshToken } =
+        await authProvider.register(firstName, lastName, email, password);
 
-      // Check if email is already taken
-      if (response.data.emailTaken) {
-        toast({
-          title: "Uh oh! Looks like you already have a user.",
-          description: "Try to login with your email.",
-          action: (
-            <Link href={"/sign-in"}>
-              <ToastAction altText="Sign-in">Sign In</ToastAction>
-            </Link>
-          ),
-        });
-        return;
-      }
-
-      // Handle other error messages
-      if (message !== "Success") {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: message,
-          action: <ToastAction altText="Try again">Try again</ToastAction>, //Add an action here
-        });
-        return;
-      }
-
-      // Set the user and tokens in context/state
       setUser(user);
+      setIsAuthenticated(true);
       setAccessToken(accessToken);
+      setAuthorizationHeader(accessToken as string);
 
-      toast({
-        title: "Congrats! You are a new user.",
-        description: "You will be redirected to verify your email.",
-      });
+      //create a cookie with the refreshToken
+      await setCookie(
+        "accessToken",
+        accessToken as string,
+        fifteenMinutesFromNow()
+      );
 
-      // Redirect to verification page
-      setTimeout(() => {
-        router.push("/verification");
-      }, 1000);
+      await setCookie("session", refreshToken as string, oneMonthFromNow());
+      //Redirect to login page
+      return router.push("/folkekraft");
     } catch (error) {
-      handleApiError(error, "Registration failed");
-      setUser(null);
+      console.error("Sign in failed:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = async () => {
-    deleteServerCookie("session");
-    setUser(null);
-    setAccessToken(null);
-    localStorage.removeItem("accessToken");
-    router.replace("/sign-in");
+  const signOut = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get("/auth/logout");
+
+      setUser(null);
+      setIsAuthenticated(false);
+      setAccessToken(null);
+      setAuthorizationHeader("");
+      await deleteCookie("session");
+      await deleteCookie("accessToken");
+
+      return router.push("/sign-in");
+    } catch (error) {
+      console.error("Sign out failed:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const verifyEmail = async (token: string) => {
+  const verifyEmail = async (code: string, email: string) => {
     try {
-      // API call to server for verifyEmail
-      const response = await axiosInstance.post("/api/verifyEmail", {
-        verificationToken: token,
+      const response = await axiosInstance.post("/email/verify/" + code, {
+        email: email,
       });
-
-      const { success, message, refreshToken, accessToken } = response.data;
-
-      if (!success) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: message,
-          action: <ToastAction altText="Try again">Try again</ToastAction>,
-        });
-        return;
-      }
-
-      const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
-
-      setAccessToken(accessToken);
-      await setServerCookie("session", refreshToken, expiresAt);
-
-      router.push("/folkekraft");
     } catch (error) {
-      handleApiError(error, "Error verifying email");
+      console.error("Verify email failed:", error);
     }
   };
 
   const forgotPassword = async (email: string) => {
     try {
-      //api call to reset password
-      const response = await axiosInstance.post("/api/forgotpassword", {
-        email,
+      const response = await axiosInstance.post("/auth/password/forgot", {
+        email: email,
       });
-
-      const { success, message } = response.data;
-
-      if (!success) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: message,
-          action: <ToastAction altText="Try again">Try again</ToastAction>,
-        });
-        return;
-      }
 
       toast({
-        title: "Check your email to reset your password",
-        description: message,
+        title: "Email sent",
+        description: "Please check your email for a password reset link.",
       });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const resetPassword = async (password: string, token: string) => {
-    try {
-      //api call to reset password
-      const response = await axios.post(
-        process.env.NEXT_PUBLIC_SERVER_BASE_URL + "/api/resetpassword/" + token,
-        {
-          password: password,
-        }
-      );
-
-      const { success, message } = response.data;
-
-      if (!success) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: message,
-          action: <ToastAction altText="Try again">Try again</ToastAction>,
-        });
-        return;
-      }
-
-      toast({
-        title: "You have changed your password",
-        description: message,
-        action: (
-          <Link href={"/sign-in"}>
-            <ToastAction altText="Sign in">Sign in</ToastAction>
-          </Link>
-        ),
-      });
-
       return;
     } catch (error) {
-      console.log(error);
+      console.error("Forgot password failed:", error);
     }
   };
+
+  const resetPassword = async (password: string, code: string) => {
+    try {
+      const response = await axiosInstance.post("/auth/reset-password", {
+        password: password,
+        token: code,
+      });
+
+      toast({
+        title: "Password reset",
+        description: "Your password has been reset.",
+      });
+
+      return router.push("/sign-in");
+    } catch (error) {
+      console.error("Reset password failed:", error);
+    }
+  };
+
+  /*
+    User Makes a Request: 
+    A request is made using the axiosInstance with the current accessToken.
+
+    401 Unauthorized Error: 
+    If the accessToken has expired, the server responds with a 401 Unauthorized error.
+
+    Refresh the Token: 
+    The interceptor detects the 401 Unauthorized error and triggers the refreshAccessToken function 
+    to request a new accessToken from the /api/auth/refresh endpoint using the refreshToken.
+
+    Retry the Request: 
+    Once the new accessToken is obtained, the original request that failed is retried automatically 
+    with the updated Authorization header.
+
+    Logout on Failure: 
+    If refreshing the token fails (e.g., if the refreshToken has expired), the user is logged out, 
+    and no retry is attempted.
+*/
+  useEffect(() => {
+    const refreshAccessToken = async () => {
+      try {
+        const response = await axiosInstance.post("/api/auth/refresh");
+        setAccessToken(response.data.accessToken); // Store new access token
+        setAuthorizationHeader(response.data.accessToken); // Set Authorization header with new token
+      } catch (error) {
+        console.error("Failed to refresh access token:", error);
+        signOut(); // Log out if refreshing fails
+      }
+    };
+
+    const axiosInterceptor = axiosInstance.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          await refreshAccessToken(); // Refresh token before retrying the request
+          return axiosInstance(originalRequest);
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    // Cleanup the interceptor when the component unmounts
+    return () => {
+      axiosInstance.interceptors.response.eject(axiosInterceptor);
+    };
+  }, [accessToken]);
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        loading,
-        login,
-        register,
-        logout,
+        isAuthenticated,
+        signIn,
+        signUp,
+        signOut,
         verifyEmail,
         forgotPassword,
         resetPassword,
+        loading,
+        accessToken,
       }}
     >
-      {children}
+      {!loading ? children : <LoadingPage />}
     </AuthContext.Provider>
   );
-}
-
-export function useAuthContext() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuthContext must be used within an AuthWrapper");
-  }
-  return context;
 }

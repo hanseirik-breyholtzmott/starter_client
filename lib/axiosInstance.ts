@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getCookieValue } from "@/lib/cookies";
 
 //Create an Axios instance
 const axiosInstance = axios.create({
@@ -6,20 +7,27 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Function to set the token dynamically
-export const setAuthorizationHeader = (token: string) => {
-  //Add a request interceptor to include the Bearer token
-  axiosInstance.interceptors.request.use(
-    (config) => {
-      if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
+let currentToken: string | null = null;
+
+export const setAuthorizationHeader = async (setAccessToken?: string) => {
+  currentToken =
+    setAccessToken || (await getCookieValue("accessToken")) || null;
 };
+
+// Add a request interceptor to include the Bearer token
+axiosInstance.interceptors.request.use(
+  async (config) => {
+    if (!currentToken) {
+      currentToken = (await getCookieValue("accessToken")) || null;
+    }
+    if (currentToken) {
+      config.headers["Authorization"] = `Bearer ${currentToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default axiosInstance;

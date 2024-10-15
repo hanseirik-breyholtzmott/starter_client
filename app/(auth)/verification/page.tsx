@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 //Auth
-import { auth } from "@/app/hooks/AuthContext";
+import { useAuth } from "@/app/hooks/AuthContext";
 
 //Form
 import { z } from "zod";
@@ -40,7 +40,7 @@ const FormSchema = z.object({
 type Props = {};
 
 const Verification = (props: Props) => {
-  const { verifyEmail } = auth();
+  const { verifyEmail } = useAuth();
   const [isResendDisabled, setIsResendDisabled] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
   const router = useRouter();

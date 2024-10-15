@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 
 //Auth
-import { auth } from "@/app/hooks/AuthContext";
+import { useAuth } from "@/app/hooks/AuthContext";
 
 //Helper functions
 import axiosInstance from "@/lib/axiosInstance";
@@ -63,7 +63,7 @@ export default function InvestmentLayout({
   investmentData,
 }: InvestmentLayoutProps) {
   //Auth
-  const { user } = auth();
+  const { user } = useAuth();
 
   //Toast
   const { toast } = useToast();

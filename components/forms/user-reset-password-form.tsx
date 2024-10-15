@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 //Auth
-import { auth } from "@/app/hooks/AuthContext";
+import { useAuth } from "@/app/hooks/AuthContext";
 
 //Form
 import { z } from "zod";
@@ -43,7 +43,7 @@ const formSchema = z
 type Props = {};
 
 export default function ForgotPasswordForm({}: Props) {
-  const { resetPassword } = auth();
+  const { resetPassword } = useAuth();
   //useState
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);

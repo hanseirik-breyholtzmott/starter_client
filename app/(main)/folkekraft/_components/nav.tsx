@@ -23,10 +23,10 @@ import {
 } from "lucide-react";
 import {} from "lucide-react";
 
-import { auth } from "@/app/hooks/AuthContext";
+import { useAuth } from "@/app/hooks/AuthContext";
 
 export default function Navbar() {
-  const { signOut } = auth();
+  const { signOut } = useAuth();
   return (
     <div className="w-full bg-white border-b">
       <nav className="flex items-center justify-between p-4  container mx-auto">

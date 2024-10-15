@@ -14,8 +14,8 @@ const Maintenance = (props: Props) => {
           Site Under Maintenance
         </h1>
         <p className="mt-4 text-lg text-gray-500">
-          We're currently performing some maintenance on our site. We'll be back
-          shortly!
+          We&apos;re currently performing some maintenance on our site.
+          We&apos;ll be back shortly!
         </p>
         <p className="mt-4 text-sm text-gray-400">
           Thank you for your patience.

@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 //Auth
-import { auth } from "@/app/hooks/AuthContext";
+import { useAuth } from "@/app/hooks/AuthContext";
 
 //Shadn
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,7 @@ type Props = {};
 
 const UserSignInForm = (props: Props) => {
   const { toast } = useToast();
-  const { signIn } = auth();
+  const { signIn } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 

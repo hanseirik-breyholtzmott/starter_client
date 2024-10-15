@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 //Auth
-import { auth } from "@/app/hooks/AuthContext";
+import { useAuth } from "@/app/hooks/AuthContext";
 
 //Form
 import { z } from "zod";
@@ -30,7 +30,7 @@ const formSchema = z.object({
 type Props = {};
 
 export default function ForgotPasswordForm({}: Props) {
-  const { forgotPassword } = auth();
+  const { forgotPassword } = useAuth();
   //useState
   const [isSubmitting, setIsSubmitting] = useState(false);
 

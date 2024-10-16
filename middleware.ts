@@ -5,23 +5,27 @@ import { validateSessionCookie } from "./lib/cookies";
 export async function middleware(req: NextRequest) {
   // --- IP-based Maintenance Logic ---
 
-  if (process.env.MAINTENCE_MODE === "true") {
-    // Get the allowed IP from environment variable
-    const allowedIp = process.env.ALLOWED_IP;
+  const maintenanceUrl = new URL("/maintenance", req.url);
 
-    // Get the client's IP address from the request
-    const clientIp = req.headers.get("x-forwarded-for") || req.ip;
+  // --- Maintenance Mode Logic ---
+  const maintenanceMode = process.env.MAINTENANCE_MODE === "true"; // Check if maintenance mode is enabled
+  const allowedIp = process.env.ALLOWED_IP; // Get the allowed IP from environment variable
+  const clientIp = req.headers.get("x-forwarded-for") || req.ip; // Get the client's IP address
 
-    // Debugging: log the client's IP
-    console.log("Client IP:", clientIp);
+  // Debugging: log the client's IP and maintenance mode
+  console.log("Client IP:", clientIp);
+  console.log("Maintenance Mode:", maintenanceMode);
 
-    // If the client's IP is not allowed, redirect to the maintenance page
-    if (clientIp !== allowedIp) {
-      return NextResponse.redirect(new URL("/maintenance", req.url));
+  // If maintenance mode is enabled and the current request is not from the allowed IP
+  if (maintenanceMode && clientIp !== allowedIp) {
+    // Skip IP check if the request is already going to the maintenance page
+    if (req.nextUrl.pathname !== maintenanceUrl.pathname) {
+      return NextResponse.redirect(maintenanceUrl); // Redirect to maintenance page
     }
   }
 
   // --- Existing Middleware Logic ---
+
   // Define public routes that do not require authentication
   const publicRoutes = ["/about", "/contact", "/coming-soon", "/bestill"]; // Add more public routes as needed
   // Define authentication-related routes

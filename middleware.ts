@@ -18,10 +18,12 @@ export async function middleware(req: NextRequest) {
 
   // If maintenance mode is enabled and the current request is not from the allowed IP
   if (maintenanceMode && clientIp !== allowedIp) {
-    // Skip IP check if the request is already going to the maintenance page
-    if (req.nextUrl.pathname !== maintenanceUrl.pathname) {
-      return NextResponse.redirect(maintenanceUrl); // Redirect to maintenance page
+    // Redirect to maintenance page for all routes except the maintenance page itself
+    if (req.nextUrl.pathname !== "/maintenance") {
+      return NextResponse.redirect(maintenanceUrl);
     }
+    // Allow access to the maintenance page
+    return NextResponse.next();
   }
 
   // --- Existing Middleware Logic ---

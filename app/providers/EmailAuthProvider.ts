@@ -1,15 +1,15 @@
 import { AuthProvider } from "./AuthProvider";
 import axiosInstance from "../../lib/axiosInstance";
+import { setCookie } from "../../lib/cookies";
+import { fifteenMinutesFromNow } from "../../lib/date";
+import { oneMonthFromNow } from "../../lib/date";
 
 export const emailAuthProvider: AuthProvider = {
   login: async (email?: string, password?: string) => {
-    console.log(email, password);
     const response = await axiosInstance.post("/auth/login", {
       email,
       password,
     });
-
-    console.log(response.data);
 
     return {
       user: response.data.user,

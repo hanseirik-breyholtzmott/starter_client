@@ -5,31 +5,16 @@ import { validateSessionCookie } from "./lib/cookies";
 export async function middleware(req: NextRequest) {
   // --- IP-based Maintenance Logic ---
 
-  const maintenanceUrl = new URL("/maintenance", req.url);
-
-  // --- Maintenance Mode Logic ---
-  const maintenanceMode = true; // Check if maintenance mode is enabled
-  const allowedIp = process.env.ALLOWED_IP; // Get the allowed IP from environment variable
-  const clientIp = req.headers.get("x-forwarded-for") || req.ip; // Get the client's IP address
-
-  // Debugging: log the client's IP and maintenance mode
-  console.log("Client IP:", clientIp);
-  console.log("Maintenance Mode:", maintenanceMode);
-
-  // If maintenance mode is enabled and the current request is not from the allowed IP
-  if (maintenanceMode && clientIp !== allowedIp) {
-    // Redirect to maintenance page for all routes except the maintenance page itself
-    if (req.nextUrl.pathname !== "/maintenance") {
-      return NextResponse.redirect(maintenanceUrl);
-    }
-    // Allow access to the maintenance page
-    return NextResponse.next();
-  }
-
   // --- Existing Middleware Logic ---
 
   // Define public routes that do not require authentication
-  const publicRoutes = ["/about", "/contact", "/coming-soon", "/bestill"]; // Add more public routes as needed
+  const publicRoutes = [
+    "/about",
+    "/contact",
+    "/coming-soon",
+    "/bestill",
+    "/api/auth/callback/vipps",
+  ]; // Add more public routes as needed
   // Define authentication-related routes
   const authRoutes = [
     "/sign-in",
@@ -105,5 +90,6 @@ export const config = {
     "/(api|trpc)(.*)",
     // Custom pages where authentication is required
     "/dashboard/:path*",
+    "/api/auth/callback/vipps",
   ],
 };

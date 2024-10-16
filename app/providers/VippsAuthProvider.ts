@@ -10,21 +10,14 @@ export const vippsAuthProvider: AuthProvider = {
       accessToken: null,
       refreshToken: null,
       status: response.status,
-      message: response.data.message || "Vipps login successful",
+      message: response.data.message || "Redirecting to Vipps login",
       success: true,
       redirectUrl: response.data.redirectUrl,
     };
   },
 
   register: async () => {
-    const response = await axiosInstance.get("/auth/vipps/login");
-    return {
-      user: response.data.user,
-      accessToken: response.data.accessToken,
-      refreshToken: response.data.refreshToken,
-      status: response.status,
-      message: response.data.message || "Login successful",
-      success: true,
-    };
+    // For Vipps, login and register are typically the same process
+    return vippsAuthProvider.login();
   },
 };

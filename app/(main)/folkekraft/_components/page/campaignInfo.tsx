@@ -164,23 +164,17 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
             {formatCurrency(investmentDetails.startAmount, 0, false)}
           </h3>
           <p className="text-gray-600 mb-2">
-            {(
-              (investmentDetails.startAmount / investmentDetails.targetAmount) *
-              100
-            ).toFixed(0)}
-            % samlet inn av maksbeløpet på 8 millioner
+            {(investmentDetails.maximumInvestment * 100).toFixed(0)}% samlet inn
+            av maksbeløpet på 8 millioner
           </p>
           <Progress
-            value={
-              (investmentDetails.startAmount / investmentDetails.targetAmount) *
-              100
-            }
+            value={investmentDetails.maximumInvestment * 100}
             className="mb-4"
           />
           <div className="grid grid-cols-2 gap-4 my-4 py-8 rounded-lg">
             <div>
               <h4 className="text-3xl font-bold">
-                {investmentDetails.investmentCount}
+                {investmentDetails.targetAmount}
               </h4>
               <p className="text-gray-600">Antall investeringer</p>
             </div>

@@ -66,6 +66,8 @@ export const useAuth = () => {
   return context;
 };
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -86,6 +88,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         console.log("Checking auth");
 
         const sessionCookie = await getCookieValue("session");
+        const accessTokenCookie = await getCookieValue("accessToken");
 
         if (!sessionCookie) {
           console.log("No session cookie found");
@@ -157,7 +160,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
       const { user, accessToken, refreshToken, message, success } = response;
 
-      console.log(response.redirectUrl);
+      console.log(response);
 
       if (response.redirectUrl) {
         console.log("Redirecting to:", response.redirectUrl);
@@ -180,12 +183,12 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
         await setCookie(
           "session",
-          response.accessToken as string,
+          response.refreshToken as string,
           oneMonthFromNow()
         );
 
         //Redirect to dashboard or home page
-
+        console.log("Redirecting to:", "/folkekraft");
         // Redirect to the dashboard
         router.push("/folkekraft");
 
@@ -240,6 +243,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     setLoading(true);
     try {
+      setAuthorizationHeader(accessToken as string);
       const response = await axiosInstance.get("/auth/logout");
 
       setUser(null);

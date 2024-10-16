@@ -10,7 +10,7 @@ export async function setCookie(name: string, value: string, expiresAt: Date) {
     httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
     secure: process.env.NODE_ENV === "production", // Ensures the cookie is only sent over HTTPS
     expires: expiresAt, // Sets the expiration date of the cookie
-    sameSite: "none", // Controls where the cookie can be sent from {strict, lax, none}
+    sameSite: "lax", // Controls where the cookie can be sent from {strict, lax, none}
     path: "/", // The path on the server in which the cookie will be sent to
   });
 }

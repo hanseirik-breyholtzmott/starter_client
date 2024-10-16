@@ -83,14 +83,18 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   useLayoutEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log("Checking auth");
         const response = await axiosInstance.get("/auth/refresh");
-
+        console.log("Response received:", response.data);
         const { user, accessToken, refreshToken, status, message, success } =
           response.data;
 
         // Check user authentication status
 
         if (success) {
+          console.log("Authentication successful");
+          console.log("User:", user);
+          console.log("Access Token:", accessToken);
           // Set user and authentication state
           setUser(user);
           setIsAuthenticated(true);
@@ -108,6 +112,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
             fifteenMinutesFromNow()
           );
         } else {
+          console.log("Authentication failed");
           setUser(null);
           setIsAuthenticated(false);
           setAccessToken(null);

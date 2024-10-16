@@ -3,6 +3,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { validateSessionCookie } from "./lib/cookies";
 
 export async function middleware(req: NextRequest) {
+  // --- IP-based Maintenance Logic ---
+
+  if (process.env.MAINTENCE_MODE === "true") {
+    // Get the allowed IP from environment variable
+    const allowedIp = process.env.ALLOWED_IP;
+
+    // Get the client's IP address from the request
+    const clientIp = req.headers.get("x-forwarded-for") || req.ip;
+
+    // Debugging: log the client's IP
+    console.log("Client IP:", clientIp);
+
+    // If the client's IP is not allowed, redirect to the maintenance page
+    if (clientIp !== allowedIp) {
+      return NextResponse.redirect(new URL("/maintenance", req.url));
+    }
+  }
+
+  // --- Existing Middleware Logic ---
   // Define public routes that do not require authentication
   const publicRoutes = ["/about", "/contact", "/coming-soon", "/bestill"]; // Add more public routes as needed
   // Define authentication-related routes

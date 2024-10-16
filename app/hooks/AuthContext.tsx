@@ -167,14 +167,11 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
           oneMonthFromNow()
         );
 
-        console.log("Redirect initiated");
         //Redirect to dashboard or home page
 
         // Redirect to the dashboard
         router.push("/folkekraft");
-        console.log("Refreshing page");
-        // Force a full page reload to trigger middleware
-        window.location.reload();
+
         return;
       } else {
         // Handle login failure

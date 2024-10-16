@@ -112,7 +112,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
           setIsAuthenticated(false);
           setAccessToken(null);
           setAuthorizationHeader("");
-          await deleteCookie("session");
+          //await deleteCookie("session");
           await deleteCookie("accessToken");
           return;
         }

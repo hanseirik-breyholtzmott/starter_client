@@ -16,7 +16,7 @@ import AuthProviderFactory from "@/app/providers/AuthProviderFactory";
 import { AuthProvider } from "@/app/providers/AuthProvider";
 
 //Utils
-import { setCookie, deleteCookie } from "@/lib/cookies";
+import { setCookie, deleteCookie, getCookieValue } from "@/lib/cookies";
 import { fifteenMinutesFromNow, oneMonthFromNow } from "@/lib/date";
 import axiosInstance, { setAuthorizationHeader } from "@/lib/axiosInstance";
 
@@ -84,7 +84,19 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     const checkAuth = async () => {
       try {
         console.log("Checking auth");
-        const response = await axiosInstance.get("/auth/refresh");
+
+        const sessionCookie = await getCookieValue("session");
+
+        if (!sessionCookie) {
+          console.log("No session cookie found");
+          setIsAuthenticated(false);
+          setLoading(false);
+          return;
+        }
+
+        const response = await axiosInstance.post("/auth/refresh", {
+          refreshToken: sessionCookie,
+        });
         console.log("Response received:", response.data);
         const { user, accessToken, refreshToken, status, message, success } =
           response.data;

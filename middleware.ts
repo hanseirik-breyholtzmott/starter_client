@@ -8,7 +8,7 @@ export async function middleware(req: NextRequest) {
   const maintenanceUrl = new URL("/maintenance", req.url);
 
   // --- Maintenance Mode Logic ---
-  const maintenanceMode = true; // Check if maintenance mode is enabled
+  const maintenanceMode = process.env.MAINTENANCE_MODE === "true"; // Check if maintenance mode is enabled
   const allowedIp = process.env.ALLOWED_IP; // Get the allowed IP from environment variable
   const clientIp = req.headers.get("x-forwarded-for") || req.ip; // Get the client's IP address
 

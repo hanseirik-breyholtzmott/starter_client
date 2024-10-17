@@ -117,7 +117,7 @@ export default function InvestmentLayout({
 
     try {
       const response = await axiosInstance.post(
-        "/api/campaign/670674479690c2e4ebb7ac5d/purchase-shares",
+        `/api/campaign/${process.env.NEXT_PUBLIC_CAMPAIGN_ID}/purchase-shares`,
         data
       );
 

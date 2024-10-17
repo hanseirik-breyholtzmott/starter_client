@@ -15,12 +15,6 @@ import {
 import { X, ChevronDown, LucideIcon } from "lucide-react";
 import * as Icons from "lucide-react";
 
-const [navItems, setNavItems] = useState([
-  { icon: "Home", label: "Home" },
-  { icon: "LayoutDashboard", label: "Dashboard" },
-  { icon: "Settings", label: "Settings" },
-]);
-
 type Props = {};
 
 export default function Sidebar({}: Props) {
@@ -32,9 +26,9 @@ export default function Sidebar({}: Props) {
     { value: "company3", label: "Company 3" },
   ]);
   const [navItems, setNavItems] = useState([
-    { icon: "home", label: "Home" },
-    { icon: "dashboard", label: "Dashboard" },
-    { icon: "settings", label: "Settings" },
+    { icon: "Home", label: "Home" },
+    { icon: "LayoutDashboard", label: "Dashboard" },
+    { icon: "Settings", label: "Settings" },
   ]);
 
   const toggleSidebar = () => {

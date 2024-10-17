@@ -9,7 +9,7 @@ import axiosInstance from "@/lib/axiosInstance";
 const getInvestmentData = async () => {
   try {
     const response = await axiosInstance.get(
-      "/api/campaign/670674479690c2e4ebb7ac5d/investment-details"
+      `/api/campaign/${process.env.NEXT_PUBLIC_CAMPAIGN_ID}/investment-details`
     );
 
     if (response.status !== 200) {

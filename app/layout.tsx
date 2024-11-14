@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 //Provider
 import { AuthWrapper } from "@/app/hooks/AuthContext";
+import { ThemeProvider } from "@/providers/theme-provider";
 
 //Analytics
 import StarterAnalytics from "@/analytics";
@@ -72,22 +73,29 @@ export default function RootLayout({
             Demo
           </div>
         )}
-        <AuthWrapper>
-          <NextSSRPlugin
-            /**
-             * The `extractRouterConfig` will extract **only** the route configs
-             * from the router to prevent additional information from being
-             * leaked to the client. The data passed to the client is the same
-             * as if you were to fetch `/api/uploadthing` directly.
-             */
-            routerConfig={extractRouterConfig(ourFileRouter)}
-          />
-          {children}
-          {/* Vercel Speed Insights */}
-          <SpeedInsights />
-          {/* Vercel Analytics */}
-          <Analytics />
-        </AuthWrapper>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthWrapper>
+            <NextSSRPlugin
+              /**
+               * The `extractRouterConfig` will extract **only** the route configs
+               * from the router to prevent additional information from being
+               * leaked to the client. The data passed to the client is the same
+               * as if you were to fetch `/api/uploadthing` directly.
+               */
+              routerConfig={extractRouterConfig(ourFileRouter)}
+            />
+            {children}
+            {/* Vercel Speed Insights */}
+            <SpeedInsights />
+            {/* Vercel Analytics */}
+            <Analytics />
+          </AuthWrapper>
+        </ThemeProvider>
         <Toaster />
       </body>
     </html>

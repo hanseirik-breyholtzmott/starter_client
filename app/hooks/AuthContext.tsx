@@ -82,7 +82,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   };
 
   // Check if the user is authenticated when the app loads
-  useLayoutEffect(() => {
+  useEffect(() => {
     const checkAuth = async () => {
       try {
         console.log("Checking auth");

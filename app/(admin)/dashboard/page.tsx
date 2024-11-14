@@ -1,35 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Menu,
-  X,
-  Home,
-  BarChart2,
-  Users,
-  Settings,
-  HelpCircle,
-  MoreVertical,
-  Search,
-  ChevronDown,
-} from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+
+//Shadcn
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Bar,
-  BarChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-} from "recharts";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import {
   Table,
   TableBody,
@@ -51,56 +27,100 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
+
+//Charts
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+  Tooltip,
+} from "recharts";
+
+//Icons
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
+  Menu,
+  X,
+  Home,
+  BarChart2,
+  Users,
+  Settings,
+  HelpCircle,
+  MoreVertical,
+  Search,
+  ChevronDown,
+  GripVertical,
+  ChevronRight,
+  Moon,
+  Sun,
+  Bell,
+  User,
+  LogOut,
+  PanelRightOpen,
+} from "lucide-react";
 
-export default function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedShareholder, setSelectedShareholder] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCompany, setSelectedCompany] = useState("Acme Inc");
-
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
-  const navItems = [
-    { icon: Home, label: "Dashboard" },
-    { icon: BarChart2, label: "Analytics" },
-    { icon: Users, label: "Shareholders" },
-    { icon: Settings, label: "Settings" },
-    { icon: HelpCircle, label: "Help" },
-  ];
-
+export default function Component() {
+  const [selectedPeriod, setSelectedPeriod] = useState("This Year");
+  //Data
   const cardData = [
-    { title: "Number of Shareholders", value: "5,234" },
-    { title: "Number of Shares", value: "10,000,000" },
-    { title: "Number of Share Classes", value: "3" },
-    { title: "Price per Share", value: "$45.67" },
+    {
+      title: "Total aksjer",
+      value: "2 753 246",
+      change: "+25.2%",
+      previousValue: "2 500 000",
+    },
+    {
+      title: "Total aksjonærer",
+      value: "1 234",
+      change: "+3.2%",
+      previousValue: "1 073",
+    },
+    {
+      title: "Total aksjeklasser",
+      value: "3",
+      change: "+0.5%",
+      previousValue: "9,950,000",
+    },
+    {
+      title: "Snitt aksjekurs",
+      value: "8kr",
+      change: "-1.3%",
+      previousValue: "12kr",
+    },
   ];
+
+  const overviewData = {
+    avgYearlyProfit: 212142.12,
+    avgYearlyProfitChange: 23.2,
+    avgYearlyExpense: 30321.23,
+    avgYearlyExpenseChange: -12.3,
+  };
 
   const transactionData = [
-    { date: "Jan", buys: 65, sells: 40 },
-    { date: "Feb", buys: 78, sells: 52 },
-    { date: "Mar", buys: 90, sells: 70 },
-    { date: "Apr", buys: 81, sells: 63 },
-    { date: "May", buys: 56, sells: 48 },
-    { date: "Jun", buys: 55, sells: 41 },
-    { date: "Jul", buys: 40, sells: 30 },
+    { month: "JAN", profit: 120000, expense: 20000 },
+    { month: "FEB", profit: 100000, expense: 22000 },
+    { month: "MAR", profit: 144000, expense: 24000 },
+    { month: "APR", profit: 123000, expense: 28000 },
+    { month: "MAY", profit: 98000, expense: 21000 },
+    { month: "JUN", profit: 79000, expense: 23000 },
+    { month: "JUL", profit: 130000, expense: 31000 },
+    { month: "AUG", profit: 98000, expense: 18000 },
+    { month: "SEP", profit: 64000, expense: 28000 },
+    { month: "OCT", profit: 90000, expense: 26000 },
+    { month: "NOV", profit: 110000, expense: 29000 },
+    { month: "DEC", profit: 154000, expense: 32000 },
   ];
 
   const recentTransactions = [
     {
       id: 1,
+      date: "Mon, 24 Apr",
+      time: "09:00 AM",
       shareholder: "John Doe",
       type: "Buy",
       shares: 100,
@@ -108,6 +128,8 @@ export default function Dashboard() {
     },
     {
       id: 2,
+      date: "Mon, 24 Apr",
+      time: "11:30 AM",
       shareholder: "Jane Smith",
       type: "Sell",
       shares: 50,
@@ -115,17 +137,12 @@ export default function Dashboard() {
     },
     {
       id: 3,
+      date: "Tue, 25 Apr",
+      time: "10:15 AM",
       shareholder: "Bob Johnson",
       type: "Buy",
       shares: 200,
       value: "$9,134",
-    },
-    {
-      id: 4,
-      shareholder: "Alice Brown",
-      type: "Sell",
-      shares: 75,
-      value: "$3,425.25",
     },
   ];
 
@@ -172,344 +189,289 @@ export default function Dashboard() {
     },
   ];
 
-  const companies = [
-    { value: "acme", label: "Acme Inc" },
-    { value: "globex", label: "Globex Corporation" },
-    { value: "initech", label: "Initech" },
-  ];
-
-  const searchResults = shareholderData.filter((shareholder) =>
-    shareholder.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside
-        className={`${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
-      >
-        <div className="flex h-full flex-col">
-          <div className="flex items-center justify-between px-4 py-6">
-            <span className="text-2xl font-semibold">ShareTrack</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleSidebar}
-              className="lg:hidden"
-            >
-              <X className="h-6 w-6" />
-            </Button>
-          </div>
-          <div className="px-4 mb-6">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  {selectedCompany}
-                  <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                {companies.map((company) => (
-                  <DropdownMenuItem
-                    key={company.value}
-                    onSelect={() => setSelectedCompany(company.label)}
-                  >
-                    {company.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <nav className="flex-1 space-y-2 px-2">
-            {navItems.map((item, index) => (
-              <a
-                key={index}
-                href="#"
-                className="flex items-center rounded-lg px-4 py-2 text-gray-700 hover:bg-gray-100"
-              >
-                <item.icon className="h-5 w-5 mr-3" />
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="bg-white shadow-sm">
-          <div className="flex items-center justify-between px-4 py-4">
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleSidebar}
-                className="lg:hidden mr-2"
-              >
-                <Menu className="h-6 w-6" />
-              </Button>
-              <h1 className="text-2xl font-semibold">Shareholder Dashboard</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Popover open={searchQuery.length > 0}>
-                <PopoverTrigger asChild>
-                  <div className="relative">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                    <Input
-                      type="search"
-                      placeholder="Search shareholders..."
-                      className="pl-8 pr-4 py-2 w-64 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </PopoverTrigger>
-                <PopoverContent className="w-64 p-0" align="start">
-                  <Command>
-                    <CommandInput placeholder="Search shareholders..." />
-                    <CommandEmpty>No results found.</CommandEmpty>
-                    <CommandGroup>
-                      {searchResults.map((shareholder) => (
-                        <CommandItem key={shareholder.id}>
-                          <span>{shareholder.name}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <Button variant="ghost" size="icon">
-                <span className="sr-only">Notifications</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                  />
-                </svg>
-              </Button>
-              <Button variant="ghost" size="icon">
-                <span className="sr-only">Account</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-              </Button>
-            </div>
-          </div>
-        </header>
-        <main className="flex-1 overflow-y-auto p-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-            {cardData.map((card, index) => (
-              <Card key={index}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {card.title}
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M12 2v20M2 12h20" />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{card.value}</div>
-                  <p className="text-xs text-muted-foreground">
-                    +20.1% from last month
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Transactions Chart and Recent Transactions */}
-          <div className="grid gap-4 md:grid-cols-3 mb-8">
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle>Transaction History</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ChartContainer
-                  config={{
-                    buys: {
-                      label: "Buys",
-                      color: "hsl(var(--chart-1))",
-                    },
-                    sells: {
-                      label: "Sells",
-                      color: "hsl(var(--chart-2))",
-                    },
-                  }}
-                  className="h-[300px]"
-                >
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={transactionData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="date"
-                        stroke="#888888"
-                        fontSize={12}
-                        tickLine={false}
-                        axisLine={false}
-                      />
-                      <YAxis
-                        stroke="#888888"
-                        fontSize={12}
-                        tickLine={false}
-                        axisLine={false}
-                        tickFormatter={(value) => `${value}`}
-                      />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar
-                        dataKey="buys"
-                        fill="var(--color-buys)"
-                        radius={[4, 4, 0, 0]}
-                      />
-                      <Bar
-                        dataKey="sells"
-                        fill="var(--color-sells)"
-                        radius={[4, 4, 0, 0]}
-                      />
-                      <Legend verticalAlign="top" height={36} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Transactions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-8">
-                  {recentTransactions.map((transaction) => (
-                    <div key={transaction.id} className="flex items-center">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          {transaction.shareholder}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {transaction.type} {transaction.shares} shares
-                        </p>
-                      </div>
-                      <div className="ml-auto font-medium">
-                        {transaction.value}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Shareholder Data Table */}
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Shareholder Information</CardTitle>
+    <>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
+        {cardData.map((card, index) => (
+          <Card key={index}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {card.title}
+              </CardTitle>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Shareholder</TableHead>
-                    <TableHead>Share Class</TableHead>
-                    <TableHead>Shares</TableHead>
-                    <TableHead>Ownership %</TableHead>
-                    <TableHead>Value</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {shareholderData.map((shareholder) => (
-                    <TableRow key={shareholder.id}>
-                      <TableCell className="font-medium">
-                        {shareholder.name}
-                      </TableCell>
-                      <TableCell>{shareholder.shareClass}</TableCell>
-                      <TableCell>
-                        {shareholder.shares.toLocaleString()}
-                      </TableCell>
-                      <TableCell>{shareholder.ownership}</TableCell>
-                      <TableCell>{shareholder.value}</TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Open menu</span>
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <Sheet>
-                              <SheetTrigger asChild>
-                                <DropdownMenuItem
-                                  onSelect={(e) => e.preventDefault()}
-                                >
-                                  View details
-                                </DropdownMenuItem>
-                              </SheetTrigger>
-                              <SheetContent>
-                                <SheetHeader>
-                                  <SheetTitle>Shareholder Details</SheetTitle>
-                                  <SheetDescription>
-                                    Detailed information about{" "}
-                                    {shareholder.name}
-                                  </SheetDescription>
-                                </SheetHeader>
-                                <div className="py-4">
-                                  <h3 className="font-medium">
-                                    Name: {shareholder.name}
-                                  </h3>
-                                  <p>Share Class: {shareholder.shareClass}</p>
-                                  <p>
-                                    Shares:{" "}
-                                    {shareholder.shares.toLocaleString()}
-                                  </p>
-                                  <p>Ownership: {shareholder.ownership}</p>
-                                  <p>Value: {shareholder.value}</p>
-                                </div>
-                              </SheetContent>
-                            </Sheet>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <div className="text-2xl font-bold">{card.value}</div>
+              <p className="text-xs text-muted-foreground">
+                <span
+                  className={`font-medium ${
+                    parseFloat(card.change) >= 0
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  {card.change}
+                </span>{" "}
+                vs last month: {card.previousValue}
+              </p>
             </CardContent>
           </Card>
-        </main>
+        ))}
       </div>
-    </div>
+
+      <div className="flex flex-wrap lg:flex-nowrap mt-4 mb-4 gap-x-4">
+        <div className="w-full xl:w-2/3 h-full ">
+          {/* Overview Section */}
+          <Card className="w-full xl:min-h-[550px]">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-xl font-semibold">
+                  Overview
+                </CardTitle>
+                <select
+                  value={selectedPeriod}
+                  onChange={(e) => setSelectedPeriod(e.target.value)}
+                  className="bg-background border rounded-md px-2 py-1 text-sm"
+                >
+                  <option>This Year</option>
+                  <option>Last Year</option>
+                  <option>All Time</option>
+                </select>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <p className="text-2xl font-bold">
+                    $
+                    {overviewData.avgYearlyProfit.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Avg. Yearly Profit
+                  </p>
+                  <p
+                    className={`text-sm ${
+                      overviewData.avgYearlyProfitChange >= 0
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {overviewData.avgYearlyProfitChange >= 0 ? "↑" : "↓"}{" "}
+                    {Math.abs(overviewData.avgYearlyProfitChange)}%
+                  </p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">
+                    $
+                    {overviewData.avgYearlyExpense.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Avg. Yearly Expense
+                  </p>
+                  <p
+                    className={`text-sm ${
+                      overviewData.avgYearlyExpenseChange >= 0
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {overviewData.avgYearlyExpenseChange >= 0 ? "↑" : "↓"}{" "}
+                    {Math.abs(overviewData.avgYearlyExpenseChange)}%
+                  </p>
+                </div>
+              </div>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={transactionData}>
+                    <XAxis
+                      dataKey="month"
+                      stroke="#888888"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      stroke="#888888"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => `$${value / 1000}k`}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        background: "#333",
+                        border: "none",
+                        borderRadius: "4px",
+                      }}
+                      labelStyle={{ color: "#fff" }}
+                      itemStyle={{ color: "#fff" }}
+                      formatter={(value) => [
+                        `$${value.toLocaleString()}`,
+                        value === transactionData[0].profit
+                          ? "Profit"
+                          : "Expense",
+                      ]}
+                    />
+                    <Bar
+                      dataKey="expense"
+                      fill="#fdba74"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar
+                      dataKey="profit"
+                      fill="#f97316"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="w-full xl:w-1/3 h-full ">
+          {/* Recent Transactions */}
+          <Card className="xl:min-h-[550px]">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Recent Transactions</CardTitle>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <MoreVertical className="h-4 w-4" />
+                    <span className="sr-only">More options</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>View all</DropdownMenuItem>
+                  <DropdownMenuItem>Export to CSV</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-8">
+                {recentTransactions.map((transaction, index) => (
+                  <div
+                    key={transaction.id}
+                    className={`flex items-center justify-between p-4 rounded-lg transition-colors ${
+                      index % 2 === 0 ? "bg-muted/50" : "bg-background"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-muted-foreground">
+                          {transaction.date}
+                        </span>
+                        <span className="text-2xl font-bold">
+                          {transaction.time}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-semibold">
+                          {transaction.type} Transaction
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {transaction.shareholder} - {transaction.shares}{" "}
+                          shares, {transaction.value}
+                        </span>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Shareholder Data Table */}
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>Topp 5 aksjonærer</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-center">Shareholder</TableHead>
+                <TableHead className="text-center">Share Class</TableHead>
+                <TableHead className="text-center">Shares</TableHead>
+                <TableHead className="text-center">Ownership %</TableHead>
+                <TableHead className="text-center">Value</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {shareholderData.map((shareholder) => (
+                <TableRow key={shareholder.id}>
+                  <TableCell className="font-medium text-center">
+                    {shareholder.name}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {shareholder.shareClass}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {shareholder.shares.toLocaleString()}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {shareholder.ownership}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {shareholder.value}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <Sheet>
+                          <SheetTrigger asChild>
+                            <DropdownMenuItem
+                              onSelect={(e) => e.preventDefault()}
+                            >
+                              View details
+                            </DropdownMenuItem>
+                          </SheetTrigger>
+                          <SheetContent>
+                            <SheetHeader>
+                              <SheetTitle>Shareholder Details</SheetTitle>
+                              <SheetDescription>
+                                Detailed information about {shareholder.name}
+                              </SheetDescription>
+                            </SheetHeader>
+                            <div className="py-4">
+                              <h3 className="font-medium">
+                                Name: {shareholder.name}
+                              </h3>
+                              <p>Share Class: {shareholder.shareClass}</p>
+                              <p>
+                                Shares: {shareholder.shares.toLocaleString()}
+                              </p>
+                              <p>Ownership: {shareholder.ownership}</p>
+                              <p>Value: {shareholder.value}</p>
+                            </div>
+                          </SheetContent>
+                        </Sheet>
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </>
   );
 }

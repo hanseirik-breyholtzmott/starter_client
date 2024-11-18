@@ -17,6 +17,8 @@ export async function middleware(req: NextRequest) {
       "/bestill",
       "/test",
       "/api/auth/callback/vipps",
+      "/folkekraft",
+      "/folkekraft-group",
     ],
     auth: [
       "/sign-in",

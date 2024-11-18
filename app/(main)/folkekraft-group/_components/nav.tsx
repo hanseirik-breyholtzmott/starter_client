@@ -26,12 +26,12 @@ import {} from "lucide-react";
 import { useAuth } from "@/app/hooks/AuthContext";
 
 export default function Navbar() {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   return (
     <div className="w-full bg-white border-b">
       <nav className="flex items-center justify-between p-4  container mx-auto">
         <div className=" items-center space-x-8 flex">
-          <Link href="/folkekraft" className="flex items-center space-x-2 ">
+          <Link href="/" className="flex items-center space-x-2 ">
             <div className="w-8 h-8 bg-[#00263D] text-white hidden items-center justify-center font-bold rounded md:flex">
               F
             </div>
@@ -40,16 +40,10 @@ export default function Navbar() {
           </Link>
           <div className=" space-x-6 flow-row items-center hidden md:flex">
             <Link
-              href="/folkekraft"
+              href="/folkekraft-group"
               className="text-gray-600 hover:text-gray-900"
             >
-              Emisjon
-            </Link>
-            <Link
-              href="/folkekraft/invest"
-              className="text-gray-600 hover:text-gray-900"
-            >
-              Invest
+              Folkekraft Group AS Emisjon
             </Link>
           </div>
         </div>
@@ -85,7 +79,8 @@ export default function Navbar() {
           </Link>
 
           <Popover>
-            <PopoverTrigger>
+            <PopoverTrigger className="flex items-center space-x-4">
+              <div>{user?.firstName}</div>
               <div className="flex items-center space-x-2 h-10 w-10 bg-[#00263D] text-white rounded-md"></div>
             </PopoverTrigger>
             <PopoverContent>

@@ -108,15 +108,15 @@ export default function Team({ perks }: PerkProps) {
               <div className="h-[160px] w-[160px] rounded-lg bg-blue-600 overflow-hidden">
                 <Image
                   src={
-                    "https://utfs.io/f/1c66qeb7SCm5DEQjjbqgux84eWln59LNpt0zoXOyqZTfrQsb"
+                    "https://utfs.io/f/1c66qeb7SCm5QSboY8gaDP3ZvkfVOIA1eXBT57EF8C0i2lSR"
                   }
-                  alt="Krishan"
+                  alt="Geir Morten Folkestad"
                   width={160}
                   height={160}
                 />
               </div>
-              <h2 className="text-xl font-semibold mt-2">Krishan</h2>
-              <p className="text-gray-600">Interim Daglig leder</p>
+              <h2 className="text-xl font-semibold mt-2">Geir Morten</h2>
+              <p className="text-gray-600">Daglig leder</p>
             </div>
 
             <div className="text-center flex flex-col items-center">

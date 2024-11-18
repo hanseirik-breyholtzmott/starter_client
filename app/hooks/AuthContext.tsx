@@ -81,69 +81,86 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     return AuthProviderFactory(providerType);
   };
 
-  // Check if the user is authenticated when the app loads
-  useEffect(() => {
-    const checkAuth = async () => {
+  const checkAuth = async () => {
+    try {
+      // Check if current path is public first
+      const publicPaths = [
+        "/",
+        "/about",
+        "/contact",
+        "/coming-soon",
+        "/bestill",
+        "/test",
+      ];
+      const currentPath = window.location.pathname;
+
+      // For public paths, don't check authentication
+      if (publicPaths.includes(currentPath)) {
+        setLoading(false);
+        return;
+      }
+
+      const [sessionCookie, accessTokenCookie] = await Promise.all([
+        getCookieValue("session"),
+        getCookieValue("accessToken"),
+      ]);
+
+      if (!sessionCookie) {
+        console.log("No session cookie found");
+        setUser(null);
+        setIsAuthenticated(false);
+        setAccessToken(null);
+        setAuthorizationHeader("");
+        await deleteCookie("accessToken");
+        setLoading(false);
+        return;
+      }
+
       try {
-        console.log("Checking auth");
-
-        const sessionCookie = await getCookieValue("session");
-        const accessTokenCookie = await getCookieValue("accessToken");
-
-        if (!sessionCookie) {
-          console.log("No session cookie found");
-          setIsAuthenticated(false);
-          setLoading(false);
-          return;
-        }
-
-        const response = await axiosInstance.post("/auth/refresh", {
+        const { data } = await axiosInstance.post("/auth/refresh", {
           refreshToken: sessionCookie,
         });
-        console.log("Response received:", response.data);
-        const { user, accessToken, refreshToken, status, message, success } =
-          response.data;
 
-        // Check user authentication status
+        const { user, accessToken, success } = data;
 
         if (success) {
-          console.log("Authentication successful");
-          console.log("User:", user);
-          console.log("Access Token:", accessToken);
-          // Set user and authentication state
           setUser(user);
           setIsAuthenticated(true);
-
-          // Store the accessToken in state
           setAccessToken(accessToken);
-
-          // Set the accessToken in the Authorization header
           setAuthorizationHeader(accessToken);
 
-          //create a cookie with the refreshToken
           await setCookie(
             "accessToken",
             accessToken as string,
             fifteenMinutesFromNow()
           );
         } else {
-          console.log("Authentication failed");
-          setUser(null);
-          setIsAuthenticated(false);
-          setAccessToken(null);
-          setAuthorizationHeader("");
-          //await deleteCookie("session");
-          await deleteCookie("accessToken");
-          return;
+          throw new Error("Authentication failed");
         }
       } catch (error) {
-        console.error("Authentication check failed:", error);
+        console.error("Token refresh failed:", error);
+        // Clean up on authentication failure
+        setUser(null);
         setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
+        setAccessToken(null);
+        setAuthorizationHeader("");
+        await Promise.all([
+          deleteCookie("session"),
+          deleteCookie("accessToken"),
+        ]);
       }
-    };
 
+      // Check user authentication status
+    } catch (error) {
+      console.error("Authentication check failed:", error);
+      setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Check if the user is authenticated when the app loads
+  useEffect(() => {
     checkAuth();
   }, []);
 

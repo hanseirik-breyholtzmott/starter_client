@@ -8,76 +8,62 @@ export async function middleware(req: NextRequest) {
   // --- Existing Middleware Logic ---
 
   // Define public routes that do not require authentication
-  const publicRoutes = [
-    "/about",
-    "/contact",
-    "/coming-soon",
-    "/bestill",
-    "/api/auth/callback/vipps",
-  ]; // Add more public routes as needed
-  // Define authentication-related routes
-  const authRoutes = [
-    "/sign-in",
-    "/sign-up",
-    "/verification",
-    "/forgot-password",
-    "/reset-password",
-  ];
+  const routeConfig = {
+    public: [
+      "/",
+      "/about",
+      "/contact",
+      "/coming-soon",
+      "/bestill",
+      "/test",
+      "/api/auth/callback/vipps",
+    ],
+    auth: [
+      "/sign-in",
+      "/sign-up",
+      "/verification",
+      "/forgot-password",
+      "/reset-password",
+    ],
+    api: ["/api/uploadthing"],
+  };
 
-  const uploadthingRoutes = ["/api/uploadthing"];
+  const currentPath = req.nextUrl.pathname;
 
-  // Check if the current request path is a public route
-  const isPublicRoute = publicRoutes.some((route) =>
-    req.nextUrl.pathname.startsWith(route)
-  );
-
-  // Check if the current request path is an auth route
-  const isAuthRoute = authRoutes.some((route) =>
-    req.nextUrl.pathname.startsWith(route)
-  );
-
-  // Check if the current request path is an Uploadthing route
-  const isUploadthingRoute = uploadthingRoutes.some((route) =>
-    req.nextUrl.pathname.startsWith(route)
-  );
-
-  // Define the login page URL
-  const loginUrl = new URL("/sign-in", req.url);
-
-  // Define the dashboard URL
-  const dashboardUrl = new URL("/folkekraft", req.url);
-
-  // Redirect logic
-  const sessionCookie = req.cookies.get("session");
-  const isSessionPresent = !!sessionCookie;
-  console.log("Session present:", isSessionPresent);
-
-  // Redirect logic
-  if (isSessionPresent) {
-    console.log("Session is present, user should be authenticated");
-    // If authenticated and trying to access an auth route, redirect to the dashboard
-    if (isAuthRoute) {
-      console.log("Authenticated user on auth route, redirecting to dashboard");
-      if (req.nextUrl.pathname !== dashboardUrl.pathname) {
-        return NextResponse.redirect(dashboardUrl);
-      }
-    }
-    // Allow access to the dashboard if authenticated
-    if (req.nextUrl.pathname.startsWith("/folkekraft")) {
-      console.log("Allowing access to folkekraft");
-      return NextResponse.next();
-    }
-  } else {
-    console.log("No session present, user is not authenticated");
-    // If not authenticated and trying to access a protected route, redirect to login
-    if (!isPublicRoute && !isAuthRoute && !isUploadthingRoute) {
-      if (req.nextUrl.pathname !== loginUrl.pathname) {
-        return NextResponse.redirect(loginUrl);
-      }
-    }
+  // Skip middleware for public routes
+  if (routeConfig.public.includes(currentPath)) {
+    console.log("Public route detected, skipping middleware:", currentPath);
+    return NextResponse.next();
   }
 
-  // Allow the request to proceed for public routes and other cases
+  const sessionCookie = req.cookies.get("session");
+  const isAuthRoute = routeConfig.auth.includes(currentPath);
+  const isApiRoute = currentPath.startsWith("/api/uploadthing");
+
+  console.log({
+    method: req.method,
+    path: currentPath,
+    isAuth: isAuthRoute,
+    isApi: isApiRoute,
+    hasSession: !!sessionCookie,
+  });
+
+  // Handle non-public routes
+  if (!sessionCookie) {
+    // Allow access to auth routes without session
+    if (isAuthRoute || isApiRoute) {
+      return NextResponse.next();
+    }
+    // Redirect to login for protected routes
+    return NextResponse.redirect(new URL("/sign-in", req.url));
+  }
+
+  // Handle authenticated users
+  if (isAuthRoute) {
+    // Redirect authenticated users away from auth pages
+    return NextResponse.redirect(new URL("/folkekraft", req.url));
+  }
+
   return NextResponse.next();
 }
 
@@ -85,11 +71,24 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     // Match all paths excluding static files and Next.js internals
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    //"/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     // Always run for API routes
-    "/(api|trpc)(.*)",
-    // Custom pages where authentication is required
+    //"/(api|trpc)(.*)",
+    //"/dashboard/:path*",
+    //"/api/auth/callback/vipps",
+    "/folkekraft/:path*",
     "/dashboard/:path*",
-    "/api/auth/callback/vipps",
+    "/settings/:path*",
+    "/profile/:path*",
+
+    // Auth routes
+    "/sign-in",
+    "/sign-up",
+    "/verification",
+    "/forgot-password",
+    "/reset-password",
+
+    // API routes (except public ones)
+    "/api/:path*",
   ],
 };

@@ -136,13 +136,13 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
               fill
               className="object-cover"
             />
-            {/*<iframe
-              src="https://player.vimeo.com/video/1007463389?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+            <iframe
+              src="https://player.vimeo.com/video/1029570862?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
               style={{ border: "none" }}
               allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
               title="Vi har ikke vært gode nok"
               className="absolute top-0 left-0 w-full h-full"
-            ></iframe> */}
+            ></iframe>
           </div>
         </div>
       </div>
@@ -174,7 +174,7 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
           <div className="grid grid-cols-2 gap-4 my-4 py-8 rounded-lg">
             <div>
               <h4 className="text-3xl font-bold">
-                {investmentDetails.targetAmount}
+                {investmentDetails.targetAmount + 14}
               </h4>
               <p className="text-gray-600">Antall investeringer</p>
             </div>

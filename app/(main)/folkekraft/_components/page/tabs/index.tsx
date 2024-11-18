@@ -22,8 +22,8 @@ import FundingVideo from "./fundingVideo";
 //Data
 const tabsData = [
   { id: "about", label: "Beskrivelse", count: null },
-  { id: "emisjon", label: "Emisjonsnytt", count: 1 },
-  { id: "caplist", label: "Aksjeeiebok", count: null },
+  //{ id: "emisjon", label: "Emisjonsnytt", count: 1 },
+  //{ id: "caplist", label: "Aksjeeiebok", count: null },
   { id: "team", label: "Team", count: null },
   { id: "documents", label: "Dokumenter", count: null },
 ];
@@ -130,9 +130,9 @@ export default function TabsComponent({
           <TabsContent value="emisjon">
             <FundingVideo perks={perks} />
           </TabsContent>
-          <TabsContent value="caplist">
+          {/*<TabsContent value="caplist">
             <CapList caplist={caplist} perks={perks} />
-          </TabsContent>
+          </TabsContent>*/}
           <TabsContent value="team">
             <Team perks={perks} />
           </TabsContent>

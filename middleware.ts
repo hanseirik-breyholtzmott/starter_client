@@ -17,8 +17,8 @@ export async function middleware(req: NextRequest) {
       "/bestill",
       "/test",
       "/api/auth/callback/vipps",
-      "/folkekraft",
-      "/folkekraft-group",
+      "/folkekraft", // Add the base folkekraft path
+      "/folkekraft-group", // Add the base folkekraft-group path
     ],
     auth: [
       "/sign-in",
@@ -79,6 +79,7 @@ export const config = {
     //"/dashboard/:path*",
     //"/api/auth/callback/vipps",
     "/folkekraft/:path*",
+    "/folkekraft-group/:path*",
     "/dashboard/:path*",
     "/settings/:path*",
     "/profile/:path*",

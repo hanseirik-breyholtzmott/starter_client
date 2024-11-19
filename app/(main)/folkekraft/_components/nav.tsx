@@ -40,7 +40,7 @@ export default function Navbar() {
           </Link>
           <div className=" space-x-6 flow-row items-center hidden md:flex">
             <Link
-              href="/folkekraft-group"
+              href="/folkekraft"
               className="text-gray-600 hover:text-gray-900"
             >
               Folkekraft AS Emisjon
@@ -66,7 +66,7 @@ export default function Navbar() {
             <span className="ml-1">US</span>
           </Button>
 
-          <Link href={"/folkekraft-group/invest"}>
+          <Link href={"/folkekraft/invest"}>
             <Button variant="ghost" size="icon">
               <Zap size={20} />
             </Button>

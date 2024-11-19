@@ -19,7 +19,7 @@ import axiosInstance from "@/lib/axiosInstance";
 const getCampaignData = async () => {
   try {
     const response = await axiosInstance.get(
-      `/api/campaign/${process.env.NEXT_PUBLIC_CAMPAIGN_ID}`
+      `/api/campaign/673b02bb51207454bd7fa5bf`
     );
 
     if (response.status != 200) {

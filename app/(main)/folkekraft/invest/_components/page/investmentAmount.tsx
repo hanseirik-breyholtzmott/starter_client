@@ -70,7 +70,7 @@ export default function InvestmentAmount({
     if (numValue < 300) {
       setError("Antall aksjer kan ikke være mindre enn 300");
     } else if (numValue > 100000) {
-      setError("Antall aksjer kan ikke være mer enn 10000");
+      setError("Antall aksjer kan ikke være mer enn 100000");
     } else {
       setError("");
     }

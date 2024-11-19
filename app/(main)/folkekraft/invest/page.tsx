@@ -1,5 +1,11 @@
 import React from "react";
 
+//Next
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+//Auth
+import { useAuth } from "@clerk/nextjs";
 //Components
 import InvestmentLayout from "./_components/investmentLayout";
 
@@ -27,6 +33,12 @@ const getInvestmentData = async () => {
 };
 
 export default async function InvestPage() {
+  const cookieStore = cookies();
+  const session = cookieStore.get("session");
+
+  if (!session) {
+    redirect("/sign-in");
+  }
   const investmentData = await getInvestmentData();
 
   if (!investmentData) {

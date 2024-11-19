@@ -42,7 +42,7 @@ type InvestmentDetails = {
   startAmount: number;
   targetAmount: number;
   availableShares: number;
-  investmentCount: number;
+  _id: string;
 };
 
 type Perk = {
@@ -68,6 +68,8 @@ type Documents = {
 };
 
 type Campaign = {
+  _id: string;
+  companyId: string;
   campaignInfo: CampaignInfo;
   investmentDetails: InvestmentDetails;
   perks: Perk[];
@@ -75,11 +77,17 @@ type Campaign = {
   documents: Documents[];
 };
 
-interface CampaignHeaderProps {
-  campaignData: Campaign | null;
+interface CampaignInfoProps {
+  campaignData: Campaign;
+  totalInvestments?: number;
+  totalInvested?: number;
 }
 
-export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
+export default function CampaignInfo({
+  campaignData,
+  totalInvestments,
+  totalInvested,
+}: CampaignInfoProps) {
   //useState
   const [isCopied, setIsCopied] = useState(false);
   const [isMounted, setIsMounted] = useState(true);
@@ -161,21 +169,24 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
             </Popover>
           </div>
           <h3 className="text-4xl font-bold my-4 ">
-            {formatCurrency(investmentDetails.startAmount, 0, false)}
+            {formatCurrency(totalInvested as number, 0, false)}
           </h3>
           <p className="text-gray-600 mb-2">
-            {(investmentDetails.maximumInvestment * 100).toFixed(0)}% samlet inn
-            av maksbeløpet på 8 millioner
+            {(
+              ((totalInvested as number) / investmentDetails.targetAmount) *
+              100
+            ).toFixed(0)}
+            % samlet inn av maksbeløpet på 8 millioner
           </p>
           <Progress
-            value={investmentDetails.maximumInvestment * 100}
+            value={
+              ((totalInvested as number) / investmentDetails.targetAmount) * 100
+            }
             className="mb-4"
           />
           <div className="grid grid-cols-2 gap-4 my-4 py-8 rounded-lg">
             <div>
-              <h4 className="text-3xl font-bold">
-                {investmentDetails.targetAmount}
-              </h4>
+              <h4 className="text-3xl font-bold">{totalInvestments}</h4>
               <p className="text-gray-600">Antall investeringer</p>
             </div>
             <div>

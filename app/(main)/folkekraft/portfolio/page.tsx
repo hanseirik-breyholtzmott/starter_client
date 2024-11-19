@@ -2,6 +2,8 @@ import React from "react";
 
 //Nextjs
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 //Shadcn
 import { cn } from "@/lib/utils";
@@ -45,6 +47,14 @@ const tabsData = [
 type Props = {};
 
 const getPortfolioData = async () => {
+  // Check for session cookie
+  const cookieStore = cookies();
+  const session = cookieStore.get("session");
+
+  if (!session) {
+    redirect("/sign-in");
+  }
+
   const userId = await getUserId();
 
   if (!userId) {

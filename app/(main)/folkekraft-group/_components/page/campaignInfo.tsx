@@ -76,11 +76,17 @@ type Campaign = {
   documents: Documents[];
 };
 
-interface CampaignHeaderProps {
-  campaignData: Campaign | null;
+interface CampaignInfoProps {
+  campaignData: Campaign;
+  totalInvestments?: number;
+  totalInvested?: number;
 }
 
-export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
+export default function CampaignInfo({
+  campaignData,
+  totalInvestments,
+  totalInvested,
+}: CampaignInfoProps) {
   //useState
   const [isCopied, setIsCopied] = useState(false);
   const [isMounted, setIsMounted] = useState(true);
@@ -164,17 +170,22 @@ export default function CampaignInfo({ campaignData }: CampaignHeaderProps) {
             {formatCurrency(investmentDetails.startAmount, 0, false)}
           </h3>
           <p className="text-gray-600 mb-2">
-            {(investmentDetails.maximumInvestment * 100).toFixed(0)}% samlet inn
-            av maksbeløpet på 12 millioner
+            {(
+              ((totalInvested as number) / investmentDetails.targetAmount) *
+              100
+            ).toFixed(0)}
+            % samlet inn av maksbeløpet på 12 millioner
           </p>
           <Progress
-            value={investmentDetails.maximumInvestment * 100}
+            value={
+              ((totalInvested as number) / investmentDetails.targetAmount) * 100
+            }
             className="mb-4"
           />
           <div className="grid grid-cols-2 gap-4 my-4 py-8 rounded-lg">
             <div>
               <h4 className="text-3xl font-bold">
-                {investmentDetails.targetAmount + 14}
+                {(totalInvestments as number) + 14}
               </h4>
               <p className="text-gray-600">Antall investeringer</p>
             </div>

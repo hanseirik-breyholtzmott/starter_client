@@ -31,27 +31,14 @@ export default function Navbar() {
     <div className="w-full bg-white border-b">
       <nav className="flex items-center justify-between p-4  container mx-auto">
         <div className=" items-center space-x-8 flex">
-          <Link href="/folkekraft" className="flex items-center space-x-2 ">
+          <Link href="/" className="flex items-center space-x-2 ">
             <div className="w-8 h-8 bg-[#00263D] text-white hidden items-center justify-center font-bold rounded md:flex">
               F
             </div>
 
             <p className="text-3xl font-bold">Folkekraft</p>
           </Link>
-          <div className=" space-x-6 flow-row items-center hidden md:flex">
-            <Link
-              href="/folkekraft"
-              className="text-gray-600 hover:text-gray-900"
-            >
-              Emisjon
-            </Link>
-            <Link
-              href="/folkekraft/invest"
-              className="text-gray-600 hover:text-gray-900"
-            >
-              Invest
-            </Link>
-          </div>
+          <div className=" space-x-6 flow-row items-center hidden md:flex"></div>
         </div>
         <div className="flex-1 max-w-xl px-4 hidden">
           <div className="relative">
@@ -103,11 +90,7 @@ export default function Navbar() {
                       <p className="ml-2">Min portefølje</p>
                     </li>
                   </Link>
-                  <Link href={"folkekraft/invest"}>
-                    <li className="flex flex-row text-lg items-center p-2">
-                      <Zap size={20} /> <p className="ml-2">Investere</p>
-                    </li>
-                  </Link>
+
                   <div onClick={signOut} className="cursor-pointer">
                     <li className="flex flex-row text-lg items-center p-2 text-red-500">
                       <LogOut size={20} /> <p className="ml-2">Log out</p>

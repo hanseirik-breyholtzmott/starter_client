@@ -13,12 +13,17 @@ type CampaignInfo = {
 };
 
 type InvestmentDetails = {
-  totalInvestments: number;
-  totalInvestedAmount: number;
   minimumInvestment: number;
-  sharesPurchasedInPercent: number;
-  status: string;
+  maximumInvestment: number;
+  shareClassId: string;
+  sharePrice: number;
+  startDate: string;
   closingDate: string | null;
+  status: string;
+  startAmount: number;
+  targetAmount: number;
+  availableShares: number;
+  _id: string;
 };
 
 type Perk = {
@@ -44,6 +49,8 @@ type Documents = {
 };
 
 type Campaign = {
+  _id: string;
+  companyId: string;
   campaignInfo: CampaignInfo;
   investmentDetails: InvestmentDetails;
   perks: Perk[];
@@ -52,7 +59,7 @@ type Campaign = {
 };
 
 interface CampaignHeaderProps {
-  campaignData: Campaign | null;
+  campaignData: Campaign;
 }
 
 export default function CampaignHeader({ campaignData }: CampaignHeaderProps) {

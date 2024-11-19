@@ -17,8 +17,8 @@ export async function middleware(req: NextRequest) {
       "/bestill",
       "/test",
       "/api/auth/callback/vipps",
-      "/folkekraft", // Add the base folkekraft path
-      "/folkekraft-group", // Add the base folkekraft-group path
+      "/folkekraft", // Only the exact /folkekraft path is public
+      "/folkekraft-group",
     ],
     auth: [
       "/sign-in",

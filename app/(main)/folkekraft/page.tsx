@@ -22,6 +22,8 @@ const getCampaignData = async () => {
       `/api/campaign/673b02bb51207454bd7fa5bf`
     );
 
+    console.log(response.data);
+
     if (response.status != 200) {
       console.log("Failed to fetch data");
       throw new Error("Failed to fetch data");
@@ -56,7 +58,11 @@ export default async function CampaignPage() {
         <InvestButton />
 
         {/* Main Carousel */}
-        <CampaignInfo campaignData={campaignData.campaign} />
+        <CampaignInfo
+          campaignData={campaignData.campaign}
+          totalInvestments={campaignData.caplist.totalInvestments}
+          totalInvested={campaignData.caplist.totalInvested}
+        />
 
         {/* Tabs */}
         <Tabs

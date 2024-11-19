@@ -52,13 +52,18 @@ export default async function CampaignPage() {
     <main className="min-h-[2000px] relative">
       <div className="container mx-auto w-full px-0 md:px-4 py-8">
         {/* Header */}
+        {/* Header */}
         <CampaignHeader campaignData={campaignData.campaign} />
 
         {/* Invest Button */}
         <InvestButton />
 
         {/* Main Carousel */}
-        <CampaignInfo campaignData={campaignData.campaign} />
+        <CampaignInfo
+          campaignData={campaignData.campaign}
+          totalInvestments={campaignData.caplist.totalInvestments}
+          totalInvested={campaignData.caplist.totalInvested}
+        />
 
         {/* Tabs */}
         <Tabs

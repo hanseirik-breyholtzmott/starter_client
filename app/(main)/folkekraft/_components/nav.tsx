@@ -98,11 +98,7 @@ export default function Navbar() {
                       <p className="ml-2">Min portefølje</p>
                     </li>
                   </Link>
-                  <Link href={"folkekraft/invest"}>
-                    <li className="flex flex-row text-lg items-center p-2">
-                      <Zap size={20} /> <p className="ml-2">Investere</p>
-                    </li>
-                  </Link>
+
                   <div onClick={signOut} className="cursor-pointer">
                     <li className="flex flex-row text-lg items-center p-2 text-red-500">
                       <LogOut size={20} /> <p className="ml-2">Log out</p>

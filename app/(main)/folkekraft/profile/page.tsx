@@ -4,6 +4,8 @@ import React, { useState } from "react";
 
 //Nextjs
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 //Shadcn
 import { Button } from "@/components/ui/button";
@@ -48,6 +50,13 @@ const cardData = [
 ];
 
 export default function ProfilePage() {
+  // Check for session cookie
+  const cookieStore = cookies();
+  const session = cookieStore.get("session");
+
+  if (!session) {
+    redirect("/sign-in");
+  }
   const { user } = useAuth();
   console.log("user", user);
 

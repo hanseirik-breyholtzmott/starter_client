@@ -213,16 +213,12 @@ export default function CampaignInfo({
           </p>
           <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-8">
             <div className="w-full">
-              <Link href="/bestill">
+              <Link
+                href="https://folkekraft-weborder.utilitycloud.app/?product=27bf03faa8524810856f558bca49bb34#/"
+                target="_blank"
+              >
                 <Button className="w-full bg-[#00263D] hover:bg-[#00263D]/80 text-[#59C9B9] text-lg h-12">
                   Bli Folkekraft kunde
-                </Button>
-              </Link>
-            </div>
-            <div className="w-full hidden">
-              <Link href="/bestill">
-                <Button className="w-full bg-[#00263D] hover:bg-[#00263D]/80 text-[#59C9B9] text-lg h-12">
-                  Hent verve lenke
                 </Button>
               </Link>
             </div>

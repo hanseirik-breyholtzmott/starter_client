@@ -22,10 +22,7 @@ const getCampaignData = async () => {
       `/api/campaign/672cbcce19b91a12e631f7f5`
     );
 
-    console.log(response.data);
-
     if (response.status != 200) {
-      console.log("Failed to fetch data");
       throw new Error("Failed to fetch data");
     } else {
     }
@@ -51,7 +48,6 @@ export default async function CampaignPage() {
   return (
     <main className="min-h-[2000px] relative">
       <div className="container mx-auto w-full px-0 md:px-4 py-8">
-        {/* Header */}
         {/* Header */}
         <CampaignHeader campaignData={campaignData.campaign} />
 

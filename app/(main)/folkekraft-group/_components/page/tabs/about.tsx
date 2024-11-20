@@ -181,16 +181,18 @@ export default function About({ perks }: PerkProps) {
               energifremtid. Ved å investere nå kan man bli del av en spennende
               veksthistorie i en sektor som er i rask utvikling.
             </p>
-            <Image
-              src="https://utfs.io/f/1c66qeb7SCm52whKXf9phV4yts0bOCKoFTzM5vIkXjlNQJdH"
-              alt="Folkekraft Group Logo"
-              layout="responsive" // Use layout responsive instead of fill
-              width={800} // Width in pixels for responsive layout
-              height={500} // Height in pixels for responsive layout
-              objectFit="contain" // Ensure the image is contained without overflow
-              sizes="(max-width: 800px) 100vw, 800px"
-              className="w-full h-auto"
-            />
+            <div className="flex justify-center w-full">
+              <Image
+                src="https://utfs.io/f/1c66qeb7SCm5858wxzRraBWAmy0sXiKu4q2jLSY1etHxwPGI"
+                alt="Folkekraft Group Logo"
+                layout="responsive"
+                width={720}
+                height={515}
+                objectFit="contain"
+                sizes="(max-width: 720px) 100vw, 720px"
+                className="w-full h-auto max-w-[720px]"
+              />
+            </div>
           </div>
         </div>
         <div className="flex flex-col justify-center gap-6 max-w-[320px]">

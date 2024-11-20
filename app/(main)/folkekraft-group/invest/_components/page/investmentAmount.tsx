@@ -23,6 +23,9 @@ import {
 //Form
 import { UseFormReturn } from "react-hook-form";
 
+//Helper functions
+import { formatNumber } from "@/lib/helperFunctions";
+
 //Icons
 import { Lock, ChevronDown } from "lucide-react";
 
@@ -62,7 +65,7 @@ export default function InvestmentAmount({
   setIdNumber,
   investmentDetails,
 }: Props) {
-  const sharePrice = 8;
+  const sharePrice = 12;
   const [error, setError] = React.useState("");
 
   useEffect(() => {
@@ -191,7 +194,9 @@ export default function InvestmentAmount({
                   <FormControl>
                     <Input
                       {...field}
-                      value={shareNumber}
+                      value={
+                        shareNumber ? formatNumber(parseInt(shareNumber)) : ""
+                      }
                       onChange={(e) => {
                         field.onChange(e);
                         handleShareNumberChange(e);
@@ -219,7 +224,11 @@ export default function InvestmentAmount({
             <Input
               type="text"
               placeholder="Beregnet beløp"
-              value={investmentAmount ? `${investmentAmount} kr` : ""}
+              value={
+                investmentAmount
+                  ? `${formatNumber(parseInt(investmentAmount))} kr`
+                  : ""
+              }
               disabled
               className="mb-2 text-xl px-4 py-4 h-14 rounded-lg bg-gray-100"
             />

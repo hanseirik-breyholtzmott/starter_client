@@ -15,7 +15,7 @@ import axiosInstance from "@/lib/axiosInstance";
 const getInvestmentData = async () => {
   try {
     const response = await axiosInstance.get(
-      `/api/campaign/${process.env.NEXT_PUBLIC_CAMPAIGN_ID}/investment-details`
+      `/api/campaign/670edfb1a444b509203c7cd7/investment-details`
     );
 
     if (response.status !== 200) {

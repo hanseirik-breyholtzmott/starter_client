@@ -219,13 +219,6 @@ export default function CampaignInfo({
                 </Button>
               </Link>
             </div>
-            <div className="w-full ">
-              <Link href="/bestill">
-                <Button className="w-full bg-[#00263D] hover:bg-[#00263D]/80 text-[#59C9B9] text-lg h-12">
-                  Hent verve lenke
-                </Button>
-              </Link>
-            </div>
             <div className="w-full hidden">
               <Popover>
                 <PopoverTrigger className="w-full  text-white text-lg h-12">

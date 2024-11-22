@@ -220,7 +220,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         //Redirect to dashboard or home page
         console.log("Redirecting to:", "/folkekraft");
         // Redirect to the dashboard
-        router.push("/folkekraft");
+        router.push("/folkekraft-group");
 
         return;
       } else {

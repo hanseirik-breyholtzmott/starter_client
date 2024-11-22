@@ -12,7 +12,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid tokens" }, { status: 400 });
   }
 
-  const response = NextResponse.redirect(new URL("/folkekraft", request.url));
+  const response = NextResponse.redirect(
+    new URL("/folkekraf-group", request.url)
+  );
 
   // Set cookies
   response.cookies.set("accessToken", accessToken, {

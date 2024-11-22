@@ -217,8 +217,6 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
           oneMonthFromNow()
         );
 
-        //Redirect to dashboard or home page
-        console.log("Redirecting to:", "/folkekraft");
         // Redirect to the dashboard
         router.push("/folkekraft-group");
 
@@ -262,7 +260,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
       await setCookie("session", refreshToken as string, oneMonthFromNow());
       //Redirect to login page
-      return router.push("/folkekraft");
+      return router.push("/folkekraft-group");
     } catch (error) {
       console.log("Sign in failed:");
     } finally {

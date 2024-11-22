@@ -151,8 +151,8 @@ export default function SharePurchaseSuccess() {
             Congratulations!
           </CardTitle>
           <CardDescription className="text-xl">
-            You've successfully reserved shares in {purchaseDetails.companyName}
-            .
+            You&apos;ve successfully reserved shares in{" "}
+            {purchaseDetails.companyName}.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

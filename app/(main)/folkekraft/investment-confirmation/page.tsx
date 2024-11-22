@@ -231,7 +231,7 @@ export default function SharePurchaseSuccess() {
               onClick={() => setCurrentStep((prev) => Math.min(3, prev + 1))}
               className={currentStep === 1 ? "ml-auto" : ""}
             >
-              {currentStep === 1 ? "Transfer Funds" : "Founder's Message"}
+              {currentStep === 1 ? "Transfer Funds" : "Founder&apos;s Message"}
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (

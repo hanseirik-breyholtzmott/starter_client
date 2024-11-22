@@ -51,32 +51,6 @@ const Verification = (props: Props) => {
       pin: "",
     },
   });
-  /*
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const token = queryParams.get("token");
-    if (token) {
-      const decoded = jwt.decode(token) as DecodedToken;
-      console.log(decoded);
-      verifyEmail(decoded.token as string);
-    }
-  }, [verifyEmail]);
-*/
-  /*
-  const handleResendToken = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    if (!isResendDisabled) {
-      setIsResendDisabled(true)
-      setResendTimer(60) // Set a 60-second cooldown
-      try {
-        await resendVerificationToken() // Assuming this function exists in your AuthContext
-        // You might want to show a success message here
-      } catch (error) {
-        // Handle any errors, maybe show an error message
-        console.error("Failed to resend verification token:", error)
-      }
-    }
-  }*/
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     //verifyEmail(data.pin);

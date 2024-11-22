@@ -47,7 +47,7 @@ export default function ForgotPasswordForm({}: Props) {
     try {
       await forgotPassword(data.email);
     } catch (error) {
-      console.error("Error in forgot password:", error);
+      console.log("Error in forgot password:");
     } finally {
       setIsSubmitting(false);
     }

@@ -127,7 +127,7 @@ export default function Home() {
         console.log("Parsed Data:", data);
         setCampaigns(data);
       } catch (error) {
-        console.error("Failed to fetch campaigns:", error);
+        console.log("Failed to fetch campaigns:");
       } finally {
         setIsLoading(false);
       }

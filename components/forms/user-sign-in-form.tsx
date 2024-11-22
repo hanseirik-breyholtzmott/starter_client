@@ -59,7 +59,7 @@ const UserSignInForm = (props: Props) => {
     try {
       await signIn("email", values.email, values.password);
     } catch (error) {
-      console.error("Login error:", error);
+      console.log("Login error:");
       toast({
         variant: "destructive",
         title: "Login failed",

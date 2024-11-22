@@ -67,11 +67,11 @@ export default function OrderForm({}: Props) {
             // Set the referral code cookie
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 30); // Cookie expires in 30 days
-            await setCookie("referralCode", urlCode, expirationDate);
+            //await setCookie("referralCode", urlCode, expirationDate);
           }
         }
       } catch (error) {
-        console.error("Error in handleReferralCode:", error);
+        console.log("Error in handleReferralCode:");
         setError((error as Error).message);
       }
     }

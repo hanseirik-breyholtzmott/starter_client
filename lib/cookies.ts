@@ -1,9 +1,25 @@
 "use server";
 
+//Nextjs
 import { cookies } from "next/headers";
+
+//JWT
 import jwt from "jsonwebtoken";
 
+//lib
 import { verifyToken, AccessTokenPayload } from "./jwt";
+
+interface CookieOptions {
+  maxAge?: number;
+  expires?: Date;
+  path?: string;
+  domain?: string;
+  secure?: boolean;
+  httpOnly?: boolean;
+  sameSite?: boolean | "lax" | "strict" | "none";
+  priority?: "low" | "medium" | "high";
+  partitioned?: boolean;
+}
 
 export async function setCookie(name: string, value: string, expiresAt: Date) {
   const cookieStore = await cookies();
@@ -22,8 +38,13 @@ export async function getCookie(name: string) {
 }
 
 export async function deleteCookie(name: string) {
-  console.log("Deleting cookie:", name);
-  return (await cookies()).delete("name");
+  const cookieStore = await cookies();
+  cookieStore.delete(name);
+}
+
+export async function clearAllCookies() {
+  const cookieStore = await cookies();
+  cookieStore.clear();
 }
 
 export async function checkCookieExists(name: string) {
@@ -32,12 +53,14 @@ export async function checkCookieExists(name: string) {
 }
 
 export async function getAllCookies() {
-  return (await cookies()).getAll();
+  const cookieStore = await cookies();
+  return cookieStore.getAll();
 }
 
 export async function getCookieValue(name: string) {
   const cookieStore = await cookies();
-  return cookieStore.get(name)?.value;
+  const cookie = cookieStore.get(name);
+  return cookie?.value;
 }
 
 interface JwtPayload {
@@ -59,12 +82,12 @@ export async function validateSessionCookie(sessionCookie: string) {
     const { payload, error } = verifyToken<AccessTokenPayload>(sessionCookie);
 
     if (error) {
-      console.log("Session cookie validation failed:", error);
+      console.log("Session cookie validation failed:");
       return null;
     }
     return payload;
   } catch (error) {
-    console.error("Session cookie validation failed:", error);
+    console.log("Session cookie validation failed:");
     return null;
   }
 }

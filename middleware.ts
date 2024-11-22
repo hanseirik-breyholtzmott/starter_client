@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest) {
       "/bestill",
       "/test",
       "/api/auth/callback/vipps",
-      "/folkekraft", // Only the exact /folkekraft path is public
+      "/folkekraft",
       "/folkekraft-group",
     ],
     auth: [
@@ -26,6 +26,7 @@ export async function middleware(req: NextRequest) {
       "/verification",
       "/forgot-password",
       "/reset-password",
+      //"/auth/callback/vipps",
     ],
     api: ["/api/uploadthing"],
   };
@@ -57,7 +58,9 @@ export async function middleware(req: NextRequest) {
       return NextResponse.next();
     }
     // Redirect to login for protected routes
-    return NextResponse.redirect(new URL("/sign-in", req.url));
+    const url = new URL("/sign-in", req.url);
+    url.searchParams.set("redirectUrl", currentPath);
+    return NextResponse.redirect(url);
   }
 
   // Handle authenticated users

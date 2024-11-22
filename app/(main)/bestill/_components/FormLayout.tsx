@@ -86,7 +86,7 @@ export default function FormLayout({
         }
       } else {
         // Handle case where the API returns a non-success response
-        console.error("API returned non-success response:", response.data);
+        console.log("API returned non-success response:", response.data);
         // You might want to set an error state or show a message to the user here
       }
     } catch (error) {
@@ -95,18 +95,18 @@ export default function FormLayout({
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.error("API error response:", error.response.data);
-          console.error("Status code:", error.response.status);
+          console.log("API error response:", error.response.data);
+          console.log("Status code:", error.response.status);
         } else if (error.request) {
           // The request was made but no response was received
-          console.error("No response received:", error.request);
+          console.log("No response received:", error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
-          console.error("Error setting up request:", error.message);
+          console.log("Error setting up request:", error.message);
         }
       } else {
         // This is not an Axios error
-        console.error("Non-Axios error:", error);
+        console.log("Non-Axios error:");
       }
       // You might want to set an error state or show a message to the user here
     } finally {

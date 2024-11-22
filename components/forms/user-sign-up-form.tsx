@@ -67,7 +67,7 @@ const UserSignUpForm = (props: Props) => {
         values.password
       );
     } catch (error) {
-      console.error("Login error:", error);
+      console.log("Login error:");
       toast({
         variant: "destructive",
         title: "Login failed",

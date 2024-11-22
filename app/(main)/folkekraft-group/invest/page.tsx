@@ -21,7 +21,7 @@ const getInvestmentData = async () => {
 
     return data;
   } catch (error) {
-    console.error("Error fetching investment data:", error);
+    console.log("Error fetching investment data:");
     return null;
   }
 };

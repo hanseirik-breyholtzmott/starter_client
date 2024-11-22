@@ -133,8 +133,7 @@ export default function SharePurchaseSuccess() {
                 to have you on board as a shareholder. Your support is crucial
                 for our growth, and we look forward to sharing our success with
                 you. If you have any questions, please don&apos;t hesitate to
-                reach out. Best regards,
-                {purchaseDetails.founderName}
+                reach out. Best regards, {purchaseDetails.founderName},
                 Co-founder, {purchaseDetails.companyName}&rdquo;
               </p>
             </div>

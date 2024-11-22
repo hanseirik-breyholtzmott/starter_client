@@ -124,17 +124,18 @@ export default function SharePurchaseSuccess() {
         {currentStep === 3 && (
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-green-700">
-              Step 3: Founder's Message
+              Step 3: Founder&apos;s Message
             </h3>
             <div className="bg-white p-4 rounded-lg italic">
               <p>
-                "Dear {purchaseDetails.name}, Thank you for your investment in{" "}
-                {purchaseDetails.companyName}. We're thrilled to have you on
-                board as a shareholder. Your support is crucial for our growth,
-                and we look forward to sharing our success with you. If you have
-                any questions, please don't hesitate to reach out. Best regards,
+                &ldquo;Dear {purchaseDetails.name}, Thank you for your
+                investment in {purchaseDetails.companyName}. We&apos;re thrilled
+                to have you on board as a shareholder. Your support is crucial
+                for our growth, and we look forward to sharing our success with
+                you. If you have any questions, please don&apos;t hesitate to
+                reach out. Best regards,
                 {purchaseDetails.founderName}
-                Co-founder, {purchaseDetails.companyName}"
+                Co-founder, {purchaseDetails.companyName}&rdquo;
               </p>
             </div>
           </div>

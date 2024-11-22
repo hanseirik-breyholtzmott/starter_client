@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 
 //Nextjs
 import { useRouter } from "next/navigation";
@@ -50,7 +56,18 @@ interface AuthContextType {
   loading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isAuthenticated: false,
+  signIn: async () => {},
+  signUp: async () => {},
+  signOut: async () => {},
+  verifyEmail: async () => {},
+  forgotPassword: async () => {},
+  resetPassword: async () => {},
+  accessToken: null,
+  loading: true,
+});
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -59,8 +76,6 @@ export const useAuth = () => {
   }
   return context;
 };
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -171,7 +186,6 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     setLoading(true);
     try {
       const authProvider = getProviderInstance(provider);
-
       const response = await authProvider.login(email, password);
 
       const { user, accessToken, refreshToken, message, success } = response;
@@ -256,7 +270,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     const cleanup = async () => {
       setUser(null);
       setIsAuthenticated(false);
@@ -282,7 +296,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [accessToken, router]);
 
   const verifyEmail = async (code: string, email: string) => {
     try {
@@ -351,11 +365,11 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     const refreshAccessToken = async () => {
       try {
         const response = await axiosInstance.post("/api/auth/refresh");
-        setAccessToken(response.data.accessToken); // Store new access token
-        setAuthorizationHeader(response.data.accessToken); // Set Authorization header with new token
+        setAccessToken(response.data.accessToken);
+        setAuthorizationHeader(response.data.accessToken);
       } catch (error) {
         console.log("Failed to refresh access token:");
-        signOut(); // Log out if refreshing fails
+        signOut();
       }
     };
 
@@ -365,18 +379,17 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         const originalRequest = error.config;
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
-          await refreshAccessToken(); // Refresh token before retrying the request
+          await refreshAccessToken();
           return axiosInstance(originalRequest);
         }
         return Promise.reject(error);
       }
     );
 
-    // Cleanup the interceptor when the component unmounts
     return () => {
       axiosInstance.interceptors.response.eject(axiosInterceptor);
     };
-  }, [accessToken]);
+  }, [accessToken, signOut]);
 
   return (
     <AuthContext.Provider

@@ -9,9 +9,7 @@ import Tabs from "./_components/page/tabs";
 import InvestButton from "./_components/page/investButton";
 
 //Dynamic imports
-const CampaignInfo = dynamic(() => import("./_components/page/campaignInfo"), {
-  ssr: false,
-});
+const CampaignInfo = dynamic(() => import("./_components/page/campaignInfo"));
 
 //Helper functions
 import axiosInstance from "@/lib/axiosInstance";

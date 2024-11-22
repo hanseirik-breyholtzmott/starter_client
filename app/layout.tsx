@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     description: process.env.NEXT_PUBLIC_SEO_DESCRIPTION,
     images: [
       {
-        url: "https://www.yourwebsite.com/image.jpg", //LinkedIn page image
+        url: "https://www.yourwebsite.com/image.jpg",
         width: 1200,
         height: 627,
       },
@@ -65,9 +65,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <StarterAnalytics />
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         {process.env.NODE_ENV === "development" && (
           <div className="w-[300px] h-fit py-2 fixed bg-red-700 top-16 left-16 -rotate-45 -translate-x-1/2 -translate-y-1/2 text-white text-center font-bold z-50">
             Demo

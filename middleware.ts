@@ -63,7 +63,7 @@ export async function middleware(req: NextRequest) {
   // Handle authenticated users
   if (isAuthRoute) {
     // Redirect authenticated users away from auth pages
-    return NextResponse.redirect(new URL("/folkekraft", req.url));
+    return NextResponse.redirect(new URL("/folkekraft-group", req.url));
   }
 
   return NextResponse.next();

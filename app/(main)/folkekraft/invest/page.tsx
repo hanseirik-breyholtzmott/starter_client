@@ -33,7 +33,7 @@ const getInvestmentData = async () => {
 };
 
 export default async function InvestPage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const session = cookieStore.get("session");
 
   if (!session) {

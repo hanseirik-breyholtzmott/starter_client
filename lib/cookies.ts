@@ -6,7 +6,8 @@ import jwt from "jsonwebtoken";
 import { verifyToken, AccessTokenPayload } from "./jwt";
 
 export async function setCookie(name: string, value: string, expiresAt: Date) {
-  cookies().set(name, value, {
+  const cookieStore = await cookies();
+  cookieStore.set(name, value, {
     httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
     secure: process.env.NODE_ENV === "production", // Ensures the cookie is only sent over HTTPS
     expires: expiresAt, // Sets the expiration date of the cookie
@@ -16,23 +17,27 @@ export async function setCookie(name: string, value: string, expiresAt: Date) {
 }
 
 export async function getCookie(name: string) {
-  return cookies().get(name);
+  const cookieStore = await cookies();
+  return cookieStore.get(name);
 }
 
 export async function deleteCookie(name: string) {
-  cookies().delete(name);
+  console.log("Deleting cookie:", name);
+  return (await cookies()).delete("name");
 }
 
 export async function checkCookieExists(name: string) {
-  return cookies().has(name);
+  const cookieStore = await cookies();
+  return cookieStore.has(name);
 }
 
 export async function getAllCookies() {
-  return cookies().getAll();
+  return (await cookies()).getAll();
 }
 
 export async function getCookieValue(name: string) {
-  return cookies().get(name)?.value;
+  const cookieStore = await cookies();
+  return cookieStore.get(name)?.value;
 }
 
 interface JwtPayload {
@@ -72,14 +77,6 @@ export async function getUserId(): Promise<string | null> {
     console.log("No session cookie found");
     return null;
   }
-
-  // Validate the session cookie
-  //const decodedToken = await validateSessionCookie(accessTokenCookie);
-
-  /*if (!decodedToken) {
-    console.log("Session cookie validation failed");
-    return null;
-  }*/
 
   const decodedToken = jwt.decode(accessTokenCookie);
 

@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useLayoutEffect,
-} from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 //Nextjs
 import { useRouter } from "next/navigation";
@@ -138,7 +132,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
           throw new Error("Authentication failed");
         }
       } catch (error) {
-        console.error("Token refresh failed:", error);
+        console.log("Token refresh failed:");
         // Clean up on authentication failure
         setUser(null);
         setIsAuthenticated(false);
@@ -152,8 +146,13 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
       // Check user authentication status
     } catch (error) {
-      console.error("Authentication check failed:", error);
+      console.log("Authentication check failed");
+      // Clean up cookies on authentication failure
+      await Promise.all([deleteCookie("session"), deleteCookie("accessToken")]);
       setIsAuthenticated(false);
+      setUser(null);
+      setAccessToken(null);
+      setAuthorizationHeader("");
     } finally {
       setLoading(false);
     }
@@ -212,10 +211,10 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         return;
       } else {
         // Handle login failure
-        console.error("Login failed:", response.message);
+        console.log("Login failed:", response.message);
       }
     } catch (error) {
-      console.error("Sign in failed:", error);
+      console.log("Sign in failed:", error);
     } finally {
       setLoading(false);
     }
@@ -251,28 +250,35 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       //Redirect to login page
       return router.push("/folkekraft");
     } catch (error) {
-      console.error("Sign in failed:", error);
+      console.log("Sign in failed:");
     } finally {
       setLoading(false);
     }
   };
 
   const signOut = async () => {
-    setLoading(true);
-    try {
-      setAuthorizationHeader(accessToken as string);
-      const response = await axiosInstance.get("/auth/logout");
-
+    const cleanup = async () => {
       setUser(null);
       setIsAuthenticated(false);
       setAccessToken(null);
       setAuthorizationHeader("");
-      await deleteCookie("session");
-      await deleteCookie("accessToken");
+      await Promise.all([deleteCookie("session"), deleteCookie("accessToken")]);
+    };
 
-      return router.push("/sign-in");
-    } catch (error) {
-      console.error("Sign out failed:", error);
+    setLoading(true);
+    try {
+      if (accessToken) {
+        setAuthorizationHeader(accessToken);
+        await axiosInstance.get("/auth/logout");
+      }
+
+      await cleanup();
+      router.push("/sign-in");
+    } catch {
+      console.log("Sign out failed");
+      // Clean up anyway on failure
+      await cleanup();
+      router.push("/sign-in");
     } finally {
       setLoading(false);
     }
@@ -284,7 +290,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         email: email,
       });
     } catch (error) {
-      console.error("Verify email failed:", error);
+      console.log("Verify email failed:");
     }
   };
 
@@ -300,7 +306,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       });
       return;
     } catch (error) {
-      console.error("Forgot password failed:", error);
+      console.log("Forgot password failed:", error);
     }
   };
 
@@ -318,7 +324,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
       return router.push("/sign-in");
     } catch (error) {
-      console.error("Reset password failed:", error);
+      console.log("Reset password failed:");
     }
   };
 
@@ -348,7 +354,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         setAccessToken(response.data.accessToken); // Store new access token
         setAuthorizationHeader(response.data.accessToken); // Set Authorization header with new token
       } catch (error) {
-        console.error("Failed to refresh access token:", error);
+        console.log("Failed to refresh access token:");
         signOut(); // Log out if refreshing fails
       }
     };

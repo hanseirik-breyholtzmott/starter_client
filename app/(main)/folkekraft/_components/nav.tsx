@@ -99,7 +99,12 @@ export default function Navbar() {
                     </li>
                   </Link>
 
-                  <div onClick={signOut} className="cursor-pointer">
+                  <div
+                    onClick={() => {
+                      signOut();
+                    }}
+                    className="cursor-pointer"
+                  >
                     <li className="flex flex-row text-lg items-center p-2 text-red-500">
                       <LogOut size={20} /> <p className="ml-2">Log out</p>
                     </li>

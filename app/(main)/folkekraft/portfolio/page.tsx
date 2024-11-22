@@ -48,7 +48,7 @@ type Props = {};
 
 const getPortfolioData = async () => {
   // Check for session cookie
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const session = cookieStore.get("session");
 
   if (!session) {

@@ -42,11 +42,6 @@ export async function deleteCookie(name: string) {
   cookieStore.delete(name);
 }
 
-export async function clearAllCookies() {
-  const cookieStore = await cookies();
-  cookieStore.clear();
-}
-
 export async function checkCookieExists(name: string) {
   const cookieStore = await cookies();
   return cookieStore.has(name);

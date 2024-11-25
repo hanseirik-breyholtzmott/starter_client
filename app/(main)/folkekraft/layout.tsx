@@ -2,6 +2,7 @@ import React from "react";
 
 //Context
 import { InvestmentConfirmationProvider } from "@/app/hooks/InvestmentConfirmationContext";
+import { InvestmentProvider } from "@/app/hooks/InvestContext";
 
 //Components
 import Navbar from "./_components/nav";
@@ -13,10 +14,12 @@ export default function CampaignLayout({
   children: React.ReactNode;
 }) {
   return (
-    <InvestmentConfirmationProvider>
-      <Navbar />
-      {children}
-      <Footer />
-    </InvestmentConfirmationProvider>
+    <InvestmentProvider>
+      <InvestmentConfirmationProvider>
+        <Navbar />
+        {children}
+        <Footer />
+      </InvestmentConfirmationProvider>
+    </InvestmentProvider>
   );
 }

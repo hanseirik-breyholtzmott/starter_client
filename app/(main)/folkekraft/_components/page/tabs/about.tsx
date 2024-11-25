@@ -201,20 +201,29 @@ export default function About({ perks }: PerkProps) {
               Kapital og exit
             </h3>
             <p className="mb-4">
-              Selskapet planlegger tre emisjoner fremover, med sikte på å hente
-              kapital fra både profesjonelle investorer og kunder. Allerede ved
-              ca. 8.000–9.000 kunder vil selskapet være selvfinansiert frem mot
-              100.000 kunder. Inntektsgrunnlaget vil primært komme fra
-              strømleveranser, men også mersalgsprodukter. Investorer i
-              Folkekraft får flere muligheter til å realisere gevinst før
-              børsnoteringen. Selskapet estimerer en aksjekurs på 57 kroner og
-              en selskapsverdi på 330 millioner kroner innen 2028. Deltagelse i
-              denne emisjonen vil i så tilfelle gi 7 ganger tilbake på investert
-              beløp.
+              Folkekraft tilbyr nå en emisjon til kr 8 per aksje, med flere
+              planlagte exit-muligheter for investorer. Oppkjøp i mars 2025:
+              Folkekraft Group AS vil kjøpe aksjene i Folkekraft AS for kr 12
+              per aksje, med oppgjør i aksjer i morselskapet (Folkekraft Group
+              AS). Dette gir investorene en bredere eksponering gjennom eierskap
+              i Folkekraft AS, Folkekraft Bedrift AS og GreenPowerHub AS.
+              Børsnotering i april 2025: Aksjene i morselskapet Folkekraft Group
+              vil børsnoteres på NOTC-listen, med en estimert verdi på kr 16 per
+              aksje, noe som gir over 70 % verdiutvikling på under et halvt år,
+              gitt at vi når våre mål og vekstplaner. Langsiktig potensial: Gitt
+              at man når våre mål og vekstplaner estimerer vi at deltakelse på
+              denne emisjonen kan resultere i 10-15 ganger investert kapital
+              innen 2028. Aksjene i Folkekraft Group vil også kunne omsettes på
+              selskapets interne handelsplattform og på NOTC-listen, noe som gir
+              fleksibilitet og muligheter for realisering av gevinst, samt
+              tilgang på kapitalsterke investorer. En mer detaljert gjennomgang,
+              inkludert et praktisk eksempel på hvordan investering og oppkjøp
+              vil fungere, finnes i videogjennomgangen på toppen av
+              emisjonsplattformen.
             </p>
             <div className="max-w-[800px] mx-auto rounded-lg overflow-hidden">
               <Image
-                src="https://utfs.io/f/1c66qeb7SCm5h9wXxADo8VErKxMCa7GPDNRYc0W49Ln1QFpe"
+                src="https://utfs.io/f/1c66qeb7SCm5QaZlcKgaDP3ZvkfVOIA1eXBT57EF8C0i2lSR"
                 alt="Strømavtalen"
                 layout="responsive" // Use layout responsive instead of fill
                 width={800} // Width in pixels for responsive layout

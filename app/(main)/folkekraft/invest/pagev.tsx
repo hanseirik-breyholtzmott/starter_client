@@ -7,11 +7,11 @@ import { redirect } from "next/navigation";
 //Auth
 import { useAuth } from "@clerk/nextjs";
 
+//Components
+import InvestmentLayout from "./_components/investmentLayout";
+
 //Helper functions
 import axiosInstance from "@/lib/axiosInstance";
-
-//Components
-import InvestmentLayout from "./_components/pagev2/InvestPageLayout";
 
 const getInvestmentData = async () => {
   try {
@@ -46,9 +46,5 @@ export default async function InvestPage() {
     return <div>Failed to load investment data. Please try again later.</div>;
   }
 
-  return (
-    <>
-      <InvestmentLayout investmentData={investmentData} />
-    </>
-  );
+  return <InvestmentLayout investmentData={investmentData} />;
 }

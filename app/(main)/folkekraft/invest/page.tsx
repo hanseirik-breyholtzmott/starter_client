@@ -4,14 +4,11 @@ import React from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-//Auth
-import { useAuth } from "@clerk/nextjs";
-
 //Helper functions
 import axiosInstance from "@/lib/axiosInstance";
 
 //Components
-import InvestmentLayout from "./_components/pagev2/InvestPageLayout";
+import InvestmentLayout from "./_components/investmentLayout";
 
 const getInvestmentData = async () => {
   try {

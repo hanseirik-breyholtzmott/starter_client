@@ -34,15 +34,17 @@ import {
 import { useAuth } from "@/app/hooks/AuthContext";
 import { formatCurrency, formatNumber } from "@/lib/helperFunctions";
 
-// Add this function at the top of the component to ensure consistent calculation
+// Update the calculation function at the top
 const calculateInvestmentAmount = (
   shares: number,
   pricePerShare: number | undefined
 ) => {
-  if (!shares || !pricePerShare) {
+  if (!shares) {
     return 0;
   }
-  return Number(shares) * Number(pricePerShare);
+  // Use 8 as default price if pricePerShare is undefined
+  const price = pricePerShare ?? 8;
+  return Number(shares) * price;
 };
 
 export default function InvestmentBody() {
@@ -152,6 +154,17 @@ export default function InvestmentBody() {
       )
     );
   }, [shareAmount, companyData]);
+
+  // Add this debug effect at the top with other effects
+  useEffect(() => {
+    console.log("Full companyData:", companyData);
+    console.log("Investment details:", companyData?.investmentDetails);
+    console.log({
+      sharePrice: companyData?.investmentDetails?.sharePrice,
+      investmentMinimum: companyData?.investmentDetails?.investmentMinimum,
+      investmentMaximum: companyData?.investmentDetails?.investmentMaximum,
+    });
+  }, [companyData]);
 
   // Early return after all hooks
   if (!isAuthenticated || !user) {

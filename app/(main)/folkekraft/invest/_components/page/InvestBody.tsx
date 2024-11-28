@@ -42,7 +42,7 @@ const calculateInvestmentAmount = (
   if (!shares || !pricePerShare) {
     return 0;
   }
-  return shares * pricePerShare;
+  return Number(shares) * Number(pricePerShare);
 };
 
 export default function InvestmentBody() {
@@ -66,20 +66,6 @@ export default function InvestmentBody() {
   const [error, setError] = React.useState("");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
-  // Add authentication check
-  useEffect(() => {
-    if (!isAuthenticated) {
-      // Store the current URL to redirect back after login
-      localStorage.setItem("postLoginRedirect", "/folkekraft/invest");
-      router.push("/sign-in");
-    }
-  }, [isAuthenticated, router]);
-
-  // Return null or loading state while checking authentication
-  if (!isAuthenticated || !user) {
-    return null;
-  }
-
   // Memoize the validation thresholds
   const minShares = React.useMemo(() => {
     if (!companyData) return 0;
@@ -97,6 +83,41 @@ export default function InvestmentBody() {
     );
   }, [companyData]);
 
+  const isIdNumberValid = () => {
+    if (entityType === "private") {
+      return idNumber.length === 11;
+    } else if (entityType === "entity") {
+      return idNumber.length === 9;
+    }
+    return false;
+  };
+
+  const isFormValid = React.useMemo(() => {
+    return (
+      !error &&
+      shareAmount > 0 &&
+      entityType &&
+      isIdNumberValid() &&
+      termsAccepted
+    );
+  }, [
+    error,
+    shareAmount,
+    entityType,
+    idNumber,
+    termsAccepted,
+    isIdNumberValid,
+  ]);
+
+  // Authentication check effect
+  useEffect(() => {
+    if (!isAuthenticated) {
+      localStorage.setItem("postLoginRedirect", "/folkekraft/invest");
+      router.push("/sign-in");
+    }
+  }, [isAuthenticated, router]);
+
+  // Share amount validation effect
   useEffect(() => {
     if (!companyData) return;
 
@@ -111,6 +132,31 @@ export default function InvestmentBody() {
       setError("");
     }
   }, [shareAmount, minShares, maxShares, companyData]);
+
+  // Debug effects
+  useEffect(() => {
+    console.log("CompanyData updated:", {
+      sharePrice: companyData?.investmentDetails?.sharePrice,
+      fullData: companyData,
+    });
+  }, [companyData]);
+
+  useEffect(() => {
+    console.log("Share price:", companyData?.investmentDetails?.sharePrice);
+    console.log("Share amount:", shareAmount);
+    console.log(
+      "Calculated amount:",
+      calculateInvestmentAmount(
+        shareAmount,
+        companyData?.investmentDetails?.sharePrice
+      )
+    );
+  }, [shareAmount, companyData]);
+
+  // Early return after all hooks
+  if (!isAuthenticated || !user) {
+    return null;
+  }
 
   const handleConfetti = () => {
     const duration = 5 * 1000;
@@ -202,48 +248,15 @@ export default function InvestmentBody() {
     setIdNumber(value.slice(0, maxLength));
   };
 
-  const isIdNumberValid = () => {
-    if (entityType === "private") {
-      return idNumber.length === 11;
-    } else if (entityType === "entity") {
-      return idNumber.length === 9;
-    }
-    return false;
-  };
-
-  const isFormValid = React.useMemo(() => {
-    return (
-      !error &&
-      shareAmount > 0 &&
-      entityType &&
-      isIdNumberValid() &&
-      termsAccepted
-    );
-  }, [error, shareAmount, entityType, idNumber, termsAccepted]);
-
   const getInvestmentAmount = () => {
-    console.log("Current shareAmount:", shareAmount);
-    console.log(
-      "Current sharePrice:",
-      companyData?.investmentDetails?.sharePrice
-    );
-    console.log("CompanyData:", companyData); // Log full companyData to check structure
+    const sharePrice = companyData?.investmentDetails?.sharePrice;
+    if (!sharePrice || !shareAmount) {
+      return formatCurrency(0, 0, false);
+    }
 
-    const amount = calculateInvestmentAmount(
-      shareAmount,
-      companyData?.investmentDetails?.sharePrice
-    );
-    console.log("Calculated amount:", amount);
+    const amount = calculateInvestmentAmount(shareAmount, sharePrice);
     return formatCurrency(amount, 0, false);
   };
-
-  // Add effect to monitor companyData changes
-  useEffect(() => {
-    console.log("CompanyData updated:", {
-      sharePrice: companyData?.investmentDetails?.sharePrice,
-      fullData: companyData,
-    });
-  }, [companyData]);
 
   // Rest of your component remains the same until the terms section
   return (

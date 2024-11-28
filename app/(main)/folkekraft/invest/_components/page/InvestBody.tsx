@@ -47,6 +47,7 @@ const calculateInvestmentAmount = (
 
 export default function InvestmentBody() {
   const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
   const { setInvestmentDetails } = useInvestmentConfirmation();
   const {
     shareAmount,
@@ -64,7 +65,20 @@ export default function InvestmentBody() {
   const form = useForm();
   const [error, setError] = React.useState("");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const { user } = useAuth();
+
+  // Add authentication check
+  useEffect(() => {
+    if (!isAuthenticated) {
+      // Store the current URL to redirect back after login
+      localStorage.setItem("postLoginRedirect", "/folkekraft/invest");
+      router.push("/sign-in");
+    }
+  }, [isAuthenticated, router]);
+
+  // Return null or loading state while checking authentication
+  if (!isAuthenticated || !user) {
+    return null;
+  }
 
   // Memoize the validation thresholds
   const minShares = React.useMemo(() => {
@@ -178,6 +192,7 @@ export default function InvestmentBody() {
   const handleShareNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
     const number = parseInt(value) || 0;
+    console.log("Setting new shareAmount:", number);
     setShareAmount(number);
   };
 
@@ -207,12 +222,28 @@ export default function InvestmentBody() {
   }, [error, shareAmount, entityType, idNumber, termsAccepted]);
 
   const getInvestmentAmount = () => {
+    console.log("Current shareAmount:", shareAmount);
+    console.log(
+      "Current sharePrice:",
+      companyData?.investmentDetails?.sharePrice
+    );
+    console.log("CompanyData:", companyData); // Log full companyData to check structure
+
     const amount = calculateInvestmentAmount(
       shareAmount,
       companyData?.investmentDetails?.sharePrice
     );
+    console.log("Calculated amount:", amount);
     return formatCurrency(amount, 0, false);
   };
+
+  // Add effect to monitor companyData changes
+  useEffect(() => {
+    console.log("CompanyData updated:", {
+      sharePrice: companyData?.investmentDetails?.sharePrice,
+      fullData: companyData,
+    });
+  }, [companyData]);
 
   // Rest of your component remains the same until the terms section
   return (

@@ -143,7 +143,9 @@ const InvestmentPDF: React.FC<InvestmentPDFProps> = (props) => {
               <Text style={styles.tableCellBold}>Investering i</Text>
             </View>
             <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>{companyDetails.name}</Text>
+              <Text style={styles.tableCell}>
+                {companyDetails.bankDetails.accountHolder}
+              </Text>
             </View>
           </View>
         </View>

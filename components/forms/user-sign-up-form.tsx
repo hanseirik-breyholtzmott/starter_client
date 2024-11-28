@@ -56,25 +56,50 @@ const UserSignUpForm = (props: Props) => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("[SignUpForm] Starting form submission");
     if (isSubmitting) return;
+
     setIsSubmitting(true);
     try {
-      await signUp(
+      const result = await signUp(
         "email",
         values.firstname,
         values.lastname,
         values.email,
         values.password
       );
-    } catch (error) {
-      console.log("Login error:");
+
+      console.log("[SignUpForm] Sign up result:", {
+        success: result?.success,
+        status: result?.status,
+      });
+
+      if (!result?.success) {
+        // Show error toast
+        toast({
+          variant: "destructive",
+          title: "Registration Failed",
+          description:
+            result?.message ||
+            "Could not create your account. Please try again.",
+        });
+
+        // If it's an email-in-use error, focus the email field
+        if (result?.message?.toLowerCase().includes("email")) {
+          form.setFocus("email");
+        }
+      }
+    } catch (error: any) {
+      console.error("[SignUpForm] Form submission error:", error);
       toast({
         variant: "destructive",
-        title: "Login failed",
-        description: "Please check your credentials and try again.",
+        title: "Error",
+        description:
+          error.message || "An unexpected error occurred. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
+      console.log("[SignUpForm] Form submission completed");
     }
   }
 

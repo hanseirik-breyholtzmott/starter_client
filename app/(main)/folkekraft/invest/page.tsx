@@ -4,11 +4,14 @@ import React from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-//Helper functions
-import axiosInstance from "@/lib/axiosInstance";
+//Auth
+import { useAuth } from "@clerk/nextjs";
 
 //Components
-import InvestmentLayout from "./_components/investmentLayout";
+import InvestmentLayout from "./_components/page/InvestPageLayout";
+
+//Helper functions
+import axiosInstance from "@/lib/axiosInstance";
 
 const getInvestmentData = async () => {
   try {
@@ -43,9 +46,5 @@ export default async function InvestPage() {
     return <div>Failed to load investment data. Please try again later.</div>;
   }
 
-  return (
-    <>
-      <InvestmentLayout investmentData={investmentData} />
-    </>
-  );
+  return <InvestmentLayout investmentData={investmentData} />;
 }

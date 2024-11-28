@@ -36,18 +36,14 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  signIn: (
-    provider: string,
-    email?: string,
-    password?: string
-  ) => Promise<void>;
+  signIn: (provider: string, email?: string, password?: string) => Promise<any>;
   signUp: (
     provider: string,
     firstName?: string,
     lastName?: string,
     email?: string,
     password?: string
-  ) => Promise<void>;
+  ) => Promise<any>;
   signOut: () => Promise<void>;
   verifyEmail: (code: string, email: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
@@ -183,83 +179,97 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     email?: string,
     password?: string
   ) => {
+    console.log(
+      "[AuthContext] Starting signIn process for provider:",
+      provider
+    );
     setLoading(true);
     try {
       const authProvider = getProviderInstance(provider);
+      console.log("[AuthContext] Got auth provider, making login request");
+
+      // Store current path if it's a public route before initiating login
+      const currentPath = window.location.pathname;
+      const publicPaths = ["/folkekraft", "/folkekraft-group"];
+      if (publicPaths.includes(currentPath)) {
+        localStorage.setItem("postLoginRedirect", currentPath);
+      }
+
       const response = await authProvider.login(email, password);
-
-      const { user, accessToken, refreshToken, message, success } = response;
-
-      console.log(response);
-
-      if (response.redirectUrl) {
-        const params = new URLSearchParams(window.location.search);
-        const redirectUrl = params.get("redirectUrl");
-        if (redirectUrl) {
-          localStorage.setItem("postLoginRedirect", redirectUrl);
-        }
-        console.log("Redirecting to SSO:", response.redirectUrl);
-        router.push(response.redirectUrl);
-        return;
-      }
-
-      if (success) {
-        setUser(response.user);
-        setIsAuthenticated(true);
-        setAccessToken(response.accessToken);
-        setAuthorizationHeader(response.accessToken as string);
-
-        //create a cookie with the refreshToken
-        Promise.all([
-          setCookie(
-            "accessToken",
-            response.accessToken as string,
-            fifteenMinutesFromNow()
-          ),
-          setCookie(
-            "session",
-            response.refreshToken as string,
-            oneMonthFromNow()
-          ),
-        ]);
-
-        // Handle redirect logic
-        let finalRedirectUrl = "/folkekraft-group"; // Default redirect
-
-        // Check stored redirect from SSO first
-        const storedRedirect = localStorage.getItem("postLoginRedirect");
-        if (storedRedirect) {
-          finalRedirectUrl = storedRedirect;
-          localStorage.removeItem("postLoginRedirect");
-        } else {
-          // Check URL params for redirect
-          const params = new URLSearchParams(window.location.search);
-          const urlRedirect = params.get("redirectUrl");
-          if (urlRedirect) {
-            finalRedirectUrl = urlRedirect;
-          }
-        }
-
-        router.push(finalRedirectUrl);
-        return;
-      } else {
-        // Handle login failure
-        console.log("Login failed:", response.message);
-        toast({
-          title: "Login Failed",
-          description: response.message || "An error occurred during login",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.log("Sign in failed:", error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive",
+      console.log("[AuthContext] Login response:", {
+        success: response.success,
+        hasUser: !!response.user,
+        hasAccessToken: !!response.accessToken,
+        status: response.status,
       });
+
+      // Handle SSO providers first
+      if (response.redirectUrl) {
+        console.log(
+          "[AuthContext] SSO redirect detected:",
+          response.redirectUrl
+        );
+        router.push(response.redirectUrl);
+        return response;
+      }
+
+      // Check for failed login before proceeding
+      if (!response.success) {
+        console.log("[AuthContext] Login failed:", response.message);
+        return response;
+      }
+
+      console.log("[AuthContext] Login successful, setting up session");
+      setUser(response.user);
+      setIsAuthenticated(true);
+      setAccessToken(response.accessToken);
+      setAuthorizationHeader(response.accessToken as string);
+
+      console.log("[AuthContext] Setting cookies");
+      await Promise.all([
+        setCookie(
+          "accessToken",
+          response.accessToken as string,
+          fifteenMinutesFromNow()
+        ),
+        setCookie(
+          "session",
+          response.refreshToken as string,
+          oneMonthFromNow()
+        ),
+      ]);
+
+      // Handle redirect
+      let finalRedirectUrl = "/folkekraft-group"; // Default fallback
+      const storedRedirect = localStorage.getItem("postLoginRedirect");
+      if (
+        storedRedirect &&
+        (publicPaths.includes(storedRedirect) ||
+          storedRedirect.startsWith("/folkekraft/"))
+      ) {
+        finalRedirectUrl = storedRedirect;
+        localStorage.removeItem("postLoginRedirect");
+      }
+      console.log("[AuthContext] Redirecting to:", finalRedirectUrl);
+      router.push(finalRedirectUrl);
+
+      return response;
+    } catch (error: any) {
+      console.error("[AuthContext] Sign in error:", {
+        message: error.message,
+        stack: error.stack,
+      });
+      return {
+        success: false,
+        message: error.message || "An unexpected error occurred",
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        status: 500,
+      };
     } finally {
       setLoading(false);
+      console.log("[AuthContext] Sign in process completed");
     }
   };
 

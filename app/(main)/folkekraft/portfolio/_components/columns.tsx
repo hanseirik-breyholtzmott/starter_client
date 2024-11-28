@@ -45,15 +45,14 @@ export const columns: ColumnDef<Shareportfolio>[] = [
       return <div className="text-center">Aksjonær type</div>;
     },
     cell: ({ row }) => {
-      const identifierType = row.getValue("identifierType") as string;
-      const identifierValue = row.getValue("identifierValue") as number;
-      if (identifierValue.toString().length === 11) {
+      const identifierType = row.original.identifierType;
+      const identifierValue = row.getValue("identifierValue") as string;
+      if (identifierValue.length === 11) {
         return <div className="text-center">Privatperson</div>;
       } else {
         return (
           <div className="text-center">
-            {formatValue(row.getValue("identifierValue") as number, 0, false)} /
-            Selskap
+            {formatValue(parseInt(identifierValue), 0, false)} / Selskap
           </div>
         );
       }

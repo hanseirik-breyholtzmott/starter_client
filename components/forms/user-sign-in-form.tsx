@@ -54,16 +54,36 @@ const UserSignInForm = (props: Props) => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("[SignInForm] Starting form submission");
     if (isSubmitting) return;
+
     setIsSubmitting(true);
     try {
-      await signIn("email", values.email, values.password);
-    } catch (error) {
-      console.log("Login error:");
+      const result = await signIn("email", values.email, values.password);
+      console.log("[SignInForm] Sign in result:", {
+        success: result?.success,
+        hasUser: !!result?.user,
+        status: result?.status,
+      });
+
+      if (!result?.success) {
+        // Show error toast
+        toast({
+          variant: "destructive",
+          title: "Login Failed",
+          description:
+            result?.message || "Please check your email and password",
+        });
+
+        // Optionally set focus back to password field
+        form.setFocus("password");
+      }
+    } catch (error: any) {
+      console.error("[SignInForm] Form submission error:", error);
       toast({
         variant: "destructive",
-        title: "Login failed",
-        description: "Please check your credentials and try again.",
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -90,6 +110,12 @@ const UserSignInForm = (props: Props) => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* Show form-level errors */}
+          {form.formState.errors.root && (
+            <div className="text-red-500 text-sm">
+              {form.formState.errors.root.message}
+            </div>
+          )}
           <FormField
             control={form.control}
             name="email"

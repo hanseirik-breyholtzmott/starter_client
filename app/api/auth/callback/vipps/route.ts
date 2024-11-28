@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { setCookie } from "@/lib/cookies";
 import { fifteenMinutesFromNow, oneMonthFromNow } from "@/lib/date";
 
 export async function GET(request: NextRequest) {
@@ -7,14 +6,26 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const accessToken = searchParams.get("accessToken");
   const refreshToken = searchParams.get("refreshToken");
+  const state = searchParams.get("state");
+
+  console.log("Received state (redirect URL):", state);
 
   if (!accessToken || !refreshToken) {
     return NextResponse.json({ error: "Invalid tokens" }, { status: 400 });
   }
 
-  const response = NextResponse.redirect(
-    new URL("/folkekraft-group", request.url)
-  );
+  // Validate the redirect URL
+  const validPaths = ["/folkekraft", "/folkekraft-group", "/folkekraft/invest"];
+  const finalRedirectUrl =
+    state && (validPaths.includes(state) || state.startsWith("/folkekraft/"))
+      ? state
+      : "/folkekraft";
+
+  console.log("Final redirect URL:", finalRedirectUrl);
+
+  // Create the response with the redirect URL
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.url;
+  const response = NextResponse.redirect(new URL(finalRedirectUrl, baseUrl));
 
   // Set cookies
   response.cookies.set("accessToken", accessToken, {

@@ -6,19 +6,58 @@ import { oneMonthFromNow } from "../../lib/date";
 
 export const emailAuthProvider: AuthProvider = {
   login: async (email?: string, password?: string) => {
-    const response = await axiosInstance.post("/auth/login", {
-      email,
-      password,
-    });
+    console.log("[EmailAuthProvider] Starting login attempt for email:", email);
+    try {
+      const response = await axiosInstance.post("/auth/login", {
+        email,
+        password,
+      });
 
-    return {
-      user: response.data.user,
-      accessToken: response.data.accessToken,
-      refreshToken: response.data.refreshToken,
-      status: response.status,
-      message: response.data.message || "Login successful",
-      success: true,
-    };
+      console.log("[EmailAuthProvider] Login response:", {
+        status: response.status,
+        success: response.data.success,
+        hasUser: !!response.data.user,
+        hasAccessToken: !!response.data.accessToken,
+        hasRefreshToken: !!response.data.refreshToken,
+      });
+
+      // Check if the response indicates success
+      if (!response.data.success) {
+        console.log("[EmailAuthProvider] Login failed:", response.data.message);
+        return {
+          user: null,
+          accessToken: null,
+          refreshToken: null,
+          status: response.status,
+          message: response.data.message || "Invalid credentials",
+          success: false,
+        };
+      }
+
+      console.log("[EmailAuthProvider] Login successful");
+      return {
+        user: response.data.user,
+        accessToken: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
+        status: response.status,
+        message: response.data.message || "Login successful",
+        success: true,
+      };
+    } catch (error: any) {
+      console.error("[EmailAuthProvider] Login error:", {
+        status: error.response?.status,
+        message: error.response?.data?.message,
+        error: error.message,
+      });
+      return {
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Login failed",
+        success: false,
+      };
+    }
   },
 
   register: async (

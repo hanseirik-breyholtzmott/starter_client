@@ -3,10 +3,54 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 // Type Definitions
+interface Button {
+  text: string;
+  link: string;
+}
+
 interface Perk {
+  button: Button;
   title: string;
-  value: number;
+  actionText: string;
   description: string;
+  _id: string;
+}
+
+interface Term {
+  id: number;
+  text: string;
+}
+
+interface BankDetails {
+  accountNumber: string;
+  bankName: string;
+  accountHolder: string;
+}
+
+interface CompanyDetails {
+  name: string;
+  ceo: string;
+  address: string;
+  orgNumber: string;
+  bankDetails: BankDetails;
+}
+
+interface InvestmentDetails {
+  sharePrice: number;
+  shareClassId: string;
+  availableShares: number;
+  investmentMinimum: number;
+  investmentMaximum: number;
+}
+
+interface CompanyData {
+  companyName: string;
+  description: string;
+  ceo: string;
+  investmentDetails: InvestmentDetails;
+  companyDetails: CompanyDetails;
+  perks: Perk[];
+  terms: Term[];
 }
 
 interface InvestmentContextType {
@@ -21,6 +65,8 @@ interface InvestmentContextType {
   activePerks: Perk[];
   setActivePerks: (perks: Perk[]) => void;
   clearInvestmentData: () => void;
+  companyData: CompanyData | null;
+  setCompanyData: (data: CompanyData) => void;
 }
 
 // Context Creation
@@ -47,6 +93,7 @@ export const InvestmentProvider = ({
   const [idNumber, setIdNumber] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [activePerks, setActivePerks] = useState<Perk[]>([]);
+  const [companyData, setCompanyData] = useState<CompanyData | null>(null);
 
   // Load saved investment data from localStorage on component mount
   useEffect(() => {
@@ -60,6 +107,7 @@ export const InvestmentProvider = ({
         setIdNumber(data.idNumber);
         setTermsAccepted(data.termsAccepted);
         setActivePerks(data.activePerks);
+        setCompanyData(data.companyData);
       } else {
         console.log("Investment data expired");
         localStorage.removeItem("investmentData");
@@ -75,10 +123,18 @@ export const InvestmentProvider = ({
       idNumber,
       termsAccepted,
       activePerks,
+      companyData,
       timestamp: Date.now(),
     };
     localStorage.setItem("investmentData", JSON.stringify(investmentData));
-  }, [shareAmount, entityType, idNumber, termsAccepted, activePerks]);
+  }, [
+    shareAmount,
+    entityType,
+    idNumber,
+    termsAccepted,
+    activePerks,
+    companyData,
+  ]);
 
   // Utility function to clear all investment data
   const clearInvestmentData = () => {
@@ -88,6 +144,7 @@ export const InvestmentProvider = ({
     setIdNumber("");
     setTermsAccepted(false);
     setActivePerks([]);
+    setCompanyData(null);
   };
 
   // Provide context values to children
@@ -105,6 +162,8 @@ export const InvestmentProvider = ({
         activePerks,
         setActivePerks,
         clearInvestmentData,
+        companyData,
+        setCompanyData,
       }}
     >
       {children}

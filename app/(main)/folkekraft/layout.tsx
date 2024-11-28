@@ -3,6 +3,7 @@ import React from "react";
 //Context
 import { InvestmentConfirmationProvider } from "@/app/hooks/InvestmentConfirmationContext";
 import { InvestmentProvider } from "@/app/hooks/InvestContext";
+import { CompanyDataProvider } from "@/app/hooks/CompanyDataContext";
 
 //Components
 import Navbar from "./_components/nav";
@@ -14,12 +15,14 @@ export default function CampaignLayout({
   children: React.ReactNode;
 }) {
   return (
-    <InvestmentProvider>
-      <InvestmentConfirmationProvider>
-        <Navbar />
-        {children}
-        <Footer />
-      </InvestmentConfirmationProvider>
-    </InvestmentProvider>
+    <CompanyDataProvider>
+      <InvestmentProvider>
+        <InvestmentConfirmationProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </InvestmentConfirmationProvider>
+      </InvestmentProvider>
+    </CompanyDataProvider>
   );
 }

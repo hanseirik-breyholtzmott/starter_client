@@ -2,66 +2,50 @@
 
 import React, { createContext, useContext, useState } from "react";
 
-//Define the interface for investment details
+interface BankDetails {
+  accountNumber: string;
+  bankName: string;
+  accountHolder: string;
+}
+
+interface CompanyDetails {
+  name: string;
+  ceo: string;
+  address: string;
+  orgNumber: string;
+  bankDetails: BankDetails;
+}
+
 interface InvestmentDetails {
   purchasedShares: number;
   pricePerShare: number;
   totalInvestment: number;
   investorName: string;
   email: string;
-  companyName: string;
-  companyCeo: string;
+  purchaseDate: string;
+  dueDate: string;
+  companyDetails: CompanyDetails;
 }
 
-//Create the context
 interface InvestmentConfirmationContextType {
-  showConfirmDialog: boolean;
-  setShowConfirmDialog: (show: boolean) => void;
-  investmentDetails: InvestmentDetails;
+  investmentDetails: InvestmentDetails | null;
   setInvestmentDetails: (details: InvestmentDetails) => void;
 }
 
-// Create the context with default values
 const InvestmentConfirmationContext =
-  createContext<InvestmentConfirmationContextType>({
-    showConfirmDialog: false,
-    setShowConfirmDialog: () => {},
-    investmentDetails: {
-      purchasedShares: 0,
-      pricePerShare: 0,
-      totalInvestment: 0,
-      investorName: "",
-      email: "",
-      companyName: "",
-      companyCeo: "",
-    },
-    setInvestmentDetails: () => {},
-  });
+  createContext<InvestmentConfirmationContextType | null>(null);
 
-// Create the provider
 export const InvestmentConfirmationProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [investmentDetails, setInvestmentDetails] = useState<InvestmentDetails>(
-    {
-      purchasedShares: 0,
-      pricePerShare: 0,
-      totalInvestment: 0,
-      investorName: "",
-      email: "",
-      companyName: "",
-      companyCeo: "",
-    }
-  );
+  const [investmentDetails, setInvestmentDetails] =
+    useState<InvestmentDetails | null>(null);
 
   return (
     <InvestmentConfirmationContext.Provider
       value={{
-        showConfirmDialog,
-        setShowConfirmDialog,
         investmentDetails,
         setInvestmentDetails,
       }}
@@ -71,9 +55,12 @@ export const InvestmentConfirmationProvider = ({
   );
 };
 
-// Create the hook
 export const useInvestmentConfirmation = () => {
-  return useContext(
-    InvestmentConfirmationContext
-  ) as InvestmentConfirmationContextType;
+  const context = useContext(InvestmentConfirmationContext);
+  if (!context) {
+    throw new Error(
+      "useInvestmentConfirmation must be used within an InvestmentConfirmationProvider"
+    );
+  }
+  return context;
 };

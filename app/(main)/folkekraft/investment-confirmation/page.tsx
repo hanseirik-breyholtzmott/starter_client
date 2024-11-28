@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import axiosInstance from "@/lib/axiosInstance";
 import { useInvestmentConfirmation } from "@/app/hooks/InvestmentConfirmationContext";
 import {
   Download,
@@ -22,12 +21,16 @@ import {
 } from "@/components/ui/card";
 import InvestmentPDF from "@/components/react-pdf/sharePDF";
 import { BlobProvider } from "@react-pdf/renderer";
+import type { InvestmentDetails } from "@/app/hooks/InvestmentConfirmationContext";
+
+const getCompanyName = (details: InvestmentDetails | null) => {
+  return details?.companyDetails?.name || "";
+};
 
 export default function SharePurchaseSuccess() {
   const router = useRouter();
   const { investmentDetails } = useInvestmentConfirmation();
   const [currentStep, setCurrentStep] = useState(1);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   // Redirect if no investment details
   useEffect(() => {
@@ -37,36 +40,9 @@ export default function SharePurchaseSuccess() {
     }
   }, [investmentDetails, router]);
 
-  // Return null while checking investment details
-  if (!investmentDetails) {
-    return null;
-  }
-
-  const purchaseDetails = {
-    shareCount: investmentDetails.purchasedShares,
-    pricePerShare: investmentDetails.pricePerShare,
-    totalInvestment: investmentDetails.totalInvestment,
-    purchaseDate: new Date().toLocaleDateString("no-NO"),
-    paymentMethod: "Bank Transfer",
-    accountNumber: "32082799299",
-    accountHolderName: "Folkekraft AS",
-    bankName: "SpareBank 1 Sør-Norge",
-    email: investmentDetails.email,
-    name: investmentDetails.investorName,
-    phone: "", // You might want to add this to context if needed
-    address: "", // You might want to add this to context if needed
-    companyName: investmentDetails.companyDetails.name,
-    founderName: investmentDetails.companyDetails.ceo,
-  };
-
-  const downloadPDF = () => {
-    // This function is no longer needed as PDFDownloadLink handles the download
-    return null;
-  };
+  if (!investmentDetails) return null;
 
   const renderPDFDownload = () => {
-    if (!investmentDetails) return null;
-
     const pdfData = {
       name: investmentDetails.investorName,
       shares: investmentDetails.purchasedShares,
@@ -78,7 +54,7 @@ export default function SharePurchaseSuccess() {
 
     return (
       <BlobProvider document={<InvestmentPDF {...pdfData} />}>
-        {({ blob, url, loading }) => (
+        {({ url, loading }) => (
           <Button
             onClick={() => {
               if (url) {
@@ -99,10 +75,6 @@ export default function SharePurchaseSuccess() {
         )}
       </BlobProvider>
     );
-  };
-
-  const viewPortfolio = () => {
-    router.push("/folkekraft/portfolio");
   };
 
   const renderStep = () => {
@@ -130,30 +102,33 @@ export default function SharePurchaseSuccess() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <p>
-                    <strong>Betalingsmåte:</strong>{" "}
-                    {purchaseDetails.paymentMethod}
+                    <strong>Betalingsmåte:</strong> Bank Transfer
                   </p>
                   <p>
                     <strong>Kontoinnehaver:</strong>{" "}
-                    {purchaseDetails.accountHolderName}
+                    {investmentDetails?.companyDetails?.bankDetails
+                      ?.accountHolder || ""}
                   </p>
                   <p>
-                    <strong>Bank:</strong> {purchaseDetails.bankName}
+                    <strong>Bank:</strong>{" "}
+                    {investmentDetails?.companyDetails?.bankDetails?.bankName ||
+                      ""}
                   </p>
                 </div>
-
                 <div className="space-y-2">
                   <p>
                     <strong>Kontonummer:</strong>{" "}
-                    {purchaseDetails.accountNumber}
+                    {investmentDetails?.companyDetails?.bankDetails
+                      ?.accountNumber || ""}
                   </p>
                   <p>
                     <strong>Beløp å overføre:</strong>{" "}
-                    {purchaseDetails.totalInvestment.toLocaleString("no-NO")} kr
+                    {investmentDetails.totalInvestment.toLocaleString("no-NO")}{" "}
+                    kr
                   </p>
                   <p>
-                    <strong>Melding:</strong> {purchaseDetails.name} -{" "}
-                    {purchaseDetails.shareCount}
+                    <strong>Melding:</strong> {investmentDetails.investorName} -{" "}
+                    {investmentDetails.purchasedShares}
                   </p>
                 </div>
               </div>
@@ -167,13 +142,13 @@ export default function SharePurchaseSuccess() {
             </h3>
             <div className="bg-white p-4 rounded-lg italic">
               <p>
-                &ldquo;Kjære {purchaseDetails.name}, Takk for din investering i{" "}
-                {purchaseDetails.companyName}. Vi er glade for å ha deg med på
-                laget som aksjonær. Din støtte er avgjørende for vår vekst, og
-                vi ser frem til å dele vår suksess med deg. Hvis du har
-                spørsmål, ikke nøl med å ta kontakt. Med vennlig hilsen,{" "}
-                {purchaseDetails.founderName}, CEO,{" "}
-                {purchaseDetails.companyName}&rdquo;
+                &ldquo;Kjære {investmentDetails?.investorName || ""}, Takk for
+                din investering i {getCompanyName(investmentDetails)}. Vi er
+                glade for å ha deg med på laget som aksjonær. Din støtte er
+                avgjørende for vår vekst, og vi ser frem til å dele vår suksess
+                med deg. Hvis du har spørsmål, ikke nøl med å ta kontakt. Med
+                vennlig hilsen, {investmentDetails?.companyDetails?.ceo || ""},
+                CEO, {getCompanyName(investmentDetails)}&rdquo;
               </p>
             </div>
           </div>
@@ -190,65 +165,32 @@ export default function SharePurchaseSuccess() {
             Gratulerer!
           </CardTitle>
           <CardDescription className="text-xl">
-            Du har tegnet aksjer i {purchaseDetails.companyName}.
+            Du har tegnet aksjer i {getCompanyName(investmentDetails)}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-3 gap-4 bg-green-100 p-4 rounded-lg">
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-700">Aksjer tegnet</h3>
-              <p className="text-2xl font-bold">{purchaseDetails.shareCount}</p>
+              <p className="text-2xl font-bold">
+                {investmentDetails.purchasedShares.toLocaleString("no-NO")}
+              </p>
             </div>
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-700">Pris per aksje</h3>
               <p className="text-2xl font-bold">
-                {purchaseDetails.pricePerShare} kr
+                {investmentDetails.pricePerShare.toLocaleString("no-NO")} kr
               </p>
             </div>
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-700">Total investering</h3>
               <p className="text-2xl font-bold">
-                {purchaseDetails.totalInvestment.toLocaleString("no-NO")} kr
+                {investmentDetails.totalInvestment.toLocaleString("no-NO")} kr
               </p>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-green-700">
-              Investeringsdetaljer
-            </h3>
-            <div className="bg-white p-4 rounded-lg grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p>
-                  <strong>Investor:</strong> {purchaseDetails.name}
-                </p>
-                <p>
-                  <strong>E-post:</strong> {purchaseDetails.email}
-                </p>
-              </div>
-              <div>
-                <p>
-                  <strong>Selskap:</strong> {purchaseDetails.companyName}
-                </p>
-                <p>
-                  <strong>CEO:</strong> {purchaseDetails.founderName}
-                </p>
-              </div>
-            </div>
-          </div>
-
           {renderStep()}
-
-          <div className="flex items-center space-x-2 text-green-700">
-            <Mail className="h-5 w-5" />
-            <p>
-              En investeringsbekreftelse er sendt til {purchaseDetails.email}
-            </p>
-          </div>
-
-          <div className="text-center text-sm text-gray-600">
-            <p>Kjøpsdato: {purchaseDetails.purchaseDate}</p>
-          </div>
         </CardContent>
         <CardFooter className="flex justify-between">
           {currentStep > 1 && (
@@ -271,7 +213,7 @@ export default function SharePurchaseSuccess() {
             </Button>
           ) : (
             <Button
-              onClick={viewPortfolio}
+              onClick={() => router.push("/folkekraft/portfolio")}
               className="w-full sm:w-auto ml-auto"
             >
               <PieChart className="mr-2 h-4 w-4" /> Se portefølje

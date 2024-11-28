@@ -123,34 +123,29 @@ export default function InvestmentBody() {
   const handleConfirmInvestment = () => {
     setShowConfirmDialog(false);
 
+    if (!companyData || !user) return;
+
     const purchaseDate = new Date().toLocaleDateString("no-NO");
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 7);
 
     setInvestmentDetails({
       purchasedShares: shareAmount,
-      pricePerShare: companyData?.investmentDetails.sharePrice || 0,
-      totalInvestment:
-        shareAmount * (companyData?.investmentDetails.sharePrice || 0),
-      investorName: user ? `${user.firstName} ${user.lastName}` : "",
-      email: user?.email || "",
+      pricePerShare: companyData.investmentDetails.sharePrice,
+      totalInvestment: shareAmount * companyData.investmentDetails.sharePrice,
+      investorName: `${user.firstName} ${user.lastName}`,
+      email: user.email,
       purchaseDate,
       dueDate: dueDate.toLocaleDateString("no-NO"),
       companyDetails: {
-        name: companyData?.companyName || "",
-        ceo: companyData?.ceo || "",
+        name: companyData.companyName,
+        ceo: companyData.ceo,
         address: "Kanalveien 107, 5058 BERGEN",
         orgNumber: "830068112",
         bankDetails: {
-          accountNumber:
-            companyData?.companyDetails?.bankDetails.accountNumber ||
-            "32082799299",
-          bankName:
-            companyData?.companyDetails?.bankDetails.bankName ||
-            "SpareBank 1 Sør-Norge",
-          accountHolder:
-            companyData?.companyDetails?.bankDetails.accountHolder ||
-            "Folkekraft AS",
+          accountNumber: "32082799299",
+          bankName: "SpareBank 1 Sør-Norge",
+          accountHolder: "Folkekraft AS",
         },
       },
     });
@@ -190,10 +185,24 @@ export default function InvestmentBody() {
     );
   }, [error, shareAmount, entityType, idNumber, termsAccepted]);
 
-  const investmentAmount =
-    shareAmount && companyData
-      ? (shareAmount * companyData.investmentDetails.sharePrice).toFixed(0)
-      : "";
+  const investmentAmount = React.useMemo(() => {
+    if (!shareAmount || !companyData?.investmentDetails?.sharePrice) {
+      return "";
+    }
+
+    const sharePrice = companyData.investmentDetails.sharePrice;
+    const amount = shareAmount * sharePrice;
+    return amount.toLocaleString("no-NO");
+  }, [shareAmount, companyData?.investmentDetails?.sharePrice]);
+
+  // Add this memoized value for the formatted dialog amount
+  const formattedDialogAmount = React.useMemo(() => {
+    if (!shareAmount || !companyData?.investmentDetails?.sharePrice) {
+      return "0";
+    }
+    const amount = shareAmount * companyData.investmentDetails.sharePrice;
+    return amount.toLocaleString("no-NO");
+  }, [shareAmount, companyData?.investmentDetails?.sharePrice]);
 
   // Rest of your component remains the same until the terms section
   return (
@@ -396,13 +405,10 @@ export default function InvestmentBody() {
                   <DialogHeader>
                     <DialogTitle>Bekreft din investering</DialogTitle>
                     <DialogDescription>
-                      Du er i ferd med å investere {shareAmount} aksjer for{" "}
-                      {investmentAmount
-                        ? `${parseInt(investmentAmount).toLocaleString(
-                            "no-NO"
-                          )}`
-                        : "0"}{" "}
-                      kr. Er du sikker på at du vil fortsette?
+                      Du er i ferd med å investere{" "}
+                      {shareAmount.toLocaleString("no-NO")} aksjer for{" "}
+                      {formattedDialogAmount} kr. Er du sikker på at du vil
+                      fortsette?
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter className="flex gap-2">

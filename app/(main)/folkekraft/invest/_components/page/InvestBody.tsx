@@ -132,39 +132,47 @@ export default function InvestmentBody() {
     console.log(values.terms);
   };
 
-  const handleConfirmInvestment = () => {
-    setShowConfirmDialog(false);
+  const handleConfirmInvestment = async () => {
+    try {
+      setShowConfirmDialog(false);
 
-    if (!companyData || !user || !shareAmount) return;
+      if (!companyData || !user || !shareAmount) return;
 
-    const totalAmount = calculateInvestmentAmount(
-      shareAmount,
-      companyData.investmentDetails.sharePrice
-    );
+      const totalAmount = calculateInvestmentAmount(
+        shareAmount,
+        companyData.investmentDetails.sharePrice
+      );
 
-    setInvestmentDetails({
-      purchasedShares: shareAmount,
-      pricePerShare: companyData.investmentDetails.sharePrice,
-      totalInvestment: totalAmount,
-      investorName: `${user.firstName} ${user.lastName}`,
-      email: user.email,
-      purchaseDate: new Date().toLocaleDateString("no-NO"),
-      dueDate: new Date().toLocaleDateString("no-NO"),
-      companyDetails: {
-        name: companyData.companyName,
-        ceo: companyData.ceo,
-        address: "Kanalveien 107, 5058 BERGEN",
-        orgNumber: "830068112",
-        bankDetails: {
-          accountNumber: "32082799299",
-          bankName: "SpareBank 1 Sør-Norge",
-          accountHolder: "Folkekraft AS",
-        },
-      },
-    });
+      // Wait for the state to be set before navigation
+      await new Promise<void>((resolve) => {
+        setInvestmentDetails({
+          purchasedShares: shareAmount,
+          pricePerShare: companyData.investmentDetails.sharePrice,
+          totalInvestment: totalAmount,
+          investorName: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+          purchaseDate: new Date().toLocaleDateString("no-NO"),
+          dueDate: new Date().toLocaleDateString("no-NO"),
+          companyDetails: {
+            name: companyData.companyName,
+            ceo: companyData.ceo,
+            address: "Kanalveien 107, 5058 BERGEN",
+            orgNumber: "830068112",
+            bankDetails: {
+              accountNumber: "32082799299",
+              bankName: "SpareBank 1 Sør-Norge",
+              accountHolder: "Folkekraft AS",
+            },
+          },
+        });
+        resolve();
+      });
 
-    handleConfetti();
-    router.push("/folkekraft/investment-confirmation");
+      handleConfetti();
+      router.push("/folkekraft/investment-confirmation");
+    } catch (error) {
+      console.error("Error in handleConfirmInvestment:", error);
+    }
   };
 
   const handleShareNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,13 +206,13 @@ export default function InvestmentBody() {
     );
   }, [error, shareAmount, entityType, idNumber, termsAccepted]);
 
-  const investmentAmount = React.useMemo(() => {
+  const getInvestmentAmount = () => {
     const amount = calculateInvestmentAmount(
       shareAmount,
       companyData?.investmentDetails?.sharePrice
     );
     return formatCurrency(amount, 0, false);
-  }, [shareAmount, companyData?.investmentDetails?.sharePrice]);
+  };
 
   // Rest of your component remains the same until the terms section
   return (
@@ -334,7 +342,7 @@ export default function InvestmentBody() {
                   <Input
                     type="text"
                     placeholder="Beregnet beløp"
-                    value={investmentAmount}
+                    value={getInvestmentAmount()}
                     disabled
                     className="mb-2 text-xl px-4 py-4 h-14 rounded-lg bg-gray-100"
                   />
@@ -409,7 +417,8 @@ export default function InvestmentBody() {
                     <DialogDescription>
                       Du er i ferd med å investere{" "}
                       {formatNumber(shareAmount || 0)} aksjer for{" "}
-                      {investmentAmount}. Er du sikker på at du vil fortsette?
+                      {getInvestmentAmount()}. Er du sikker på at du vil
+                      fortsette?
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter className="flex gap-2">

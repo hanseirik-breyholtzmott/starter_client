@@ -32,6 +32,7 @@ import {
   FormControl,
 } from "@/components/ui/form";
 import { useAuth } from "@/app/hooks/AuthContext";
+import { formatCurrency, formatNumber } from "@/lib/helperFunctions";
 
 export default function InvestmentBody() {
   const router = useRouter();
@@ -151,7 +152,10 @@ export default function InvestmentBody() {
     });
 
     handleConfetti();
-    router.push("/folkekraft/investment-confirmation");
+    // Force navigation after a short delay to ensure state is updated
+    setTimeout(() => {
+      router.push("/folkekraft/investment-confirmation");
+    }, 100);
   };
 
   const handleShareNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -186,22 +190,12 @@ export default function InvestmentBody() {
   }, [error, shareAmount, entityType, idNumber, termsAccepted]);
 
   const investmentAmount = React.useMemo(() => {
-    if (!shareAmount || !companyData?.investmentDetails?.sharePrice) {
-      return "";
+    if (!companyData?.investmentDetails?.sharePrice) {
+      return "0 kr";
     }
-
-    const sharePrice = companyData.investmentDetails.sharePrice;
-    const amount = shareAmount * sharePrice;
-    return amount.toLocaleString("no-NO");
-  }, [shareAmount, companyData?.investmentDetails?.sharePrice]);
-
-  // Add this memoized value for the formatted dialog amount
-  const formattedDialogAmount = React.useMemo(() => {
-    if (!shareAmount || !companyData?.investmentDetails?.sharePrice) {
-      return "0";
-    }
-    const amount = shareAmount * companyData.investmentDetails.sharePrice;
-    return amount.toLocaleString("no-NO");
+    const amount =
+      (shareAmount || 0) * companyData.investmentDetails.sharePrice;
+    return formatCurrency(amount, 0, false);
   }, [shareAmount, companyData?.investmentDetails?.sharePrice]);
 
   // Rest of your component remains the same until the terms section
@@ -332,7 +326,7 @@ export default function InvestmentBody() {
                   <Input
                     type="text"
                     placeholder="Beregnet beløp"
-                    value={investmentAmount ? `${investmentAmount} kr` : ""}
+                    value={investmentAmount}
                     disabled
                     className="mb-2 text-xl px-4 py-4 h-14 rounded-lg bg-gray-100"
                   />
@@ -406,9 +400,8 @@ export default function InvestmentBody() {
                     <DialogTitle>Bekreft din investering</DialogTitle>
                     <DialogDescription>
                       Du er i ferd med å investere{" "}
-                      {shareAmount.toLocaleString("no-NO")} aksjer for{" "}
-                      {formattedDialogAmount} kr. Er du sikker på at du vil
-                      fortsette?
+                      {formatNumber(shareAmount || 0)} aksjer for{" "}
+                      {investmentAmount}. Er du sikker på at du vil fortsette?
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter className="flex gap-2">

@@ -22,6 +22,7 @@ import {
 import InvestmentPDF from "@/components/react-pdf/sharePDF";
 import { BlobProvider } from "@react-pdf/renderer";
 import type { InvestmentDetails } from "@/app/hooks/InvestmentConfirmationContext";
+import { formatCurrency, formatNumber } from "@/lib/helperFunctions";
 
 const getCompanyName = (details: InvestmentDetails | null) => {
   return details?.companyDetails?.name || "";
@@ -123,8 +124,11 @@ export default function SharePurchaseSuccess() {
                   </p>
                   <p>
                     <strong>Beløp å overføre:</strong>{" "}
-                    {investmentDetails.totalInvestment.toLocaleString("no-NO")}{" "}
-                    kr
+                    {formatCurrency(
+                      investmentDetails?.totalInvestment || 0,
+                      0,
+                      false
+                    )}
                   </p>
                   <p>
                     <strong>Melding:</strong> {investmentDetails.investorName} -{" "}
@@ -173,19 +177,27 @@ export default function SharePurchaseSuccess() {
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-700">Aksjer tegnet</h3>
               <p className="text-2xl font-bold">
-                {investmentDetails.purchasedShares.toLocaleString("no-NO")}
+                {formatNumber(investmentDetails?.purchasedShares || 0)}
               </p>
             </div>
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-700">Pris per aksje</h3>
               <p className="text-2xl font-bold">
-                {investmentDetails.pricePerShare.toLocaleString("no-NO")} kr
+                {formatCurrency(
+                  investmentDetails?.pricePerShare || 0,
+                  0,
+                  false
+                )}
               </p>
             </div>
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-700">Total investering</h3>
               <p className="text-2xl font-bold">
-                {investmentDetails.totalInvestment.toLocaleString("no-NO")} kr
+                {formatCurrency(
+                  investmentDetails?.totalInvestment || 0,
+                  0,
+                  false
+                )}
               </p>
             </div>
           </div>

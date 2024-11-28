@@ -34,6 +34,17 @@ import {
 import { useAuth } from "@/app/hooks/AuthContext";
 import { formatCurrency, formatNumber } from "@/lib/helperFunctions";
 
+// Add this function at the top of the component to ensure consistent calculation
+const calculateInvestmentAmount = (
+  shares: number,
+  pricePerShare: number | undefined
+) => {
+  if (!shares || !pricePerShare) {
+    return 0;
+  }
+  return shares * pricePerShare;
+};
+
 export default function InvestmentBody() {
   const router = useRouter();
   const { setInvestmentDetails } = useInvestmentConfirmation();
@@ -124,20 +135,21 @@ export default function InvestmentBody() {
   const handleConfirmInvestment = () => {
     setShowConfirmDialog(false);
 
-    if (!companyData || !user) return;
+    if (!companyData || !user || !shareAmount) return;
 
-    const purchaseDate = new Date().toLocaleDateString("no-NO");
-    const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 7);
+    const totalAmount = calculateInvestmentAmount(
+      shareAmount,
+      companyData.investmentDetails.sharePrice
+    );
 
     setInvestmentDetails({
       purchasedShares: shareAmount,
       pricePerShare: companyData.investmentDetails.sharePrice,
-      totalInvestment: shareAmount * companyData.investmentDetails.sharePrice,
+      totalInvestment: totalAmount,
       investorName: `${user.firstName} ${user.lastName}`,
       email: user.email,
-      purchaseDate,
-      dueDate: dueDate.toLocaleDateString("no-NO"),
+      purchaseDate: new Date().toLocaleDateString("no-NO"),
+      dueDate: new Date().toLocaleDateString("no-NO"),
       companyDetails: {
         name: companyData.companyName,
         ceo: companyData.ceo,
@@ -152,10 +164,7 @@ export default function InvestmentBody() {
     });
 
     handleConfetti();
-    // Force navigation after a short delay to ensure state is updated
-    setTimeout(() => {
-      router.push("/folkekraft/investment-confirmation");
-    }, 100);
+    router.push("/folkekraft/investment-confirmation");
   };
 
   const handleShareNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,11 +199,10 @@ export default function InvestmentBody() {
   }, [error, shareAmount, entityType, idNumber, termsAccepted]);
 
   const investmentAmount = React.useMemo(() => {
-    if (!companyData?.investmentDetails?.sharePrice) {
-      return "0 kr";
-    }
-    const amount =
-      (shareAmount || 0) * companyData.investmentDetails.sharePrice;
+    const amount = calculateInvestmentAmount(
+      shareAmount,
+      companyData?.investmentDetails?.sharePrice
+    );
     return formatCurrency(amount, 0, false);
   }, [shareAmount, companyData?.investmentDetails?.sharePrice]);
 

@@ -39,11 +39,13 @@ const calculateInvestmentAmount = (
   shares: number,
   pricePerShare: number | undefined
 ) => {
-  if (!shares) {
-    return 0;
-  }
-  // Use 8 as default price if pricePerShare is undefined
-  const price = pricePerShare ?? 8;
+  if (!shares) return 0;
+
+  // Log the incoming values
+  console.log("Calculating investment amount:", { shares, pricePerShare });
+
+  // If pricePerShare is undefined or 0, use 8 as fallback
+  const price = !pricePerShare || pricePerShare === 0 ? 8 : pricePerShare;
   return Number(shares) * price;
 };
 
@@ -263,21 +265,10 @@ export default function InvestmentBody() {
 
   const getInvestmentAmount = () => {
     const sharePrice = companyData?.investmentDetails?.sharePrice;
-    if (!sharePrice || !shareAmount) {
-      return formatCurrency(0, 0, false);
-    }
+    console.log("Current company data:", companyData);
+    console.log("Share price from company data:", sharePrice);
 
-    // Ensure we're using numeric values
-    const numericSharePrice = Number(sharePrice);
-    const numericShareAmount = Number(shareAmount);
-    const amount = numericSharePrice * numericShareAmount;
-
-    console.log("Investment calculation:", {
-      sharePrice: numericSharePrice,
-      shareAmount: numericShareAmount,
-      calculatedAmount: amount,
-    });
-
+    const amount = calculateInvestmentAmount(shareAmount, sharePrice);
     return formatCurrency(amount, 0, false);
   };
 

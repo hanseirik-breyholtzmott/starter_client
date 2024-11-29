@@ -53,6 +53,8 @@ export default function InvestPageLayout({ investmentData }: Props) {
   const { setCompanyData } = useInvestment();
 
   useEffect(() => {
+    console.log("Investment Data received:", investmentData);
+    console.log("Share Price:", investmentData?.investmentDetails?.sharePrice);
     setCompanyData(investmentData);
   }, [investmentData, setCompanyData]);
 

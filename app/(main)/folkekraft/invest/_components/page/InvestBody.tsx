@@ -210,6 +210,7 @@ export default function InvestmentBody() {
 
       setInvestmentDetails(investmentDetails);
       handleConfetti();
+      router.push("/folkekraft/investment-confirmation");
     } catch (error) {
       console.error("Error in handleConfirmInvestment:", error);
     }

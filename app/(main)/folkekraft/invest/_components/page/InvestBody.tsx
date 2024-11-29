@@ -267,7 +267,17 @@ export default function InvestmentBody() {
       return formatCurrency(0, 0, false);
     }
 
-    const amount = calculateInvestmentAmount(shareAmount, sharePrice);
+    // Ensure we're using numeric values
+    const numericSharePrice = Number(sharePrice);
+    const numericShareAmount = Number(shareAmount);
+    const amount = numericSharePrice * numericShareAmount;
+
+    console.log("Investment calculation:", {
+      sharePrice: numericSharePrice,
+      shareAmount: numericShareAmount,
+      calculatedAmount: amount,
+    });
+
     return formatCurrency(amount, 0, false);
   };
 
@@ -396,6 +406,13 @@ export default function InvestmentBody() {
                 </div>
                 <div>
                   <p className="text-gray-600 mb-4">Investeringsbeløp</p>
+                  <div className="text-xs text-gray-500 mb-2">
+                    Debug: SharePrice:{" "}
+                    {companyData?.investmentDetails?.sharePrice}, Shares:{" "}
+                    {shareAmount}, Total:{" "}
+                    {shareAmount *
+                      (companyData?.investmentDetails?.sharePrice || 0)}
+                  </div>
                   <Input
                     type="text"
                     placeholder="Beregnet beløp"

@@ -71,41 +71,60 @@ export default function InvestPageLayout({
   useEffect(() => {
     if (investmentData) {
       try {
+        console.log("Received investmentData:", investmentData);
+
+        if (!investmentData.bankAccount) {
+          console.error("Missing bankAccount data");
+          setIsLoading(false);
+          return;
+        }
+
         const transformedData = {
-          description: investmentData.description,
-          companyName: investmentData.companyName,
+          description: investmentData.description || "",
+          companyName: investmentData.companyName || "",
           companyDetails: {
-            ceo: investmentData.ceo,
+            ceo: investmentData.ceo || "",
             address: "",
             vatNumber: "",
             bankDetails: {
-              accountNumber: investmentData.bankAccount.accountNumber,
-              bankName: investmentData.bankAccount.bankName,
-              accountHolder: investmentData.bankAccount.accountHolderName,
+              accountNumber: investmentData.bankAccount?.accountNumber || "",
+              bankName: investmentData.bankAccount?.bankName || "",
+              accountHolder:
+                investmentData.bankAccount?.accountHolderName || "",
             },
           },
           investmentDetails: {
-            sharePrice: investmentData.investmentDetails.sharePrice,
-            shareClassId: investmentData.investmentDetails.shareClassId,
-            availableShares: investmentData.investmentDetails.availableShares,
-            minSharePurchase: investmentData.investmentDetails.minSharePurchase,
-            maxSharePurchase: investmentData.investmentDetails.maxSharePurchase,
+            sharePrice: investmentData.investmentDetails?.sharePrice || 0,
+            shareClassId: investmentData.investmentDetails?.shareClassId || "",
+            availableShares:
+              investmentData.investmentDetails?.availableShares || 0,
+            minSharePurchase:
+              investmentData.investmentDetails?.minSharePurchase || 0,
+            maxSharePurchase:
+              investmentData.investmentDetails?.maxSharePurchase || 0,
           },
-          perks: investmentData.perks.map((perk) => ({
-            button: perk.button,
-            title: perk.title,
-            actionText: perk.actionText,
-            description: perk.description,
-            _id: perk._id,
+          perks: (investmentData.perks || []).map((perk) => ({
+            button: {
+              text: perk.button?.text || "",
+              link: perk.button?.link || "",
+            },
+            title: perk.title || "",
+            actionText: perk.actionText || "",
+            description: perk.description || "",
+            _id: perk._id || perk.title || "",
           })),
         };
 
+        console.log("Transformed data:", transformedData);
         setCompanyData(transformedData);
       } catch (error) {
         console.error("Error transforming data:", error);
       } finally {
         setIsLoading(false);
       }
+    } else {
+      console.log("No investment data received");
+      setIsLoading(false);
     }
   }, [investmentData, setCompanyData]);
 

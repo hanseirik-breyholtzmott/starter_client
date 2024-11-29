@@ -176,7 +176,21 @@ export default function InvestmentBody() {
     try {
       setShowConfirmDialog(false);
 
-      if (!companyData || !user || !numberOfShares) return;
+      if (!companyData || !user || !numberOfShares) {
+        console.error("Missing required data:", {
+          companyData,
+          user,
+          numberOfShares,
+        });
+        return;
+      }
+
+      // Ensure bankDetails exists before accessing it
+      const bankDetails = companyData.companyDetails?.bankDetails;
+      if (!bankDetails) {
+        console.error("Missing bank details in company data");
+        return;
+      }
 
       const totalAmount =
         numberOfShares * companyData.investmentDetails.sharePrice;
@@ -193,9 +207,9 @@ export default function InvestmentBody() {
           name: companyData.companyName,
           ceo: companyData.ceo,
           bankDetails: {
-            accountNumber: companyData.companyDetails.bankDetails.accountNumber,
-            bankName: companyData.companyDetails.bankDetails.bankName,
-            accountHolder: companyData.companyDetails.bankDetails.accountHolder,
+            accountNumber: bankDetails.accountNumber,
+            bankName: bankDetails.bankName,
+            accountHolder: bankDetails.accountHolder,
           },
         },
       };

@@ -45,17 +45,16 @@ export default function InvestPageLayout({
 
   useEffect(() => {
     if (investmentData) {
-      // Transform the data to match the expected structure
       const transformedData = {
         ...investmentData,
         companyDetails: {
           ceo: investmentData.ceo,
-          address: "", // Add default or get from API if needed
-          vatNumber: "", // Add default or get from API if needed
+          address: "",
+          vatNumber: "",
           bankDetails: {
-            accountNumber: investmentData.bankAccount.accountNumber,
-            bankName: investmentData.bankAccount.bankName,
-            accountHolder: investmentData.bankAccount.accountHolderName,
+            accountNumber: investmentData.bankAccount?.accountNumber ?? "",
+            bankName: investmentData.bankAccount?.bankName ?? "",
+            accountHolder: investmentData.bankAccount?.accountHolderName ?? "",
           },
         },
       };

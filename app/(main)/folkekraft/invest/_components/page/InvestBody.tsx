@@ -176,32 +176,40 @@ export default function InvestmentBody() {
     try {
       setShowConfirmDialog(false);
 
-      if (!companyData || !user || !numberOfShares) return;
+      if (
+        !companyData?.companyDetails?.bankDetails ||
+        !user ||
+        !numberOfShares
+      ) {
+        console.error("Missing required data");
+        return;
+      }
 
       const totalAmount =
-        numberOfShares * companyData.investmentDetails.sharePrice;
+        numberOfShares * (companyData.investmentDetails.sharePrice || 0);
 
       const investmentDetails: InvestmentDetails = {
-        investorName: "Hans-Eirik" || "",
+        investorName: "Hans-Eirik",
         purchasedShares: numberOfShares,
         pricePerShare: companyData.investmentDetails.sharePrice,
         totalInvestment: totalAmount,
         purchaseDate: new Date().toISOString(),
-        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         companyDetails: {
-          name: companyData.companyName,
-          ceo: companyData.companyDetails.ceo,
+          name: companyData.companyName || "Folkekraft AS",
+          ceo: companyData.companyDetails.ceo || "",
           bankDetails: {
-            accountNumber: companyData.companyDetails.bankDetails.accountNumber,
-            bankName: companyData.companyDetails.bankDetails.bankName,
-            accountHolder: companyData.companyDetails.bankDetails.accountHolder,
+            accountNumber:
+              companyData.companyDetails.bankDetails.accountNumber || "",
+            bankName: companyData.companyDetails.bankDetails.bankName || "",
+            accountHolder:
+              companyData.companyDetails.bankDetails.accountHolder || "",
           },
         },
       };
 
       setInvestmentDetails(investmentDetails);
       handleConfetti();
-      //router.push("/folkekraft/investment-confirmation");
     } catch (error) {
       console.error("Error in handleConfirmInvestment:", error);
     }

@@ -46,24 +46,30 @@ export default function InvestPageLayout({ investmentData }: Props) {
   const { setCompanyData } = useInvestment();
 
   useEffect(() => {
-    if (investmentData) {
-      // Transform the data to match the expected structure
+    if (!investmentData) {
+      console.warn("No investment data provided");
+      return;
+    }
+
+    try {
       const transformedData = {
         ...investmentData,
         companyDetails: {
-          ceo: investmentData.ceo,
-          address: "", // Add default or get from API if needed
-          vatNumber: "", // Add default or get from API if needed
+          ceo: investmentData.ceo ?? "",
+          address: "",
+          vatNumber: "",
           bankDetails: {
-            accountNumber: investmentData.bankAccount.accountNumber,
-            bankName: investmentData.bankAccount.bankName,
-            accountHolder: investmentData.bankAccount.accountHolderName,
+            accountNumber: investmentData.bankAccount?.accountNumber ?? "",
+            bankName: investmentData.bankAccount?.bankName ?? "",
+            accountHolder: investmentData.bankAccount?.accountHolderName ?? "",
           },
         },
       };
 
       console.log("Setting company data:", transformedData);
       setCompanyData(transformedData);
+    } catch (error) {
+      console.error("Error transforming investment data:", error);
     }
   }, [investmentData, setCompanyData]);
 

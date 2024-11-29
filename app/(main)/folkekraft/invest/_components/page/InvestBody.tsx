@@ -176,27 +176,12 @@ export default function InvestmentBody() {
     try {
       setShowConfirmDialog(false);
 
-      if (!companyData || !user || !numberOfShares) {
-        console.error("Missing required data:", {
-          companyData,
-          user,
-          numberOfShares,
-        });
-        return;
-      }
-
-      // Ensure bankDetails exists before accessing it
-      const bankDetails = companyData.companyDetails?.bankDetails;
-      if (!bankDetails) {
-        console.error("Missing bank details in company data");
-        return;
-      }
+      if (!companyData || !user || !numberOfShares) return;
 
       const totalAmount =
         numberOfShares * companyData.investmentDetails.sharePrice;
 
-      // Create investment details
-      const investmentDetails = {
+      const investmentDetails: InvestmentDetails = {
         investorName: "Hans-Eirik" || "",
         purchasedShares: numberOfShares,
         pricePerShare: companyData.investmentDetails.sharePrice,
@@ -205,20 +190,18 @@ export default function InvestmentBody() {
         dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
         companyDetails: {
           name: companyData.companyName,
-          ceo: companyData.ceo,
+          ceo: companyData.companyDetails.ceo,
           bankDetails: {
-            accountNumber: bankDetails.accountNumber,
-            bankName: bankDetails.bankName,
-            accountHolder: bankDetails.accountHolder,
+            accountNumber: companyData.companyDetails.bankDetails.accountNumber,
+            bankName: companyData.companyDetails.bankDetails.bankName,
+            accountHolder: companyData.companyDetails.bankDetails.accountHolder,
           },
         },
       };
 
-      // Save to context
       setInvestmentDetails(investmentDetails);
-
       handleConfetti();
-      router.push("/folkekraft/investment-confirmation");
+      //router.push("/folkekraft/investment-confirmation");
     } catch (error) {
       console.error("Error in handleConfirmInvestment:", error);
     }

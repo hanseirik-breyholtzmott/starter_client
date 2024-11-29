@@ -4,13 +4,20 @@ import React, { useEffect } from "react";
 import { useInvestment } from "@/app/hooks/InvestContext";
 import InvestmentBody from "./InvestBody";
 
-interface BankAccount {
-  accountNumber: string;
-  bankName: string;
-  accountHolderName: string;
+interface ApiPerk {
+  title: string;
+  value: number;
+  description: string;
 }
 
-interface CompanyData {
+interface InvestmentLimits {
+  investmentMinimum: number;
+  investmentMaximum: number;
+  investmentRecommendation: number;
+  investmentPurchaseRight: number;
+}
+
+interface ApiResponse {
   companyName: string;
   description: string;
   ceo: string;
@@ -21,18 +28,12 @@ interface CompanyData {
     minSharePurchase: number;
     maxSharePurchase: number;
   };
-  companyDetails: {
-    ceo: string;
-    address: string;
-    vatNumber: string;
-    bankDetails: {
-      accountNumber: string;
-      bankName: string;
-      accountHolder: string;
-    };
+  bankAccount: {
+    accountNumber: string;
+    bankName: string;
+    accountHolderName: string;
   };
-  bankAccount: BankAccount;
-  perks: Array<{
+  perks: {
     button: {
       text: string;
       link: string;
@@ -41,47 +42,59 @@ interface CompanyData {
     actionText: string;
     description: string;
     _id: string;
-  }>;
+  }[];
 }
 
 interface Props {
-  investmentData: CompanyData;
+  investmentData: ApiResponse;
 }
 
 export default function InvestPageLayout({
   investmentData,
 }: Props): JSX.Element {
-  const { setCompanyData } = useInvestment();
+  const {
+    numberOfShares,
+    entityType,
+    idNumber,
+    termsAccepted,
+    activePerks,
+    setActivePerks,
+    companyData,
+    setCompanyData,
+    minSharePurchase,
+    maxSharePurchase,
+    investmentDetails,
+  } = useInvestment();
 
   useEffect(() => {
     if (investmentData) {
       const transformedData = {
-        companyName: investmentData.companyName || '',
-        description: investmentData.description || '',
-        ceo: investmentData.ceo || '',
-        investmentDetails: {
-          sharePrice: investmentData.investmentDetails?.sharePrice || 0,
-          shareClassId: investmentData.investmentDetails?.shareClassId || '',
-          availableShares: investmentData.investmentDetails?.availableShares || 0,
-          minSharePurchase: investmentData.investmentDetails?.minSharePurchase || 0,
-          maxSharePurchase: investmentData.investmentDetails?.maxSharePurchase || 0,
-        },
+        description: investmentData.description,
+        companyName: investmentData.companyName,
         companyDetails: {
-          ceo: investmentData.companyDetails?.ceo || '',
-          address: investmentData.companyDetails?.address || '',
-          vatNumber: investmentData.companyDetails?.vatNumber || '',
+          ceo: investmentData.ceo,
+          address: "",
+          vatNumber: "",
           bankDetails: {
-            accountNumber: investmentData.companyDetails?.bankDetails?.accountNumber || '',
-            bankName: investmentData.companyDetails?.bankDetails?.bankName || '',
-            accountHolder: investmentData.companyDetails?.bankDetails?.accountHolder || '',
+            accountNumber: investmentData.bankAccount.accountNumber,
+            bankName: investmentData.bankAccount.bankName,
+            accountHolder: investmentData.bankAccount.accountHolderName,
           },
         },
-        bankAccount: {
-          accountNumber: investmentData.bankAccount?.accountNumber || '',
-          bankName: investmentData.bankAccount?.bankName || '',
-          accountHolderName: investmentData.bankAccount?.accountHolderName || '',
+        investmentDetails: {
+          sharePrice: investmentData.investmentDetails.sharePrice,
+          shareClassId: investmentData.investmentDetails.shareClassId,
+          availableShares: investmentData.investmentDetails.availableShares,
+          minSharePurchase: investmentData.investmentDetails.minSharePurchase,
+          maxSharePurchase: investmentData.investmentDetails.maxSharePurchase,
         },
-        perks: Array.isArray(investmentData.perks) ? investmentData.perks : []
+        perks: investmentData.perks.map((perk) => ({
+          button: perk.button,
+          title: perk.title,
+          actionText: perk.actionText,
+          description: perk.description,
+          _id: perk._id,
+        })),
       };
 
       setCompanyData(transformedData);
@@ -95,8 +108,57 @@ export default function InvestPageLayout({
   return (
     <div className="flex flex-col-reverse md:flex-row justify-between container mx-auto px-4 py-8 min-h-screen gap-6">
       <InvestmentBody />
-      <div className="w-full md:w-1/3">
-        <pre>{JSON.stringify(investmentData, null, 2)}</pre>
+      <div className="w-full md:w-1/3 space-y-4">
+        <div className="bg-white rounded-lg shadow p-4">
+          <h2 className="text-lg font-semibold mb-4">API Response</h2>
+          <pre className="bg-gray-50 p-4 rounded overflow-auto">
+            {JSON.stringify(investmentData, null, 2)}
+          </pre>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-4">
+          <h2 className="text-lg font-semibold mb-4">InvestContext Data</h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-medium text-gray-700">
+                Investment Form Data
+              </h3>
+              <p>Number of Shares: {numberOfShares}</p>
+              <p>Entity Type: {entityType || "Not selected"}</p>
+              <p>ID Number: {idNumber || "Not provided"}</p>
+              <p>Terms Accepted: {termsAccepted ? "Yes" : "No"}</p>
+            </div>
+
+            <div>
+              <h3 className="font-medium text-gray-700">
+                Share Purchase Limits
+              </h3>
+              <p>Min Share Purchase: {minSharePurchase}</p>
+              <p>Max Share Purchase: {maxSharePurchase}</p>
+            </div>
+
+            <div>
+              <h3 className="font-medium text-gray-700">Company Data</h3>
+              <pre className="bg-gray-50 p-4 rounded overflow-auto text-sm">
+                {JSON.stringify(companyData, null, 2)}
+              </pre>
+            </div>
+
+            <div>
+              <h3 className="font-medium text-gray-700">Active Perks</h3>
+              <pre className="bg-gray-50 p-4 rounded overflow-auto text-sm">
+                {JSON.stringify(activePerks, null, 2)}
+              </pre>
+            </div>
+
+            <div>
+              <h3 className="font-medium text-gray-700">Investment Details</h3>
+              <pre className="bg-gray-50 p-4 rounded overflow-auto text-sm">
+                {JSON.stringify(investmentDetails, null, 2)}
+              </pre>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

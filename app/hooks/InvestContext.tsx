@@ -3,17 +3,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 // Type Definitions
-interface Button {
-  text: string;
-  link: string;
-}
 
-interface Perk {
-  button: Button;
+interface ApiPerk {
   title: string;
-  actionText: string;
+  value: number;
   description: string;
-  _id: string;
 }
 
 interface BankDetails {
@@ -29,7 +23,7 @@ interface CompanyDetails {
   bankDetails: BankDetails;
 }
 
-interface CompanyInvestmentDetails {
+interface ShareDetails {
   sharePrice: number;
   shareClassId: string;
   availableShares: number;
@@ -37,12 +31,22 @@ interface CompanyInvestmentDetails {
   maxSharePurchase: number;
 }
 
-interface CompanyData {
-  companyName: string;
+interface Perk {
+  button: {
+    text: string;
+    link: string;
+  };
+  title: string;
+  actionText: string;
   description: string;
-  ceo: string;
-  investmentDetails: CompanyInvestmentDetails;
+  _id: string;
+}
+
+interface CompanyData {
+  description: string;
+  companyName: string;
   companyDetails: CompanyDetails;
+  investmentDetails: ShareDetails;
   perks: Perk[];
 }
 
@@ -56,11 +60,7 @@ export interface InvestmentDetails {
   companyDetails: {
     name: string;
     ceo: string;
-    bankDetails: {
-      accountNumber: string;
-      bankName: string;
-      accountHolder: string;
-    };
+    bankDetails: BankDetails;
   };
 }
 
@@ -73,8 +73,8 @@ interface InvestmentContextType {
   setIdNumber: (id: string) => void;
   termsAccepted: boolean;
   setTermsAccepted: (accepted: boolean) => void;
-  activePerks: Perk[];
-  setActivePerks: (perks: Perk[]) => void;
+  activePerks: ApiPerk[];
+  setActivePerks: (perks: ApiPerk[]) => void;
   clearInvestmentData: () => void;
   companyData: CompanyData | null;
   setCompanyData: (data: CompanyData) => void;
@@ -107,7 +107,7 @@ export const InvestmentProvider = ({
   const [entityType, setEntityType] = useState("");
   const [idNumber, setIdNumber] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [activePerks, setActivePerks] = useState<Perk[]>([]);
+  const [activePerks, setActivePerks] = useState<ApiPerk[]>([]);
   const [companyData, setCompanyData] = useState<CompanyData | null>(null);
   const [minSharePurchase, setMinSharePurchase] = useState(0);
   const [maxSharePurchase, setMaxSharePurchase] = useState(0);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useInvestment } from "@/app/hooks/InvestContext";
 import InvestmentBody from "./InvestBody";
 
@@ -66,42 +66,50 @@ export default function InvestPageLayout({
     investmentDetails,
   } = useInvestment();
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     if (investmentData) {
-      const transformedData = {
-        description: investmentData.description,
-        companyName: investmentData.companyName,
-        companyDetails: {
-          ceo: investmentData.ceo,
-          address: "",
-          vatNumber: "",
-          bankDetails: {
-            accountNumber: investmentData.bankAccount.accountNumber,
-            bankName: investmentData.bankAccount.bankName,
-            accountHolder: investmentData.bankAccount.accountHolderName,
+      try {
+        const transformedData = {
+          description: investmentData.description,
+          companyName: investmentData.companyName,
+          companyDetails: {
+            ceo: investmentData.ceo,
+            address: "",
+            vatNumber: "",
+            bankDetails: {
+              accountNumber: investmentData.bankAccount.accountNumber,
+              bankName: investmentData.bankAccount.bankName,
+              accountHolder: investmentData.bankAccount.accountHolderName,
+            },
           },
-        },
-        investmentDetails: {
-          sharePrice: investmentData.investmentDetails.sharePrice,
-          shareClassId: investmentData.investmentDetails.shareClassId,
-          availableShares: investmentData.investmentDetails.availableShares,
-          minSharePurchase: investmentData.investmentDetails.minSharePurchase,
-          maxSharePurchase: investmentData.investmentDetails.maxSharePurchase,
-        },
-        perks: investmentData.perks.map((perk) => ({
-          button: perk.button,
-          title: perk.title,
-          actionText: perk.actionText,
-          description: perk.description,
-          _id: perk._id,
-        })),
-      };
+          investmentDetails: {
+            sharePrice: investmentData.investmentDetails.sharePrice,
+            shareClassId: investmentData.investmentDetails.shareClassId,
+            availableShares: investmentData.investmentDetails.availableShares,
+            minSharePurchase: investmentData.investmentDetails.minSharePurchase,
+            maxSharePurchase: investmentData.investmentDetails.maxSharePurchase,
+          },
+          perks: investmentData.perks.map((perk) => ({
+            button: perk.button,
+            title: perk.title,
+            actionText: perk.actionText,
+            description: perk.description,
+            _id: perk._id,
+          })),
+        };
 
-      setCompanyData(transformedData);
+        setCompanyData(transformedData);
+      } catch (error) {
+        console.error("Error transforming data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   }, [investmentData, setCompanyData]);
 
-  if (!investmentData) {
+  if (isLoading || !companyData) {
     return <div>Loading investment data...</div>;
   }
 

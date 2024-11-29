@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useInvestmentConfirmation } from "@/app/hooks/InvestmentConfirmationContext";
+import { useInvestment } from "@/app/hooks/InvestContext";
+
 import {
   Download,
   Mail,
@@ -21,7 +22,7 @@ import {
 } from "@/components/ui/card";
 import InvestmentPDF from "@/components/react-pdf/sharePDF";
 import { BlobProvider } from "@react-pdf/renderer";
-import type { InvestmentDetails } from "@/app/hooks/InvestmentConfirmationContext";
+import type { InvestmentDetails } from "@/app/hooks/InvestContext";
 import { formatCurrency, formatNumber } from "@/lib/helperFunctions";
 
 const getCompanyName = (details: InvestmentDetails | null) => {
@@ -30,7 +31,7 @@ const getCompanyName = (details: InvestmentDetails | null) => {
 
 export default function SharePurchaseSuccess() {
   const router = useRouter();
-  const { investmentDetails } = useInvestmentConfirmation();
+  const { investmentDetails } = useInvestment();
   const [currentStep, setCurrentStep] = useState(1);
 
   // Redirect if no investment details
@@ -50,7 +51,12 @@ export default function SharePurchaseSuccess() {
       amount: investmentDetails.totalInvestment,
       date: investmentDetails.purchaseDate,
       dueDate: investmentDetails.dueDate,
-      companyDetails: investmentDetails.companyDetails,
+      companyDetails: {
+        name: investmentDetails.companyDetails.name,
+        bankDetails: investmentDetails.companyDetails.bankDetails,
+        address: "N/A",
+        orgNumber: "123456789",
+      },
     };
 
     return (

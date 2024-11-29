@@ -16,11 +16,6 @@ interface Perk {
   _id: string;
 }
 
-interface Term {
-  id: number;
-  text: string;
-}
-
 interface BankDetails {
   accountNumber: string;
   bankName: string;
@@ -28,34 +23,50 @@ interface BankDetails {
 }
 
 interface CompanyDetails {
-  name: string;
   ceo: string;
   address: string;
-  orgNumber: string;
+  vatNumber: string;
   bankDetails: BankDetails;
 }
 
-interface InvestmentDetails {
+interface CompanyInvestmentDetails {
   sharePrice: number;
   shareClassId: string;
   availableShares: number;
-  investmentMinimum: number;
-  investmentMaximum: number;
+  minSharePurchase: number;
+  maxSharePurchase: number;
 }
 
 interface CompanyData {
   companyName: string;
   description: string;
   ceo: string;
-  investmentDetails: InvestmentDetails;
+  investmentDetails: CompanyInvestmentDetails;
   companyDetails: CompanyDetails;
   perks: Perk[];
-  terms: Term[];
+}
+
+export interface InvestmentDetails {
+  investorName: string;
+  purchasedShares: number;
+  pricePerShare: number;
+  totalInvestment: number;
+  purchaseDate: string;
+  dueDate: string;
+  companyDetails: {
+    name: string;
+    ceo: string;
+    bankDetails: {
+      accountNumber: string;
+      bankName: string;
+      accountHolder: string;
+    };
+  };
 }
 
 interface InvestmentContextType {
-  shareAmount: number;
-  setShareAmount: (amount: number) => void;
+  numberOfShares: number;
+  setNumberOfShares: (amount: number) => void;
   entityType: string;
   setEntityType: (type: string) => void;
   idNumber: string;
@@ -67,6 +78,10 @@ interface InvestmentContextType {
   clearInvestmentData: () => void;
   companyData: CompanyData | null;
   setCompanyData: (data: CompanyData) => void;
+  minSharePurchase: number;
+  maxSharePurchase: number;
+  investmentDetails: InvestmentDetails | null;
+  setInvestmentDetails: (details: InvestmentDetails | null) => void;
 }
 
 // Context Creation
@@ -88,28 +103,46 @@ export const InvestmentProvider = ({
   children: React.ReactNode;
 }) => {
   // State Management
-  const [shareAmount, setShareAmount] = useState(0);
+  const [numberOfShares, setNumberOfShares] = useState(0);
   const [entityType, setEntityType] = useState("");
   const [idNumber, setIdNumber] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [activePerks, setActivePerks] = useState<Perk[]>([]);
   const [companyData, setCompanyData] = useState<CompanyData | null>(null);
+  const [minSharePurchase, setMinSharePurchase] = useState(0);
+  const [maxSharePurchase, setMaxSharePurchase] = useState(0);
+  const [investmentDetails, setInvestmentDetails] =
+    useState<InvestmentDetails | null>(null);
+
+  // Update min/max share purchase when companyData changes
+  useEffect(() => {
+    if (companyData) {
+      setMinSharePurchase(companyData.investmentDetails.minSharePurchase);
+      setMaxSharePurchase(companyData.investmentDetails.maxSharePurchase);
+    }
+  }, [companyData]);
 
   // Load saved investment data from localStorage on component mount
   useEffect(() => {
     const storedData = localStorage.getItem("investmentData");
     if (storedData) {
       const data = JSON.parse(storedData);
-      // Check if data is less than 24 hours old (86400000 ms)
       if (Date.now() - data.timestamp < 86400000) {
-        setShareAmount(data.shareAmount);
+        setNumberOfShares(data.numberOfShares);
         setEntityType(data.entityType);
         setIdNumber(data.idNumber);
         setTermsAccepted(data.termsAccepted);
         setActivePerks(data.activePerks);
         setCompanyData(data.companyData);
+        if (data.companyData) {
+          setMinSharePurchase(
+            data.companyData.investmentDetails.minSharePurchase
+          );
+          setMaxSharePurchase(
+            data.companyData.investmentDetails.maxSharePurchase
+          );
+        }
       } else {
-        console.log("Investment data expired");
         localStorage.removeItem("investmentData");
       }
     }
@@ -118,41 +151,47 @@ export const InvestmentProvider = ({
   // Save investment data to localStorage whenever state changes
   useEffect(() => {
     const investmentData = {
-      shareAmount,
+      numberOfShares,
       entityType,
       idNumber,
       termsAccepted,
       activePerks,
       companyData,
+      minSharePurchase,
+      maxSharePurchase,
       timestamp: Date.now(),
     };
     localStorage.setItem("investmentData", JSON.stringify(investmentData));
   }, [
-    shareAmount,
+    numberOfShares,
     entityType,
     idNumber,
     termsAccepted,
     activePerks,
     companyData,
+    minSharePurchase,
+    maxSharePurchase,
   ]);
 
   // Utility function to clear all investment data
   const clearInvestmentData = () => {
     localStorage.removeItem("investmentData");
-    setShareAmount(0);
+    setNumberOfShares(0);
     setEntityType("");
     setIdNumber("");
     setTermsAccepted(false);
     setActivePerks([]);
     setCompanyData(null);
+    setMinSharePurchase(0);
+    setMaxSharePurchase(0);
   };
 
   // Provide context values to children
   return (
     <InvestmentContext.Provider
       value={{
-        shareAmount,
-        setShareAmount,
+        numberOfShares,
+        setNumberOfShares,
         entityType,
         setEntityType,
         idNumber,
@@ -164,6 +203,10 @@ export const InvestmentProvider = ({
         clearInvestmentData,
         companyData,
         setCompanyData,
+        minSharePurchase,
+        maxSharePurchase,
+        investmentDetails,
+        setInvestmentDetails,
       }}
     >
       {children}

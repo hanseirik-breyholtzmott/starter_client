@@ -1,10 +1,14 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import confetti from "canvas-confetti";
 import { Form } from "@/components/ui/form";
-import { useInvestment } from "@/app/hooks/InvestContext";
-import { useInvestmentConfirmation } from "@/app/hooks/InvestmentConfirmationContext";
+import { useInvestment, InvestmentDetails } from "@/app/hooks/InvestContext";
+import { useAuth } from "@/app/hooks/AuthContext";
+import { formatCurrency } from "@/lib/helperFunctions";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,31 +35,32 @@ import {
   FormMessage,
   FormControl,
 } from "@/components/ui/form";
-import { useAuth } from "@/app/hooks/AuthContext";
-import { formatCurrency, formatNumber } from "@/lib/helperFunctions";
 
-// Update the calculation function at the top
-const calculateInvestmentAmount = (
-  shares: number,
-  pricePerShare: number | undefined
-) => {
-  if (!shares) return 0;
-
-  // Log the incoming values
-  console.log("Calculating investment amount:", { shares, pricePerShare });
-
-  // If pricePerShare is undefined or 0, use 8 as fallback
-  const price = !pricePerShare || pricePerShare === 0 ? 8 : pricePerShare;
-  return Number(shares) * price;
-};
+const INVESTMENT_TERMS = [
+  {
+    id: 1,
+    text: "Investering i unoterte aksjer innebærer høy risiko. Det er viktig at jeg som investor leser investeringstilbudet nøye og gjør meg egen formening om hvilken risiko den eventuelle investeringen innebærer for meg.",
+  },
+  {
+    id: 2,
+    text: "Jeg gir med dette min fullmakt til styreleder i utsteder til å tegne aksjer på mine vegne under fremsatte vilkår i forbindelse med vedtak om kapitalutvidelse i selskapets generalforsamling.",
+  },
+  {
+    id: 3,
+    text: "Jeg bekrefter at jeg har satt meg inn i investeringstilbudet, og aksepterer risikoen denne investeringen innebærer.",
+  },
+  {
+    id: 4,
+    text: "Alle økonomiske bidrag må overholde gjeldende lover, inkludert regler om hvitvasking av penger. Midler fra ulovlige aktiviteter vil bli avvist. Vi forbeholder oss retten til å returnere midler som mistenkes for å bryte disse reglene.",
+  },
+];
 
 export default function InvestmentBody() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
-  const { setInvestmentDetails } = useInvestmentConfirmation();
   const {
-    shareAmount,
-    setShareAmount,
+    numberOfShares,
+    setNumberOfShares,
     entityType,
     setEntityType,
     idNumber,
@@ -64,7 +69,17 @@ export default function InvestmentBody() {
     setTermsAccepted,
     activePerks,
     companyData,
+    minSharePurchase,
+    maxSharePurchase,
+    setInvestmentDetails,
   } = useInvestment();
+
+  console.log("companyData", companyData);
+  console.log("numberOfShares", numberOfShares);
+  console.log("entityType", entityType);
+  console.log("idNumber", idNumber);
+  console.log("termsAccepted", termsAccepted);
+  console.log("minSharePurchase", minSharePurchase);
 
   const form = useForm();
   const [error, setError] = React.useState("");
@@ -73,18 +88,12 @@ export default function InvestmentBody() {
   // Memoize the validation thresholds
   const minShares = React.useMemo(() => {
     if (!companyData) return 0;
-    return Math.ceil(
-      companyData.investmentDetails.investmentMinimum /
-        companyData.investmentDetails.sharePrice
-    );
+    return companyData.investmentDetails.minSharePurchase;
   }, [companyData]);
 
   const maxShares = React.useMemo(() => {
     if (!companyData) return 0;
-    return Math.floor(
-      companyData.investmentDetails.investmentMaximum /
-        companyData.investmentDetails.sharePrice
-    );
+    return companyData.investmentDetails.maxSharePurchase;
   }, [companyData]);
 
   const isIdNumberValid = () => {
@@ -99,19 +108,12 @@ export default function InvestmentBody() {
   const isFormValid = React.useMemo(() => {
     return (
       !error &&
-      shareAmount > 0 &&
+      numberOfShares >= 300 &&
       entityType &&
       isIdNumberValid() &&
       termsAccepted
     );
-  }, [
-    error,
-    shareAmount,
-    entityType,
-    idNumber,
-    termsAccepted,
-    isIdNumberValid,
-  ]);
+  }, [error, numberOfShares, entityType, idNumber, termsAccepted]);
 
   // Authentication check effect
   useEffect(() => {
@@ -125,53 +127,16 @@ export default function InvestmentBody() {
   useEffect(() => {
     if (!companyData) return;
 
-    const numValue = shareAmount;
-    if (numValue < minShares) {
+    if (numberOfShares < minShares) {
       setError(
         `Antall aksjer kan ikke være mindre enn ${minShares.toFixed(0)}`
       );
-    } else if (numValue > maxShares) {
+    } else if (numberOfShares > maxShares) {
       setError(`Antall aksjer kan ikke være mer enn ${maxShares.toFixed(0)}`);
     } else {
       setError("");
     }
-  }, [shareAmount, minShares, maxShares, companyData]);
-
-  // Debug effects
-  useEffect(() => {
-    console.log("CompanyData updated:", {
-      sharePrice: companyData?.investmentDetails?.sharePrice,
-      fullData: companyData,
-    });
-  }, [companyData]);
-
-  useEffect(() => {
-    console.log("Share price:", companyData?.investmentDetails?.sharePrice);
-    console.log("Share amount:", shareAmount);
-    console.log(
-      "Calculated amount:",
-      calculateInvestmentAmount(
-        shareAmount,
-        companyData?.investmentDetails?.sharePrice
-      )
-    );
-  }, [shareAmount, companyData]);
-
-  // Add this debug effect at the top with other effects
-  useEffect(() => {
-    console.log("Full companyData:", companyData);
-    console.log("Investment details:", companyData?.investmentDetails);
-    console.log({
-      sharePrice: companyData?.investmentDetails?.sharePrice,
-      investmentMinimum: companyData?.investmentDetails?.investmentMinimum,
-      investmentMaximum: companyData?.investmentDetails?.investmentMaximum,
-    });
-  }, [companyData]);
-
-  // Early return after all hooks
-  if (!isAuthenticated || !user) {
-    return null;
-  }
+  }, [numberOfShares, minShares, maxShares, companyData]);
 
   const handleConfetti = () => {
     const duration = 5 * 1000;
@@ -211,37 +176,32 @@ export default function InvestmentBody() {
     try {
       setShowConfirmDialog(false);
 
-      if (!companyData || !user || !shareAmount) return;
+      if (!companyData || !user || !numberOfShares) return;
 
-      const totalAmount = calculateInvestmentAmount(
-        shareAmount,
-        companyData.investmentDetails.sharePrice
-      );
+      const totalAmount =
+        numberOfShares * companyData.investmentDetails.sharePrice;
 
-      // Wait for the state to be set before navigation
-      await new Promise<void>((resolve) => {
-        setInvestmentDetails({
-          purchasedShares: shareAmount,
-          pricePerShare: companyData.investmentDetails.sharePrice,
-          totalInvestment: totalAmount,
-          investorName: `${user.firstName} ${user.lastName}`,
-          email: user.email,
-          purchaseDate: new Date().toLocaleDateString("no-NO"),
-          dueDate: new Date().toLocaleDateString("no-NO"),
-          companyDetails: {
-            name: companyData.companyName,
-            ceo: companyData.ceo,
-            address: "Kanalveien 107, 5058 BERGEN",
-            orgNumber: "830068112",
-            bankDetails: {
-              accountNumber: "32082799299",
-              bankName: "SpareBank 1 Sør-Norge",
-              accountHolder: "Folkekraft AS",
-            },
+      // Create investment details matching the InvestmentDetails interface
+      const investmentDetails: InvestmentDetails = {
+        investorName: "Hans-Eirik",
+        purchasedShares: numberOfShares,
+        pricePerShare: companyData.investmentDetails.sharePrice,
+        totalInvestment: totalAmount,
+        purchaseDate: new Date().toISOString(),
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+        companyDetails: {
+          name: companyData.companyName,
+          ceo: companyData.ceo,
+          bankDetails: {
+            accountNumber: companyData.companyDetails.bankDetails.accountNumber,
+            bankName: companyData.companyDetails.bankDetails.bankName,
+            accountHolder: companyData.companyDetails.bankDetails.accountHolder,
           },
-        });
-        resolve();
-      });
+        },
+      };
+
+      // Save to context
+      setInvestmentDetails(investmentDetails);
 
       handleConfetti();
       router.push("/folkekraft/investment-confirmation");
@@ -253,24 +213,30 @@ export default function InvestmentBody() {
   const handleShareNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
     const number = parseInt(value) || 0;
-    console.log("Setting new shareAmount:", number);
-    setShareAmount(number);
+    console.log("New number of shares:", number); // Debug log
+    setNumberOfShares(number);
   };
 
-  const handleIdNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/\D/g, "");
+  const handleIdNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
     const maxLength = entityType === "private" ? 11 : 9;
     setIdNumber(value.slice(0, maxLength));
   };
 
-  const getInvestmentAmount = () => {
-    const sharePrice = companyData?.investmentDetails?.sharePrice;
-    console.log("Current company data:", companyData);
-    console.log("Share price from company data:", sharePrice);
+  const getInvestmentAmount = React.useMemo(() => {
+    if (!companyData) return formatCurrency(0, 0, false);
 
-    const amount = calculateInvestmentAmount(shareAmount, sharePrice);
+    const sharePrice = companyData.investmentDetails.sharePrice;
+    const amount = numberOfShares * sharePrice;
+
+    console.log("Investment calculation:", {
+      shares: numberOfShares,
+      price: sharePrice,
+      total: amount,
+    }); // Debug log
+
     return formatCurrency(amount, 0, false);
-  };
+  }, [numberOfShares, companyData]);
 
   // Rest of your component remains the same until the terms section
   return (
@@ -317,6 +283,8 @@ export default function InvestmentBody() {
                   )}
                 />
               </div>
+
+              {/* ID Number section */}
               <div>
                 <FormField
                   control={form.control}
@@ -358,6 +326,8 @@ export default function InvestmentBody() {
                   )}
                 />
               </div>
+
+              {/* Share number input */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="w-full">
                   <FormField
@@ -371,43 +341,31 @@ export default function InvestmentBody() {
                         <FormControl>
                           <Input
                             {...field}
-                            value={shareAmount}
+                            value={numberOfShares}
                             onChange={(e) => {
                               field.onChange(e);
                               handleShareNumberChange(e);
                             }}
                             placeholder="Antall aksjer"
                             className={`mb-2 text-xl px-4 py-4 h-14 rounded-lg ${
-                              shareAmount && error ? "border-red-500" : ""
+                              numberOfShares && error ? "border-red-500" : ""
                             }`}
                           />
                         </FormControl>
+                        {numberOfShares > 0 && error && (
+                          <p className="text-red-500 text-sm mt-1">{error}</p>
+                        )}
                       </FormItem>
                     )}
                   />
-                  {shareAmount > 0 && error && (
-                    <p className="text-red-500 text-sm mt-1">{error}</p>
-                  )}
-                  {activePerks.length > 0 && (
-                    <p className="text-green-500 text-sm mt-1 hidden">
-                      Aktive perks:{" "}
-                      {activePerks.map((perk) => perk.title).join(", ")}
-                    </p>
-                  )}
                 </div>
+
+                {/* Investment amount section */}
                 <div>
                   <p className="text-gray-600 mb-4">Investeringsbeløp</p>
-                  <div className="text-xs text-gray-500 mb-2">
-                    Debug: SharePrice:{" "}
-                    {companyData?.investmentDetails?.sharePrice}, Shares:{" "}
-                    {shareAmount}, Total:{" "}
-                    {shareAmount *
-                      (companyData?.investmentDetails?.sharePrice || 0)}
-                  </div>
                   <Input
                     type="text"
-                    placeholder="Beregnet beløp"
-                    value={getInvestmentAmount()}
+                    value={getInvestmentAmount}
                     disabled
                     className="mb-2 text-xl px-4 py-4 h-14 rounded-lg bg-gray-100"
                   />
@@ -417,52 +375,43 @@ export default function InvestmentBody() {
           </div>
 
           {/* Terms section */}
-          <div className="">
+          <div>
             <h2 className="text-3xl font-bold mb-2">Vilkår</h2>
             <Card className="mt-8 rounded-xl">
               <CardContent className="pt-6">
                 <ul className="space-y-4">
-                  {companyData?.terms.map((term) => (
+                  {INVESTMENT_TERMS.map((term) => (
                     <li key={term.id} className="text-sm p-2 rounded-lg">
                       {term.text}
                     </li>
                   ))}
                 </ul>
               </CardContent>
-              <label
-                htmlFor="terms"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                <CardFooter className="bg-slate-100 hover:bg-slate-200 cursor-pointer transition-all ease-in-out duration-300 flex items-center justify-start">
-                  <div className="flex items-center pt-6">
-                    <FormField
-                      control={form.control}
-                      name="termsAccepted"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              id="terms"
-                              checked={termsAccepted}
-                              onCheckedChange={(checked) => {
-                                field.onChange(checked);
-                                setTermsAccepted(checked as boolean);
-                              }}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <label htmlFor="terms">
-                              Jeg aksepterer vilkårene
-                            </label>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </CardFooter>
-              </label>
+              <CardFooter className="bg-slate-100 hover:bg-slate-200 cursor-pointer transition-all ease-in-out duration-300">
+                <FormField
+                  control={form.control}
+                  name="termsAccepted"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-6">
+                      <FormControl>
+                        <Checkbox
+                          checked={termsAccepted}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked);
+                            setTermsAccepted(checked as boolean);
+                          }}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Jeg aksepterer vilkårene</FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </CardFooter>
             </Card>
             <div>
+              {/* Confirm button and dialog */}
               <Button
                 type="button"
                 disabled={!isFormValid}
@@ -480,23 +429,19 @@ export default function InvestmentBody() {
                   <DialogHeader>
                     <DialogTitle>Bekreft din investering</DialogTitle>
                     <DialogDescription>
-                      Du er i ferd med å investere{" "}
-                      {formatNumber(shareAmount || 0)} aksjer for{" "}
-                      {getInvestmentAmount()}. Er du sikker på at du vil
+                      Du er i ferd med å investere {numberOfShares} aksjer for{" "}
+                      {getInvestmentAmount}. Er du sikker på at du vil
                       fortsette?
                     </DialogDescription>
                   </DialogHeader>
-                  <DialogFooter className="flex gap-2">
+                  <DialogFooter>
                     <Button
                       variant="outline"
                       onClick={() => setShowConfirmDialog(false)}
                     >
                       Avbryt
                     </Button>
-                    <Button
-                      onClick={handleConfirmInvestment}
-                      className="bg-[#59C9B9] hover:bg-[#4BA89B]"
-                    >
+                    <Button onClick={handleConfirmInvestment}>
                       Bekreft investering
                     </Button>
                   </DialogFooter>

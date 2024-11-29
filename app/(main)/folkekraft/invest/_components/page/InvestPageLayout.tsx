@@ -4,58 +4,67 @@ import React, { useEffect } from "react";
 import { useInvestment } from "@/app/hooks/InvestContext";
 import InvestmentBody from "./InvestBody";
 
-interface BankDetails {
+interface BankAccount {
   accountNumber: string;
   bankName: string;
-  accountHolder: string;
-}
-
-interface CompanyDetails {
-  name: string;
-  ceo: string;
-  address: string;
-  orgNumber: string;
-  bankDetails: BankDetails;
+  accountHolderName: string;
 }
 
 interface InvestmentDetails {
   sharePrice: number;
   shareClassId: string;
   availableShares: number;
-  investmentMinimum: number;
-  investmentMaximum: number;
+  minSharePurchase: number;
+  maxSharePurchase: number;
 }
 
-interface InvestmentData {
+interface Perk {
+  button: {
+    text: string;
+    link: string;
+  };
+  title: string;
+  actionText: string;
+  description: string;
+  _id: string;
+}
+
+interface CompanyData {
   companyName: string;
   description: string;
   ceo: string;
   investmentDetails: InvestmentDetails;
-  companyDetails: CompanyDetails;
-  perks: Array<{
-    button: { text: string; link: string };
-    title: string;
-    actionText: string;
-    description: string;
-    _id: string;
-  }>;
-  terms: Array<{
-    id: number;
-    text: string;
-  }>;
+  bankAccount: BankAccount;
+  perks: Perk[];
 }
 
-type Props = {
-  investmentData: InvestmentData;
-};
+interface Props {
+  investmentData: CompanyData;
+}
 
 export default function InvestPageLayout({ investmentData }: Props) {
   const { setCompanyData } = useInvestment();
 
   useEffect(() => {
-    console.log("Investment Data received:", investmentData);
-    console.log("Share Price:", investmentData?.investmentDetails?.sharePrice);
-    setCompanyData(investmentData);
+    if (investmentData) {
+      // Transform the data to match the expected structure
+      const transformedData = {
+        ...investmentData,
+        companyDetails: {
+          ceo: investmentData.ceo,
+          address: "", // Add default or get from API if needed
+          vatNumber: "", // Add default or get from API if needed
+          bankDetails: {
+            accountNumber: investmentData.bankAccount.accountNumber,
+            bankName: investmentData.bankAccount.bankName,
+            accountHolder: investmentData.bankAccount.accountHolderName,
+          },
+        },
+      };
+
+      console.log("Setting company data:", transformedData);
+      setCompanyData(transformedData);
+    }
   }, [investmentData, setCompanyData]);
 
   return (

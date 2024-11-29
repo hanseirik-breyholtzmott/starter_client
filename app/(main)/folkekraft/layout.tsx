@@ -10,7 +10,7 @@ import Navbar from "./_components/nav";
 import Footer from "./_components/footer";
 
 export default function CampaignLayout({
-  children, // will be a page or nested layout
+  children, 
 }: {
   children: React.ReactNode;
 }) {
@@ -18,9 +18,11 @@ export default function CampaignLayout({
     <CompanyDataProvider>
       <InvestmentProvider>
         <InvestmentConfirmationProvider>
-          <Navbar />
-          {children}
-          <Footer />
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </div>
         </InvestmentConfirmationProvider>
       </InvestmentProvider>
     </CompanyDataProvider>

@@ -21,6 +21,16 @@ interface CompanyData {
     minSharePurchase: number;
     maxSharePurchase: number;
   };
+  companyDetails: {
+    ceo: string;
+    address: string;
+    vatNumber: string;
+    bankDetails: {
+      accountNumber: string;
+      bankName: string;
+      accountHolder: string;
+    };
+  };
   bankAccount: BankAccount;
   perks: Array<{
     button: {
@@ -46,22 +56,41 @@ export default function InvestPageLayout({
   useEffect(() => {
     if (investmentData) {
       const transformedData = {
-        ...investmentData,
+        companyName: investmentData.companyName || '',
+        description: investmentData.description || '',
+        ceo: investmentData.ceo || '',
+        investmentDetails: {
+          sharePrice: investmentData.investmentDetails?.sharePrice || 0,
+          shareClassId: investmentData.investmentDetails?.shareClassId || '',
+          availableShares: investmentData.investmentDetails?.availableShares || 0,
+          minSharePurchase: investmentData.investmentDetails?.minSharePurchase || 0,
+          maxSharePurchase: investmentData.investmentDetails?.maxSharePurchase || 0,
+        },
         companyDetails: {
-          ceo: investmentData.ceo,
-          address: "",
-          vatNumber: "",
+          ceo: investmentData.companyDetails?.ceo || '',
+          address: investmentData.companyDetails?.address || '',
+          vatNumber: investmentData.companyDetails?.vatNumber || '',
           bankDetails: {
-            accountNumber: investmentData.bankAccount?.accountNumber ?? "",
-            bankName: investmentData.bankAccount?.bankName ?? "",
-            accountHolder: investmentData.bankAccount?.accountHolderName ?? "",
+            accountNumber: investmentData.companyDetails?.bankDetails?.accountNumber || '',
+            bankName: investmentData.companyDetails?.bankDetails?.bankName || '',
+            accountHolder: investmentData.companyDetails?.bankDetails?.accountHolder || '',
           },
         },
+        bankAccount: {
+          accountNumber: investmentData.bankAccount?.accountNumber || '',
+          bankName: investmentData.bankAccount?.bankName || '',
+          accountHolderName: investmentData.bankAccount?.accountHolderName || '',
+        },
+        perks: Array.isArray(investmentData.perks) ? investmentData.perks : []
       };
 
       setCompanyData(transformedData);
     }
   }, [investmentData, setCompanyData]);
+
+  if (!investmentData) {
+    return <div>Loading investment data...</div>;
+  }
 
   return (
     <div className="flex flex-col-reverse md:flex-row justify-between container mx-auto px-4 py-8 min-h-screen gap-6">

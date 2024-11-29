@@ -87,7 +87,7 @@ export default function InvestPageLayout({
             address: "",
             vatNumber: "",
             bankDetails: {
-              accountNumber: investmentData.bankAccount?.accountNumber || "",
+              accountNumber: "123456789988",
               bankName: investmentData.bankAccount?.bankName || "",
               accountHolder:
                 investmentData.bankAccount?.accountHolderName || "",

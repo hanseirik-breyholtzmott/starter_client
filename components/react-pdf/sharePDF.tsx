@@ -1,5 +1,9 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import {
+  formatDateString,
+  formatStringWithSpacing,
+} from "@/lib/helperFunctions";
 
 interface InvestmentPDFProps {
   name: string;
@@ -135,7 +139,9 @@ const InvestmentPDF: React.FC<InvestmentPDFProps> = (props) => {
               <Text style={styles.tableCellBold}>Tegningsdato</Text>
             </View>
             <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>{props.date}</Text>
+              <Text style={styles.tableCell}>
+                {formatDateString(props.date)}
+              </Text>
             </View>
           </View>
           <View style={[styles.tableRow, { borderBottomWidth: 0 }]}>
@@ -167,12 +173,17 @@ const InvestmentPDF: React.FC<InvestmentPDFProps> = (props) => {
           <View style={styles.bankInfoRow}>
             <Text style={styles.bankLabel}>Kontonummer:</Text>
             <Text style={styles.bankValue}>
-              {companyDetails.bankDetails.accountNumber}
+              {formatStringWithSpacing(
+                companyDetails.bankDetails.accountNumber,
+                [3, 3]
+              )}
             </Text>
           </View>
           <View style={styles.bankInfoRow}>
             <Text style={styles.bankLabel}>Forfallsdato:</Text>
-            <Text style={styles.bankValue}>{props.dueDate}</Text>
+            <Text style={styles.bankValue}>
+              {formatDateString(props.dueDate)}
+            </Text>
           </View>
           <View style={styles.bankInfoRow}>
             <Text style={styles.bankLabel}>Beløp:</Text>
@@ -191,7 +202,7 @@ const InvestmentPDF: React.FC<InvestmentPDFProps> = (props) => {
         <View style={styles.footer}>
           <Text>
             {companyDetails.name} - {companyDetails.address} - Orgnr:{" "}
-            {companyDetails.orgNumber}
+            {formatStringWithSpacing(companyDetails.orgNumber, [3, 3])}
           </Text>
         </View>
       </Page>

@@ -110,3 +110,30 @@ export const calculateDaysRemaining = (date: string | Date) => {
 
   return differenceInDays;
 };
+
+export const formatStringWithSpacing = (
+  value: string,
+  spacingPattern: number[]
+): string => {
+  let result = "";
+  let currentIndex = 0;
+
+  // Iterate through the spacing pattern
+  for (const spacing of spacingPattern) {
+    // Add the next chunk of characters based on the spacing value
+    result += value.slice(currentIndex, currentIndex + spacing);
+    currentIndex += spacing;
+
+    // Add space if we're not at the end of the string
+    if (currentIndex < value.length) {
+      result += " ";
+    }
+  }
+
+  // Add any remaining characters
+  if (currentIndex < value.length) {
+    result += value.slice(currentIndex);
+  }
+
+  return result;
+};

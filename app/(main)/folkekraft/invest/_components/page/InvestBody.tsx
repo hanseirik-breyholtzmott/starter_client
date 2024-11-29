@@ -181,9 +181,9 @@ export default function InvestmentBody() {
       const totalAmount =
         numberOfShares * companyData.investmentDetails.sharePrice;
 
-      // Create investment details matching the InvestmentDetails interface
-      const investmentDetails: InvestmentDetails = {
-        investorName: "Hans-Eirik",
+      // Create investment details
+      const investmentDetails = {
+        investorName: "Hans-Eirik" || "",
         purchasedShares: numberOfShares,
         pricePerShare: companyData.investmentDetails.sharePrice,
         totalInvestment: totalAmount,

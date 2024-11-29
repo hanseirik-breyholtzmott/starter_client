@@ -10,75 +10,66 @@ interface BankAccount {
   accountHolderName: string;
 }
 
-interface InvestmentDetails {
-  sharePrice: number;
-  shareClassId: string;
-  availableShares: number;
-  minSharePurchase: number;
-  maxSharePurchase: number;
-}
-
-interface Perk {
-  button: {
-    text: string;
-    link: string;
-  };
-  title: string;
-  actionText: string;
-  description: string;
-  _id: string;
-}
-
 interface CompanyData {
   companyName: string;
   description: string;
   ceo: string;
-  investmentDetails: InvestmentDetails;
+  investmentDetails: {
+    sharePrice: number;
+    shareClassId: string;
+    availableShares: number;
+    minSharePurchase: number;
+    maxSharePurchase: number;
+  };
   bankAccount: BankAccount;
-  perks: Perk[];
+  perks: Array<{
+    button: {
+      text: string;
+      link: string;
+    };
+    title: string;
+    actionText: string;
+    description: string;
+    _id: string;
+  }>;
 }
 
 interface Props {
   investmentData: CompanyData;
 }
 
-export default function InvestPageLayout({ investmentData }: Props) {
+export default function InvestPageLayout({
+  investmentData,
+}: Props): JSX.Element {
   const { setCompanyData } = useInvestment();
 
   useEffect(() => {
-    if (!investmentData) {
-      console.warn("No investment data provided");
-      return;
-    }
-
-    try {
+    if (investmentData) {
+      // Transform the data to match the expected structure
       const transformedData = {
         ...investmentData,
         companyDetails: {
-          ceo: investmentData.ceo ?? "",
-          address: "",
-          vatNumber: "",
+          ceo: investmentData.ceo,
+          address: "", // Add default or get from API if needed
+          vatNumber: "", // Add default or get from API if needed
           bankDetails: {
-            accountNumber: investmentData.bankAccount?.accountNumber ?? "",
-            bankName: investmentData.bankAccount?.bankName ?? "",
-            accountHolder: investmentData.bankAccount?.accountHolderName ?? "",
+            accountNumber: investmentData.bankAccount.accountNumber,
+            bankName: investmentData.bankAccount.bankName,
+            accountHolder: investmentData.bankAccount.accountHolderName,
           },
         },
       };
 
-      console.log("Setting company data:", transformedData);
       setCompanyData(transformedData);
-    } catch (error) {
-      console.error("Error transforming investment data:", error);
     }
   }, [investmentData, setCompanyData]);
 
   return (
     <div className="flex flex-col-reverse md:flex-row justify-between container mx-auto px-4 py-8 min-h-screen gap-6">
       <InvestmentBody />
-      <pre className="whitespace-pre-wrap bg-gray-100 p-4 rounded">
-        {JSON.stringify(investmentData, null, 2)}
-      </pre>
+      <div className="w-full md:w-1/3">
+        <pre>{JSON.stringify(investmentData, null, 2)}</pre>
+      </div>
     </div>
   );
 }

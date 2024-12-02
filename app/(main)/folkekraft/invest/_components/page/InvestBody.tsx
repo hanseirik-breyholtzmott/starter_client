@@ -187,9 +187,10 @@ export default function InvestmentBody() {
 
       const totalAmount =
         numberOfShares * (companyData.investmentDetails.sharePrice || 0);
+      const investorFullName = `${user.firstName} ${user.lastName}`.trim();
 
       const investmentDetails: InvestmentDetails = {
-        investorName: "Hans-Eirik",
+        investorName: investorFullName,
         purchasedShares: numberOfShares,
         pricePerShare: companyData.investmentDetails.sharePrice,
         totalInvestment: totalAmount,

@@ -20,22 +20,23 @@ const getCampaignData = async () => {
       `/api/campaign/670edfb1a444b509203c7cd7`
     );
 
-    console.log(response.data);
+    console.log("API Response:", {
+      status: response.status,
+      data: JSON.stringify(response.data, null, 2),
+    });
 
     if (response.status != 200) {
       console.log("Failed to fetch data");
       throw new Error("Failed to fetch data");
-    } else {
     }
 
     const data = response.data;
-
     return {
       campaign: data.campaign,
       caplist: data.caplist,
     };
   } catch (error) {
-    console.log(error);
+    console.error("API Error:", error);
   }
 };
 

@@ -208,7 +208,12 @@ export default function CampaignInfo({
           <p className="text-center text-gray-600 mt-2 hidden md:block">
             Minstetegning er{" "}
             <strong>
-              {formatCurrency(investmentDetails.minimumInvestment, 0, false)}
+              {formatCurrency(
+                investmentDetails.minimumInvestment *
+                  investmentDetails.sharePrice,
+                0,
+                false
+              )}
             </strong>
           </p>
           <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-8">

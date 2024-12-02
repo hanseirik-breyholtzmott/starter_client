@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useInvestment } from "@/app/hooks/InvestContext";
 import InvestmentBody from "./InvestBody";
+import InvestSidebar from "./InvestSidebar";
 
 interface ApiPerk {
   title: string;
@@ -135,6 +136,11 @@ export default function InvestPageLayout({
   return (
     <div className="flex flex-col-reverse md:flex-row justify-between container mx-auto px-4 py-8 min-h-screen gap-6">
       <InvestmentBody />
+      <div className="w-full md:w-1/3 hidden">
+        <InvestSidebar />
+      </div>
+
+      {/* Debug Data (Commented Out)
       <div className="w-full md:w-1/3 space-y-4">
         <div className="bg-white rounded-lg shadow p-4">
           <h2 className="text-lg font-semibold mb-4">API Response</h2>
@@ -147,9 +153,7 @@ export default function InvestPageLayout({
           <h2 className="text-lg font-semibold mb-4">InvestContext Data</h2>
           <div className="space-y-4">
             <div>
-              <h3 className="font-medium text-gray-700">
-                Investment Form Data
-              </h3>
+              <h3 className="font-medium text-gray-700">Investment Form Data</h3>
               <p>Number of Shares: {numberOfShares}</p>
               <p>Entity Type: {entityType || "Not selected"}</p>
               <p>ID Number: {idNumber || "Not provided"}</p>
@@ -157,9 +161,7 @@ export default function InvestPageLayout({
             </div>
 
             <div>
-              <h3 className="font-medium text-gray-700">
-                Share Purchase Limits
-              </h3>
+              <h3 className="font-medium text-gray-700">Share Purchase Limits</h3>
               <p>Min Share Purchase: {minSharePurchase}</p>
               <p>Max Share Purchase: {maxSharePurchase}</p>
             </div>
@@ -187,6 +189,7 @@ export default function InvestPageLayout({
           </div>
         </div>
       </div>
+      */}
     </div>
   );
 }

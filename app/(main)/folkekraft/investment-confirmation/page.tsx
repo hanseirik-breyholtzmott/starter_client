@@ -24,6 +24,7 @@ import InvestmentPDF from "@/components/react-pdf/sharePDF";
 import { BlobProvider } from "@react-pdf/renderer";
 import type { InvestmentDetails } from "@/app/hooks/InvestContext";
 import { formatCurrency, formatNumber } from "@/lib/helperFunctions";
+import { sendInvestmentPDF } from "@/lib/actions/email";
 
 const getCompanyName = (details: InvestmentDetails | null) => {
   return details?.companyDetails?.name || "";
@@ -33,6 +34,15 @@ export default function SharePurchaseSuccess() {
   const router = useRouter();
   const { investmentDetails } = useInvestment();
   const [currentStep, setCurrentStep] = useState(1);
+  const [emailSent, setEmailSent] = useState(false);
+
+  // Check if email was already sent in a previous session
+  useEffect(() => {
+    const wasEmailSent = localStorage.getItem("investmentEmailSent");
+    if (wasEmailSent === "true") {
+      setEmailSent(true);
+    }
+  }, []);
 
   // Redirect if no investment details
   useEffect(() => {
@@ -43,6 +53,34 @@ export default function SharePurchaseSuccess() {
   }, [investmentDetails, router]);
 
   if (!investmentDetails) return null;
+
+  const sendPDFEmail = async (blob: Blob) => {
+    if ((sendPDFEmail as any).emailSent) {
+      console.log("Email already sent, skipping...");
+      return;
+    }
+
+    if (blob && !emailSent) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          await sendInvestmentPDF(
+            reader.result as string,
+            investmentDetails.email,
+            investmentDetails.investorName,
+            investmentDetails.companyDetails.name
+          );
+          setEmailSent(true);
+          (sendPDFEmail as any).emailSent = true;
+          localStorage.setItem("investmentEmailSent", "true");
+          console.log("PDF sent to email successfully");
+        } catch (error) {
+          console.log("Error sending PDF:", error);
+        }
+      };
+      reader.readAsDataURL(blob);
+    }
+  };
 
   const renderPDFDownload = () => {
     const pdfData = {
@@ -61,25 +99,32 @@ export default function SharePurchaseSuccess() {
 
     return (
       <BlobProvider document={<InvestmentPDF {...pdfData} />}>
-        {({ url, loading }) => (
-          <Button
-            onClick={() => {
-              if (url) {
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = `Folkekraft-Investering-${
-                  new Date().toISOString().split("T")[0]
-                }.pdf`;
-                link.click();
-              }
-            }}
-            disabled={loading}
-            className="w-full sm:w-auto"
-          >
-            <Download className="mr-2 h-4 w-4" />
-            {loading ? "Genererer PDF..." : "Last ned kjøpsdetaljer (PDF)"}
-          </Button>
-        )}
+        {({ blob, url, loading }) => {
+          // Automatically send email when blob is available
+          if (blob && !emailSent) {
+            sendPDFEmail(blob);
+          }
+
+          return (
+            <Button
+              onClick={() => {
+                if (url) {
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.download = `Folkekraft-Investering-${
+                    new Date().toISOString().split("T")[0]
+                  }.pdf`;
+                  link.click();
+                }
+              }}
+              disabled={loading}
+              className="w-full sm:w-auto"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              {loading ? "Genererer PDF..." : "Last ned kjøpsdetaljer (PDF)"}
+            </Button>
+          );
+        }}
       </BlobProvider>
     );
   };
@@ -93,6 +138,11 @@ export default function SharePurchaseSuccess() {
               Steg 1: Last ned kjøpsdetaljer
             </h3>
             <p>Last ned kjøpsdetaljer for dine arkiver.</p>
+            {emailSent && (
+              <div className="bg-green-100 text-green-700 p-3 rounded-md mb-4">
+                ✓ En kopi av kjøpsdetaljene er sendt til din e-post
+              </div>
+            )}
             {renderPDFDownload()}
           </div>
         )}

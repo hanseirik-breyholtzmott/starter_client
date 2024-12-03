@@ -176,12 +176,20 @@ export default function InvestmentBody() {
     try {
       setShowConfirmDialog(false);
 
+      console.log("User data:", user); // Debug log
+
       if (
         !companyData?.companyDetails?.bankDetails ||
         !user ||
-        !numberOfShares
+        !numberOfShares ||
+        !user.email
       ) {
-        console.error("Missing required data");
+        console.error("Missing required data:", {
+          hasCompanyData: !!companyData?.companyDetails?.bankDetails,
+          hasUser: !!user,
+          hasShares: !!numberOfShares,
+          hasEmail: !!user?.email,
+        });
         return;
       }
 
@@ -190,6 +198,7 @@ export default function InvestmentBody() {
       const investorFullName = `${user.firstName} ${user.lastName}`.trim();
 
       const investmentDetails: InvestmentDetails = {
+        email: user.email,
         investorName: investorFullName,
         purchasedShares: numberOfShares,
         pricePerShare: companyData.investmentDetails.sharePrice,

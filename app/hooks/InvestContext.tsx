@@ -51,6 +51,7 @@ interface CompanyData {
 }
 
 export interface InvestmentDetails {
+  email: string;
   investorName: string;
   purchasedShares: number;
   pricePerShare: number;
@@ -122,12 +123,19 @@ export const InvestmentProvider = ({
     }
   }, [companyData]);
 
-  // Load saved investment data from localStorage on component mount
+  // Add this helper function at the top
+  const STORAGE_EXPIRY_TIME = 15 * 60 * 1000; // 15 minutes in milliseconds
+
+  const isStorageExpired = (timestamp: number) => {
+    return Date.now() - timestamp > STORAGE_EXPIRY_TIME;
+  };
+
+  // Update the useEffect that loads data
   useEffect(() => {
     const storedData = localStorage.getItem("investmentData");
     if (storedData) {
       const data = JSON.parse(storedData);
-      if (Date.now() - data.timestamp < 86400000) {
+      if (!isStorageExpired(data.timestamp)) {
         setNumberOfShares(data.numberOfShares);
         setEntityType(data.entityType);
         setIdNumber(data.idNumber);
@@ -144,11 +152,13 @@ export const InvestmentProvider = ({
         }
       } else {
         localStorage.removeItem("investmentData");
+        localStorage.removeItem("investmentEmailSent"); // Also clear email sent status
+        clearInvestmentData(); // Clear all state
       }
     }
   }, []);
 
-  // Save investment data to localStorage whenever state changes
+  // Update the useEffect that saves data
   useEffect(() => {
     const investmentData = {
       numberOfShares,

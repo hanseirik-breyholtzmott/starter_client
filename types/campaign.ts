@@ -4,15 +4,12 @@ export interface InvestmentOpportunity {
   description: string;
   companyName: string;
   tags: string[];
-  displayImage: string;
-  iconImage: string;
+  images: {
+    icon: string;
+    logo: string;
+    campaign: string;
+  };
   startDate: string;
   endDate: string;
   daysRemaining: number;
-  followers: number;
-  status: "Fulgt" | "Følg emisjon";
-  raisedAmount?: number;
-  targetAmount?: number;
-  investorCount?: number;
-  progressPercentage?: number;
 }

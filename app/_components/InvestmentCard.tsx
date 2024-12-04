@@ -24,7 +24,7 @@ export default function InvestmentCard({
       <Card className="max-w-md overflow-hidden block transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
         <div className="relative h-64">
           <Image
-            src={opportunity.displayImage}
+            src={opportunity.images.campaign}
             alt={opportunity.title}
             fill
             className="object-cover"
@@ -33,7 +33,7 @@ export default function InvestmentCard({
             <div className="flex items-center gap-4">
               <div className="h-16 w-16 bg-white rounded-lg overflow-hidden">
                 <Image
-                  src={opportunity.iconImage}
+                  src={opportunity.images.icon}
                   alt={`${opportunity.companyName} logo`}
                   width={64}
                   height={64}

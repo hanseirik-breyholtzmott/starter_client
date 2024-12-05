@@ -222,8 +222,8 @@ const InvestmentPDF: React.FC<InvestmentPDFProps> = (props) => {
 
         <View style={styles.footer}>
           <Text>
-            {companyDetails.name} - {companyDetails.address} - Orgnr:{" "}
-            {formatStringWithSpacing(companyDetails.orgNumber, [3, 3])}
+            {companyDetails.name} - C. Sundts gate 55, 5004 Bergen - Orgnr:{" "}
+            {formatStringWithSpacing("830068112", [3, 3])}
           </Text>
         </View>
       </Page>

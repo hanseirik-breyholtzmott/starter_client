@@ -32,7 +32,7 @@ export default function InvestButton({}: Props) {
             Invester i Folkekraft
           </Button>
           <p className="text-center text-gray-600 m-2 text-sm">
-            Minstetegning er <strong>2 400kr</strong>
+            Minstetegning er <strong>4 800kr</strong>
           </p>
         </div>
         {/* Desktop button */}

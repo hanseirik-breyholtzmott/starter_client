@@ -218,7 +218,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
       // Store current path if it's a public route before initiating login
       const currentPath = window.location.pathname;
-      const publicPaths = ["/folkekraft", "/folkekraft-group"];
+      const publicPaths = ["/folkekraft"];
       if (publicPaths.includes(currentPath)) {
         localStorage.setItem("postLoginRedirect", currentPath);
       }
@@ -268,7 +268,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       ]);
 
       // Handle redirect
-      let finalRedirectUrl = "/folkekraft-group"; // Default fallback
+      let finalRedirectUrl = "/folkekraft"; // Default fallback
       const storedRedirect = localStorage.getItem("postLoginRedirect");
       if (
         storedRedirect &&
@@ -351,7 +351,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         ]);
 
         // Handle redirect logic
-        let finalRedirectUrl = "/folkekraft-group";
+        let finalRedirectUrl = "/folkekraft";
         const storedRedirect = localStorage.getItem("postLoginRedirect");
         if (storedRedirect) {
           finalRedirectUrl = storedRedirect;

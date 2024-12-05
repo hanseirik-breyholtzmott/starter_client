@@ -34,15 +34,6 @@ export default function SharePurchaseSuccess() {
   const router = useRouter();
   const { investmentDetails } = useInvestment();
   const [currentStep, setCurrentStep] = useState(1);
-  const [emailSent, setEmailSent] = useState(false);
-
-  // Check if email was already sent in a previous session
-  useEffect(() => {
-    const wasEmailSent = localStorage.getItem("investmentEmailSent");
-    if (wasEmailSent === "true") {
-      setEmailSent(true);
-    }
-  }, []);
 
   // Redirect if no investment details
   useEffect(() => {
@@ -55,30 +46,56 @@ export default function SharePurchaseSuccess() {
   if (!investmentDetails) return null;
 
   const sendPDFEmail = async (blob: Blob) => {
-    if ((sendPDFEmail as any).emailSent) {
-      console.log("Email already sent, skipping...");
-      return;
-    }
+    try {
+      console.log("Starting email send process with blob", {
+        hasBlob: !!blob,
+        hasInvestmentDetails: !!investmentDetails,
+        email: investmentDetails?.email,
+      });
 
-    if (blob && !emailSent) {
+      if (!blob) {
+        console.error("No blob available for email");
+        return;
+      }
+
+      if (!investmentDetails?.email) {
+        console.error("No email address available", investmentDetails);
+        return;
+      }
+
       const reader = new FileReader();
+
+      reader.onerror = (error) => {
+        console.error("Error reading blob:", error);
+      };
+
       reader.onloadend = async () => {
         try {
-          await sendInvestmentPDF(
+          console.log("Converting blob to base64...", {
+            hasResult: !!reader.result,
+            resultLength: (reader.result as string)?.length,
+          });
+
+          const result = await sendInvestmentPDF(
             reader.result as string,
             investmentDetails.email,
             investmentDetails.investorName,
             investmentDetails.companyDetails.name
           );
-          setEmailSent(true);
-          (sendPDFEmail as any).emailSent = true;
-          localStorage.setItem("investmentEmailSent", "true");
-          console.log("PDF sent to email successfully");
+
+          console.log("Investment PDF send result:", result);
+
+          if (!result.success) {
+            console.error("Email send failed:", result);
+          }
         } catch (error) {
-          console.log("Error sending PDF:", error);
+          console.error("Error in email sending process:", error);
         }
       };
+
       reader.readAsDataURL(blob);
+    } catch (error) {
+      console.error("Error in sendPDFEmail:", error);
     }
   };
 
@@ -89,6 +106,7 @@ export default function SharePurchaseSuccess() {
       amount: investmentDetails.totalInvestment,
       date: investmentDetails.purchaseDate,
       dueDate: investmentDetails.dueDate,
+      idNumber: investmentDetails.idNumber,
       companyDetails: {
         name: investmentDetails.companyDetails.name,
         bankDetails: investmentDetails.companyDetails.bankDetails,
@@ -97,32 +115,51 @@ export default function SharePurchaseSuccess() {
       },
     };
 
+    console.log("Rendering PDF with data:", pdfData);
+
     return (
       <BlobProvider document={<InvestmentPDF {...pdfData} />}>
         {({ blob, url, loading }) => {
-          // Automatically send email when blob is available
-          if (blob && !emailSent) {
-            sendPDFEmail(blob);
-          }
+          const handleEmailSend = async () => {
+            if (blob && !loading) {
+              console.log("PDF blob available, attempting to send email...");
+              try {
+                await sendPDFEmail(blob);
+              } catch (error) {
+                console.error("Failed to send email:", error);
+              }
+            }
+          };
+
+          React.useEffect(() => {
+            handleEmailSend();
+          }, [blob, loading]);
 
           return (
-            <Button
-              onClick={() => {
-                if (url) {
-                  const link = document.createElement("a");
-                  link.href = url;
-                  link.download = `Folkekraft-Investering-${
-                    new Date().toISOString().split("T")[0]
-                  }.pdf`;
-                  link.click();
-                }
-              }}
-              disabled={loading}
-              className="w-full sm:w-auto"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              {loading ? "Genererer PDF..." : "Last ned kjøpsdetaljer (PDF)"}
-            </Button>
+            <>
+              <Button
+                onClick={() => {
+                  if (url) {
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = `Folkekraft-Investering-${
+                      new Date().toISOString().split("T")[0]
+                    }.pdf`;
+                    link.click();
+                  }
+                }}
+                disabled={loading}
+                className="w-full sm:w-auto"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                {loading ? "Genererer PDF..." : "Last ned kjøpsdetaljer (PDF)"}
+              </Button>
+              {loading && (
+                <p className="text-sm text-gray-500 mt-2">
+                  Genererer PDF og forbereder e-post...
+                </p>
+              )}
+            </>
           );
         }}
       </BlobProvider>
@@ -138,11 +175,6 @@ export default function SharePurchaseSuccess() {
               Steg 1: Last ned kjøpsdetaljer
             </h3>
             <p>Last ned kjøpsdetaljer for dine arkiver.</p>
-            {emailSent && (
-              <div className="bg-green-100 text-green-700 p-3 rounded-md mb-4">
-                ✓ En kopi av kjøpsdetaljene er sendt til din e-post
-              </div>
-            )}
             {renderPDFDownload()}
           </div>
         )}

@@ -86,6 +86,14 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     return AuthProviderFactory(providerType);
   };
 
+  const cleanup = async () => {
+    setUser(null);
+    setIsAuthenticated(false);
+    setAccessToken(null);
+    setAuthorizationHeader("");
+    await Promise.all([deleteCookie("session"), deleteCookie("accessToken")]);
+  };
+
   const checkAuth = async () => {
     try {
       // Check if current path is public first
@@ -121,6 +129,26 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      // Add a direct session check with the backend
+      if (accessTokenCookie) {
+        try {
+          setAuthorizationHeader(accessTokenCookie);
+          const { data } = await axiosInstance.get("/auth/validate-session");
+
+          if (data.success) {
+            setUser(data.user);
+            setIsAuthenticated(true);
+            setAccessToken(accessTokenCookie);
+            setLoading(false);
+            return;
+          }
+        } catch (error) {
+          // If session validation fails, continue to token refresh
+          console.log("Session validation failed, attempting refresh");
+        }
+      }
+
+      // Existing refresh token logic
       try {
         const { data } = await axiosInstance.post("/auth/refresh", {
           refreshToken: sessionCookie,
@@ -144,26 +172,11 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         }
       } catch (error) {
         console.log("Token refresh failed:");
-        // Clean up on authentication failure
-        setUser(null);
-        setIsAuthenticated(false);
-        setAccessToken(null);
-        setAuthorizationHeader("");
-        await Promise.all([
-          deleteCookie("session"),
-          deleteCookie("accessToken"),
-        ]);
+        await cleanup();
       }
-
-      // Check user authentication status
     } catch (error) {
       console.log("Authentication check failed");
-      // Clean up cookies on authentication failure
-      await Promise.all([deleteCookie("session"), deleteCookie("accessToken")]);
-      setIsAuthenticated(false);
-      setUser(null);
-      setAccessToken(null);
-      setAuthorizationHeader("");
+      await cleanup();
     } finally {
       setLoading(false);
     }
@@ -173,6 +186,21 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     checkAuth();
   }, []);
+
+  // Add a periodic check effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isAuthenticated) {
+      interval = setInterval(checkAuth, 2 * 60 * 1000); // Check every 2 minutes
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isAuthenticated]);
 
   const signIn = async (
     provider: string,

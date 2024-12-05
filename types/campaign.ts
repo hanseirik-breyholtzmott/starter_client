@@ -12,4 +12,8 @@ export interface InvestmentOpportunity {
   startDate: string;
   endDate: string;
   daysRemaining: number;
+  status: "active" | "upcoming";
+  totalInvestments?: number;
+  totalInvested?: number;
+  percentageInvested?: number;
 }

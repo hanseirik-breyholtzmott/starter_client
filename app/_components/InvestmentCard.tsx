@@ -9,6 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { type InvestmentOpportunity } from "@/types/campaign";
+import { formatCurrency, covertToPercentage } from "@/lib/helperFunctions";
 
 export default function InvestmentCard({
   opportunity,
@@ -41,12 +42,27 @@ export default function InvestmentCard({
                 />
               </div>
               <div className="flex-1">
-                <div className="text-lg font-semibold">£2,141,789 Raised</div>
-                <Progress value={65} className="h-2 mt-2 bg-slate-400/20" />
-                <div className="flex justify-between text-sm text-muted-foreground mt-1">
-                  <span>1,042 Investors</span>
-                  <span>142% of target</span>
-                </div>
+                {opportunity.status === "active" ? (
+                  <>
+                    <div className="text-lg font-semibold">
+                      {formatCurrency(opportunity.totalInvested || 0, 0, false)}
+                    </div>
+                    <Progress
+                      value={(opportunity.percentageInvested ?? 0) * 100}
+                      className="h-2 mt-2 bg-slate-400/20"
+                    />
+                    <div className="flex justify-between text-sm text-muted-foreground mt-1">
+                      <span>{opportunity.totalInvestments} tegninger</span>
+                      <span>
+                        {covertToPercentage(
+                          opportunity.percentageInvested || 0
+                        )}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-lg font-semibold">Coming Soon</div>
+                )}
               </div>
             </div>
           </div>

@@ -176,7 +176,8 @@ export default function InvestmentBody() {
     try {
       setShowConfirmDialog(false);
 
-      console.log("User data:", user); // Debug log
+      console.log("User data:", user);
+      console.log("ID Number being saved:", idNumber);
 
       if (
         !companyData?.companyDetails?.bankDetails ||
@@ -205,6 +206,7 @@ export default function InvestmentBody() {
         totalInvestment: totalAmount,
         purchaseDate: new Date().toISOString(),
         dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        idNumber: idNumber,
         companyDetails: {
           name: companyData.companyName || "Folkekraft AS",
           ceo: companyData.companyDetails.ceo || "",
@@ -218,6 +220,7 @@ export default function InvestmentBody() {
         },
       };
 
+      console.log("Investment details being saved:", investmentDetails);
       setInvestmentDetails(investmentDetails);
       handleConfetti();
       router.push("/folkekraft/investment-confirmation");

@@ -11,6 +11,7 @@ interface InvestmentPDFProps {
   amount: number;
   date: string;
   dueDate: string;
+  idNumber: string;
   companyDetails: {
     name: string;
     bankDetails: {
@@ -100,6 +101,18 @@ const styles = StyleSheet.create({
 const InvestmentPDF: React.FC<InvestmentPDFProps> = (props) => {
   const { companyDetails } = props;
 
+  console.log("PDF Props:", props);
+  console.log("ID Number:", props.idNumber);
+
+  const idType =
+    props.idNumber?.length === 11 ? "Fødselsnummer" : "Organisasjonsnummer";
+  console.log("ID Type:", idType);
+
+  const formattedIdNumber = props.idNumber
+    ? formatStringWithSpacing(props.idNumber, [3, 3])
+    : "---";
+  console.log("Formatted ID Number:", formattedIdNumber);
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -108,10 +121,18 @@ const InvestmentPDF: React.FC<InvestmentPDFProps> = (props) => {
         <View style={styles.table}>
           <View style={styles.tableRow}>
             <View style={styles.tableCol}>
-              <Text style={styles.tableCellBold}>Navn</Text>
+              <Text style={styles.tableCellBold}>Kontaktperson</Text>
             </View>
             <View style={styles.tableCol}>
               <Text style={styles.tableCell}>{props.name}</Text>
+            </View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCellBold}>{idType}</Text>
+            </View>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCell}>{formattedIdNumber}</Text>
             </View>
           </View>
           <View style={styles.tableRow}>

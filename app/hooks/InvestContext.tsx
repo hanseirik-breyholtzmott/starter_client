@@ -58,6 +58,7 @@ export interface InvestmentDetails {
   totalInvestment: number;
   purchaseDate: string;
   dueDate: string;
+  idNumber: string;
   companyDetails: {
     name: string;
     ceo: string;
@@ -152,7 +153,6 @@ export const InvestmentProvider = ({
         }
       } else {
         localStorage.removeItem("investmentData");
-        localStorage.removeItem("investmentEmailSent"); // Also clear email sent status
         clearInvestmentData(); // Clear all state
       }
     }

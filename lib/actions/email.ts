@@ -5,15 +5,23 @@ export async function sendInvestmentPDF(
   companyName: string
 ) {
   try {
-    console.log("Sending PDF with data:", {
-      hasEmail: !!email,
-      hasName: !!investorName,
-      hasCompany: !!companyName,
+    console.log("Starting sendInvestmentPDF with:", {
+      hasBase64: !!pdfBase64,
+      base64Length: pdfBase64?.length,
       email,
       investorName,
       companyName,
-      pdfLength: pdfBase64?.length,
     });
+
+    if (!pdfBase64 || !email || !investorName || !companyName) {
+      console.error("Missing required fields:", {
+        hasBase64: !!pdfBase64,
+        hasEmail: !!email,
+        hasName: !!investorName,
+        hasCompany: !!companyName,
+      });
+      throw new Error("Missing required fields for email send");
+    }
 
     const response = await fetch("/api/send-investment-pdf", {
       method: "POST",
@@ -29,19 +37,19 @@ export async function sendInvestmentPDF(
     });
 
     const data = await response.json();
-    console.log("Response data:", data);
+    console.log("API Response:", {
+      status: response.status,
+      ok: response.ok,
+      data,
+    });
 
     if (!response.ok) {
-      throw new Error(data.error || "Failed to send email");
-    }
-
-    if (!data.success) {
-      throw new Error("Email sending was not successful");
+      throw new Error(data.error || `Failed to send email: ${response.status}`);
     }
 
     return data;
   } catch (error) {
-    console.log("Error sending email:", error);
+    console.error("Error in sendInvestmentPDF:", error);
     throw error;
   }
 }

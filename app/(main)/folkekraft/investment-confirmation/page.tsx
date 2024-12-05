@@ -120,20 +120,9 @@ export default function SharePurchaseSuccess() {
     return (
       <BlobProvider document={<InvestmentPDF {...pdfData} />}>
         {({ blob, url, loading }) => {
-          const handleEmailSend = async () => {
-            if (blob && !loading) {
-              console.log("PDF blob available, attempting to send email...");
-              try {
-                await sendPDFEmail(blob);
-              } catch (error) {
-                console.error("Failed to send email:", error);
-              }
-            }
-          };
-
-          React.useEffect(() => {
-            handleEmailSend();
-          }, [blob, loading]);
+          if (blob && !loading) {
+            sendPDFEmail(blob);
+          }
 
           return (
             <>

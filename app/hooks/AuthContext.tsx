@@ -9,7 +9,7 @@ import React, {
 } from "react";
 
 //Nextjs
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 //Auth Providers
 import AuthProviderFactory from "@/app/providers/AuthProviderFactory";
@@ -81,6 +81,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
   const { toast } = useToast();
   const router = useRouter();
+  const pathname = usePathname();
 
   const getProviderInstance = (providerType: string): AuthProvider => {
     return AuthProviderFactory(providerType);
@@ -96,6 +97,37 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
+      const [sessionCookie, accessTokenCookie] = await Promise.all([
+        getCookieValue("session"),
+        getCookieValue("accessToken"),
+      ]);
+
+      // If we have a session cookie but no auth state, try to validate immediately
+      if (sessionCookie && !isAuthenticated) {
+        try {
+          const { data } = await axiosInstance.post("/auth/refresh", {
+            refreshToken: sessionCookie,
+          });
+
+          if (data.success) {
+            setUser(data.user);
+            setIsAuthenticated(true);
+            setAccessToken(data.accessToken);
+            setAuthorizationHeader(data.accessToken);
+
+            await setCookie(
+              "accessToken",
+              data.accessToken as string,
+              fifteenMinutesFromNow()
+            );
+            return;
+          }
+        } catch (error) {
+          console.log("Initial session validation failed");
+          await cleanup();
+        }
+      }
+
       // Check if current path is public first
       const publicPaths = [
         "/",
@@ -105,6 +137,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         "/bestill",
         "/test",
       ];
+
       const currentPath = window.location.pathname;
 
       // For public paths, don't check authentication
@@ -112,11 +145,6 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         setLoading(false);
         return;
       }
-
-      const [sessionCookie, accessTokenCookie] = await Promise.all([
-        getCookieValue("session"),
-        getCookieValue("accessToken"),
-      ]);
 
       if (!sessionCookie) {
         console.log("No session cookie found");
@@ -182,10 +210,10 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Check if the user is authenticated when the app loads
+  // Check auth on mount and when path changes
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [pathname]);
 
   // Add a periodic check effect
   useEffect(() => {

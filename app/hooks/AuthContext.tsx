@@ -161,7 +161,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       if (accessTokenCookie) {
         try {
           setAuthorizationHeader(accessTokenCookie);
-          const { data } = await axiosInstance.get("/api/auth/refresh");
+          const { data } = await axiosInstance.get("/auth/refresh");
 
           if (data.success) {
             setUser(data.user);
@@ -501,7 +501,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const refreshAccessToken = async () => {
       try {
-        const response = await axiosInstance.post("/api/auth/refresh");
+        const response = await axiosInstance.post("/auth/refresh");
         setAccessToken(response.data.accessToken);
         setAuthorizationHeader(response.data.accessToken);
       } catch (error) {

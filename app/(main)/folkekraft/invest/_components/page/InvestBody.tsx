@@ -8,6 +8,7 @@ import { Form } from "@/components/ui/form";
 import { useInvestment, InvestmentDetails } from "@/app/hooks/InvestContext";
 import { useAuth } from "@/app/hooks/AuthContext";
 import { formatCurrency } from "@/lib/helperFunctions";
+import axiosInstance from "@/lib/axiosInstance";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -191,6 +192,26 @@ export default function InvestmentBody() {
           hasShares: !!numberOfShares,
           hasEmail: !!user?.email,
         });
+        return;
+      }
+
+      // Submit share purchase to API
+      try {
+        const response = await axiosInstance.post(
+          "/api/campaigns/670edfb1a444b509203c7cd7/purchase-shares",
+          {
+            userId: user.id,
+            shareNumber: numberOfShares,
+            ssn: idNumber,
+          }
+        );
+
+        if (!response.data.success) {
+          throw new Error("Failed to submit share purchase");
+        }
+      } catch (error) {
+        console.error("Error submitting share purchase:", error);
+        // You may want to show an error message to the user here
         return;
       }
 

@@ -38,42 +38,42 @@ const cardData = [
   {
     id: 4,
     imageSrc:
-      "https://utfs.io/f/1c66qeb7SCm56wggZ1aDi46HWJYcyGSjUxI5lCVZFgepzduh",
-    altText: "Energi Salg Norge",
-    title: "Duo",
-    role: "Innholdsprodusent",
+      "https://utfs.io/f/1c66qeb7SCm51STQOyb7SCm5D69PaJXv0Bd3zUofGxYQkn1I",
+    altText: "Credo Revisjon",
+    title: "Credo Revisjon",
+    role: "Revisor",
   },
   {
     id: 5,
     imageSrc:
-      "https://utfs.io/f/1c66qeb7SCm5jZKTny4mqnaQXygZTwVGR8hDHBbxJ7Ao2ps5",
-    altText: "Ceylon Capital",
-    title: "Ceylon Capital",
-    role: "Markedsstrategi",
+      "https://utfs.io/f/1c66qeb7SCm5KoDEiJXpSEv3rPDqiJxksfXTgtVLwjMhWCn4",
+    altText: "Ecit Regnskap",
+    title: "Ecit Regnskap",
+    role: "Regnskapsfører",
   },
   {
     id: 6,
     imageSrc:
-      "https://utfs.io/f/1c66qeb7SCm52mKDic9phV4yts0bOCKoFTzM5vIkXjlNQJdH",
-    altText: "Energi Salg Norge",
-    title: "Alskog",
-    role: "Budsjettering",
+      "https://utfs.io/f/1c66qeb7SCm5NPS9njJdwjiMcG5DPegqJl0H9uatx8Y4AsU3",
+    altText: "Bergen Synergy",
+    title: "Bergen Synergy",
+    role: "Strømforvaltning",
   },
   {
     id: 7,
     imageSrc:
       "https://utfs.io/f/1c66qeb7SCm5J9J76ET8lQqnjs7ozIEpK04O3mD6TY9xuAfZ",
-    altText: "Energi Salg Norge",
+    altText: "Nudge Media",
     title: "Nudge Media",
-    role: "Media produsent",
+    role: "Digital markedsføring",
   },
   {
     id: 8,
     imageSrc:
-      "https://utfs.io/f/1c66qeb7SCm51AIcghb7SCm5D69PaJXv0Bd3zUofGxYQkn1I",
-    altText: "Energi Salg Norge",
-    title: "Mynt",
-    role: "Telefonsalg",
+      "https://utfs.io/f/1c66qeb7SCm5jGNsDcH4mqnaQXygZTwVGR8hDHBbxJ7Ao2ps",
+    altText: "Harris Adcokatfirma",
+    title: "Harris Adcokatfirma",
+    role: "Advokter",
   },
 ];
 
@@ -99,7 +99,9 @@ export default function Team({ perks }: PerkProps) {
       <div className="flex-grow flex md:flex-row items-center md:items-start gap-8 flex-col">
         <div className="h-full flex flex-col gap-10 w-full text-center">
           <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-2 text-[#00263D]">Team</h2>
+            <h2 className="text-3xl font-bold mb-2 text-[#00263D]">
+              Team og Samarbeidspartnere
+            </h2>
             <span>Dette faktiske team som driver Folkekraft</span>
             <Separator className="max-w-[200px] mx-auto h-[2px] bg-[#59C9B9] mt-4" />
           </div>

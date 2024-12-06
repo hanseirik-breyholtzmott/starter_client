@@ -30,7 +30,7 @@ export default function About({ perks }: PerkProps) {
   const [showButton, setShowButton] = useState(true);
 
   return (
-    <div className=" py-8 mt-6 flex">
+    <div className="py-8 mt-6 flex">
       {/* Sticky hyperlinks column */}
       <div
         className={`
@@ -171,16 +171,18 @@ export default function About({ perks }: PerkProps) {
               året. Det tilsvarer ca. 1000 kr i aksjeverdi.
             </p>
             <div className="max-w-[800px] mx-auto rounded-lg overflow-hidden">
-              <Image
-                src="https://utfs.io/f/1c66qeb7SCm5GcwCvsw0asLcm8Djn3uxXCWtE5I7ypeVUrb4"
-                alt="Strømavtalen"
-                layout="responsive" // Use layout responsive instead of fill
-                width={800} // Width in pixels for responsive layout
-                height={500} // Height in pixels for responsive layout
-                objectFit="contain" // Ensure the image is contained without overflow
-                sizes="(max-width: 800px) 100vw, 800px"
-                className="w-full h-auto"
-              />
+              <Link href="https://www.folkekraft.no/#stromavtale">
+                <Image
+                  src="https://utfs.io/f/1c66qeb7SCm5GcwCvsw0asLcm8Djn3uxXCWtE5I7ypeVUrb4"
+                  alt="Strømavtalen"
+                  layout="responsive" // Use layout responsive instead of fill
+                  width={800} // Width in pixels for responsive layout
+                  height={500} // Height in pixels for responsive layout
+                  objectFit="contain" // Ensure the image is contained without overflow
+                  sizes="(max-width: 800px) 100vw, 800px"
+                  className="w-full h-auto"
+                />
+              </Link>
             </div>
           </div>
           <div>
@@ -198,41 +200,85 @@ export default function About({ perks }: PerkProps) {
           </div>
           <div>
             <h3 id="utfordring" className="text-2xl font-bold mb-4">
-              Kapital og exit
+              Potensiell investorreise
             </h3>
             <p className="mb-4">
               Folkekraft tilbyr nå en emisjon til kr 8 per aksje, med flere
-              planlagte exit-muligheter for investorer. Oppkjøp i mars 2025:
-              Folkekraft Group AS vil kjøpe aksjene i Folkekraft AS for kr 12
-              per aksje, med oppgjør i aksjer i morselskapet (Folkekraft Group
-              AS). Dette gir investorene en bredere eksponering gjennom eierskap
-              i Folkekraft AS, Folkekraft Bedrift AS og GreenPowerHub AS.
-              Børsnotering i april 2025: Aksjene i morselskapet Folkekraft Group
-              vil børsnoteres på NOTC-listen, med en estimert verdi på kr 16 per
-              aksje, noe som gir over 70 % verdiutvikling på under et halvt år,
-              gitt at vi når våre mål og vekstplaner. Langsiktig potensial: Gitt
-              at man når våre mål og vekstplaner estimerer vi at deltakelse på
-              denne emisjonen kan resultere i 10-15 ganger investert kapital
-              innen 2028. Aksjene i Folkekraft Group vil også kunne omsettes på
-              selskapets interne handelsplattform og på NOTC-listen, noe som gir
-              fleksibilitet og muligheter for realisering av gevinst, samt
-              tilgang på kapitalsterke investorer. En mer detaljert gjennomgang,
-              inkludert et praktisk eksempel på hvordan investering og oppkjøp
-              vil fungere, finnes i videogjennomgangen på toppen av
-              emisjonsplattformen.
+              planlagte muligheter for exit og verdiskaping for investorer:
             </p>
-            <div className="max-w-[800px] mx-auto rounded-lg overflow-hidden">
-              <Image
-                src="https://utfs.io/f/1c66qeb7SCm5QaZlcKgaDP3ZvkfVOIA1eXBT57EF8C0i2lSR"
-                alt="Strømavtalen"
-                layout="responsive" // Use layout responsive instead of fill
-                width={800} // Width in pixels for responsive layout
-                height={500} // Height in pixels for responsive layout
-                objectFit="contain" // Ensure the image is contained without overflow
-                sizes="(max-width: 800px) 100vw, 800px"
-                className="w-full h-auto"
-              />
-            </div>
+            <ol className="flex flex-col gap-4">
+              <li>
+                <strong>1. Oppkjøp i mars 2025</strong>
+                <ul className="list-disc list-inside ml-8 mt-4">
+                  <li>
+                    <strong>Pris:</strong> Folkekraft Group AS planlegger å
+                    kjøpe aksjene i Folkekraft AS for{" "}
+                    <strong>kr 12 per aksje</strong>.
+                  </li>
+                  <li>
+                    <strong>Oppgjør:</strong> Oppgjøret vil skje i form av
+                    aksjer i morselskapet Folkekraft Group AS til{" "}
+                    <strong>kr 14 per aksje</strong>.
+                  </li>
+                  <li>
+                    <strong>Fordel:</strong> Dette gir investorene bredere
+                    eksponering gjennom eierskap i:
+                    <ul className="list-disc list-inside ml-8 mt-4">
+                      <li>Folkekraft AS</li>
+                      <li>Folkekraft Bedrift AS</li>
+                      <li>GreenPowerHub AS</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>2. Notering på NOTC-listen i april 2025</strong>
+                <ul className="list-disc list-inside ml-8 mt-4">
+                  <li>
+                    <strong>Notering:</strong> Folkekraft Group AS planlegger
+                    notering på <strong>NOTC-listen</strong>.
+                  </li>
+                  <li>
+                    <strong>Estimert verdi:</strong> Ved notering forventes
+                    aksjeverdien å være <strong>kr 16 per aksje</strong>, noe
+                    som representerer en verdiøkning på over{" "}
+                    <strong>70 %</strong> på mindre enn seks måneder, forutsatt
+                    at mål og vekstplaner nås.
+                  </li>
+                  <li>
+                    Se visuell fremstilling under for illustrasjon av
+                    investorreisen og verdiutviklingen.
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>3. Langsiktig potensial</strong>
+                <ul className="list-disc list-inside ml-8 mt-4">
+                  <li>
+                    <strong>Vekst:</strong> Ved å oppnå selskapets mål og
+                    vekstambisjoner estimeres investeringen å kunne gi en
+                    avkastning på{" "}
+                    <strong>10–15 ganger kapitalen innen 2028</strong> .
+                  </li>
+                  <li>
+                    <strong>Fleksibilitet:</strong> Aksjene i Folkekraft Group
+                    AS vil kunne omsettes både:
+                    <ul className="list-disc list-inside ml-8 mt-4">
+                      <li>På selskapets interne handelsplattform.</li>
+                      <li>
+                        På NOTC-listen, med tilgang til kapitalsterke investorer
+                        og realiseringsmuligheter.
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ol>
+            <p className="mt-4">
+              En gjennomgang, inkludert et praktisk eksempel på hvordan
+              investering og oppkjøp vil fungere, finner du i videogjennomgangen
+              på toppen av emisjonsplattformen.
+            </p>
           </div>
           <div>
             <h3 id="utfordring" className="text-2xl font-bold mb-4">
@@ -242,10 +288,10 @@ export default function About({ perks }: PerkProps) {
               <Image
                 src="https://utfs.io/f/1c66qeb7SCm5U0IyQUhK9DFI27TyPikVXGMclz50mNB6prEC"
                 alt="Strømavtalen"
-                layout="responsive" // Use layout responsive instead of fill
-                width={800} // Width in pixels for responsive layout
-                height={500} // Height in pixels for responsive layout
-                objectFit="contain" // Ensure the image is contained without overflow
+                layout="responsive"
+                width={800}
+                height={500}
+                objectFit="contain"
                 sizes="(max-width: 800px) 100vw, 800px"
                 className="w-full h-auto"
               />

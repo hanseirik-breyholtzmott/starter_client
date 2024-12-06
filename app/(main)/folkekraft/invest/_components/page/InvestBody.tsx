@@ -198,7 +198,7 @@ export default function InvestmentBody() {
       // Submit share purchase to API
       try {
         const response = await axiosInstance.post(
-          "/api/campaigns/670edfb1a444b509203c7cd7/purchase-shares",
+          "/api/campaign/670edfb1a444b509203c7cd7/purchase-shares",
           {
             userId: user.id,
             shareNumber: numberOfShares,

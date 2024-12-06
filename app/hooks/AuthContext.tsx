@@ -161,7 +161,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       if (accessTokenCookie) {
         try {
           setAuthorizationHeader(accessTokenCookie);
-          const { data } = await axiosInstance.get("/auth/validate-session");
+          const { data } = await axiosInstance.get("/api/auth/refresh");
 
           if (data.success) {
             setUser(data.user);

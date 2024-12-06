@@ -210,7 +210,7 @@ export default function InvestmentBody() {
           throw new Error("Failed to submit share purchase");
         }
       } catch (error) {
-        console.error("Error submitting share purchase:", error);
+        console.log("Error submitting share purchase:", error);
         // You may want to show an error message to the user here
         return;
       }

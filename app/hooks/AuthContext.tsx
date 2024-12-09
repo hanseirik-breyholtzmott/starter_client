@@ -479,25 +479,6 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  /*
-    User Makes a Request: 
-    A request is made using the axiosInstance with the current accessToken.
-
-    401 Unauthorized Error: 
-    If the accessToken has expired, the server responds with a 401 Unauthorized error.
-
-    Refresh the Token: 
-    The interceptor detects the 401 Unauthorized error and triggers the refreshAccessToken function 
-    to request a new accessToken from the /api/auth/refresh endpoint using the refreshToken.
-
-    Retry the Request: 
-    Once the new accessToken is obtained, the original request that failed is retried automatically 
-    with the updated Authorization header.
-
-    Logout on Failure: 
-    If refreshing the token fails (e.g., if the refreshToken has expired), the user is logged out, 
-    and no retry is attempted.
-*/
   useEffect(() => {
     const refreshAccessToken = async () => {
       try {

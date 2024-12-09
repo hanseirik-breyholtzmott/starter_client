@@ -1,33 +1,6 @@
-// security.ts
-import { randomBytes, createHash } from 'crypto';
-
-export function generateStateToken(redirectUrl: string | null): string {
-  const randomString = randomBytes(32).toString('hex');
-  const payload = {
-    redirectUrl: redirectUrl || '/folkekraft',
-    timestamp: Date.now(),
-    nonce: randomString
-  };
-  return Buffer.from(JSON.stringify(payload)).toString('base64');
-}
-
-export function validateStateToken(token: string): { 
-  isValid: boolean; 
-  redirectUrl: string | null; 
-} {
-  try {
-    const payload = JSON.parse(Buffer.from(token, 'base64').toString());
-    const isExpired = Date.now() - payload.timestamp > 1000 * 60 * 5; // 5 minutes
-    
-    return {
-      isValid: !isExpired,
-      redirectUrl: payload.redirectUrl
-    };
-  } catch {
-    return { isValid: false, redirectUrl: null };
-  }
-}import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { fifteenMinutesFromNow, oneMonthFromNow } from "@/lib/date";
+import { validateStateToken } from "../../../../lib/security";
 
 export async function GET(request: NextRequest) {
   console.log("Vipps callback hit:", request.url);
@@ -36,17 +9,24 @@ export async function GET(request: NextRequest) {
   const refreshToken = searchParams.get("refreshToken");
   const state = searchParams.get("state");
 
-  console.log("Received state (redirect URL):", state);
+  console.log("Received state:", state);
 
   if (!accessToken || !refreshToken) {
     return NextResponse.json({ error: "Invalid tokens" }, { status: 400 });
   }
 
+  // Validate the state token and get the redirect URL
+  const { isValid, redirectUrl } = state
+    ? validateStateToken(state)
+    : { isValid: false, redirectUrl: null };
+
   // Validate the redirect URL
   const validPaths = ["/folkekraft", "/folkekraft-group", "/folkekraft/invest"];
   const finalRedirectUrl =
-    state && (validPaths.includes(state) || state.startsWith("/folkekraft/"))
-      ? state
+    isValid &&
+    redirectUrl &&
+    (validPaths.includes(redirectUrl) || redirectUrl.startsWith("/folkekraft/"))
+      ? redirectUrl
       : "/folkekraft";
 
   console.log("Final redirect URL:", finalRedirectUrl);

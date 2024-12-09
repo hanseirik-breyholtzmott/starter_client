@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 //Nextjs
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 //Form
 import { z } from "zod";
@@ -47,7 +47,11 @@ const UserSignInForm = (props: Props) => {
   const router = useRouter();
 
   useEffect(() => {
-    const { status, message } = router.query;
+    // Get URL parameters using the Web API
+    const searchParams = new URLSearchParams(window.location.search);
+    const status = searchParams.get('status');
+    const message = searchParams.get('message');
+
     if (status) {
       let errorMessage = message || "An unexpected error occurred.";
       switch (status) {
@@ -58,8 +62,7 @@ const UserSignInForm = (props: Props) => {
           errorMessage = "Could not authenticate with Vipps. Please try again.";
           break;
         case "error":
-          errorMessage =
-            message || "An unexpected error occurred. Please try again.";
+          errorMessage = message || "An unexpected error occurred. Please try again.";
           break;
         default:
           errorMessage = message || errorMessage;
@@ -71,7 +74,7 @@ const UserSignInForm = (props: Props) => {
         description: errorMessage,
       });
     }
-  }, [router.query, toast]);
+  }, [toast]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 //Nextjs
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 //Form
 import { z } from "zod";
@@ -43,6 +44,34 @@ const UserSignInForm = (props: Props) => {
   const { signIn } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const { status, message } = router.query;
+    if (status) {
+      let errorMessage = message || "An unexpected error occurred.";
+      switch (status) {
+        case "cancelled":
+          errorMessage = "Login was cancelled. Please try again.";
+          break;
+        case "auth_failed":
+          errorMessage = "Could not authenticate with Vipps. Please try again.";
+          break;
+        case "error":
+          errorMessage =
+            message || "An unexpected error occurred. Please try again.";
+          break;
+        default:
+          errorMessage = message || errorMessage;
+      }
+
+      toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: errorMessage,
+      });
+    }
+  }, [router.query, toast]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

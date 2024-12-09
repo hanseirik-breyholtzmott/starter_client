@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 //Next
@@ -41,10 +41,17 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function Navbar() {
   const { signOut, user, isAuthenticated } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
+  // Only run on client side
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleSignIn = () => {
+    if (!mounted) return;
     localStorage.setItem("postLoginRedirect", pathname);
     router.push("/sign-in");
   };

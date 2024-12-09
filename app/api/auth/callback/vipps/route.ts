@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     : { isValid: false, redirectUrl: null };
 
   // Validate the redirect URL
-  const validPaths = ["/folkekraft", "/folkekraft-group", "/folkekraft/invest"];
+  const validPaths = ["/folkekraft", "/folkekraft/invest"];
   const finalRedirectUrl =
     isValid &&
     redirectUrl &&

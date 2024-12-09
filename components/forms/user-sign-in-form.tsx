@@ -67,12 +67,29 @@ const UserSignInForm = (props: Props) => {
       });
 
       if (!result?.success) {
+        let errorMessage = "Please check your email and password";
+        switch (result?.status) {
+          case "cancelled":
+            errorMessage = "Login was cancelled. Please try again.";
+            break;
+          case "auth_failed":
+            errorMessage =
+              "Could not authenticate with Vipps. Please try again.";
+            break;
+          case "error":
+            errorMessage =
+              result?.message ||
+              "An unexpected error occurred. Please try again.";
+            break;
+          default:
+            errorMessage = result?.message || errorMessage;
+        }
+
         // Show error toast
         toast({
           variant: "destructive",
           title: "Login Failed",
-          description:
-            result?.message || "Please check your email and password",
+          description: errorMessage,
         });
 
         // Optionally set focus back to password field

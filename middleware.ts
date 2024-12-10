@@ -69,6 +69,13 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/folkekraft", req.url));
   }
 
+  // Rewrite /auth/callback/vipps to /api/auth/callback/vipps
+  if (currentPath.startsWith("/auth/callback/vipps")) {
+    return NextResponse.rewrite(
+      new URL(currentPath.replace("/auth", "/api/auth"), req.url)
+    );
+  }
+
   return NextResponse.next();
 }
 

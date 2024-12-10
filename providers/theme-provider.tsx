@@ -13,7 +13,11 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   }, []);
 
   if (!mounted) {
-    return null;
+    return (
+      <NextThemesProvider {...props} forcedTheme="light">
+        {children}
+      </NextThemesProvider>
+    );
   }
 
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>;

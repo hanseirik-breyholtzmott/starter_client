@@ -8,6 +8,8 @@ import jwt from "jsonwebtoken";
 
 //lib
 import { verifyToken, AccessTokenPayload } from "./jwt";
+import { fifteenMinutesFromNow } from "./date";
+import { oneMonthFromNow } from "./date";
 
 interface CookieOptions {
   maxAge?: number;
@@ -107,4 +109,42 @@ export async function getUserId(): Promise<string | null> {
   }
 
   return userId;
+}
+
+export async function setAuthCookies(
+  accessToken: string,
+  refreshToken: string
+) {
+  console.log("[cookies.ts] Starting setAuthCookies with:", {
+    hasAccessToken: !!accessToken,
+    hasRefreshToken: !!refreshToken,
+  });
+
+  try {
+    const cookieStore = await cookies();
+
+    console.log("[cookies.ts] Setting accessToken cookie");
+    cookieStore.set("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      expires: fifteenMinutesFromNow(),
+      sameSite: "lax",
+      path: "/",
+    });
+
+    console.log("[cookies.ts] Setting session cookie");
+    cookieStore.set("session", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      expires: oneMonthFromNow(),
+      sameSite: "lax",
+      path: "/",
+    });
+
+    console.log("[cookies.ts] Cookies set successfully");
+    return { success: true };
+  } catch (error) {
+    console.error("[cookies.ts] Failed to set auth cookies:", error);
+    return { success: false, error };
+  }
 }

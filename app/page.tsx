@@ -13,6 +13,7 @@ export default async function Home() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <div className="flex-grow">
+        <Hero />
         <div className="container mx-auto px-4">
           <main className="py-8">
             <PageHeader />

@@ -53,7 +53,7 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.1.7",
-    "framer-motion": "^11.8.0",
+    "framer-motion": "^11.13.5",
     "html2pdf-ts": "^1.2.23",
     "html2pdf.js": "^0.10.2",
     "input-otp": "^1.2.4",

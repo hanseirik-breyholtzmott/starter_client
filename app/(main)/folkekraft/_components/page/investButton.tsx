@@ -2,11 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 
+import { motion } from "framer-motion";
+
 //Nextjs
 import Link from "next/link";
 
 //Shadcn
 import { Button } from "@/components/ui/button";
+
+//Icons
+import { ArrowRight, ChevronRight, Clock, Copy, Users } from "lucide-react";
 
 type Props = {};
 
@@ -31,11 +36,13 @@ export default function InvestButton({}: Props) {
           <Button className="w-full bg-[#00263D] hover:bg-[#00263D]/80 text-[#59C9B9] text-xl h-12">
             Invester i Folkekraft
           </Button>
+
           <p className="text-center text-gray-600 m-2 text-sm">
             Minstetegning er <strong>4 800kr</strong>
           </p>
         </div>
         {/* Desktop button */}
+
         <Button
           className={`
     fixed bottom-6 bg-[#00263D] hover:bg-[#00263D]/80 px-8 h-16 rounded-xl text-xl text-[#59C9B9] z-50 hidden md:block

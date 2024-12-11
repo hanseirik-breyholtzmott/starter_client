@@ -65,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <StarterAnalytics />
       <body className={inter.className} suppressHydrationWarning>
         {process.env.NODE_ENV === "development" && (

@@ -66,20 +66,64 @@ export const emailAuthProvider: AuthProvider = {
     email?: string,
     password?: string
   ) => {
-    const response = await axiosInstance.post("/auth/register", {
-      firstName,
-      lastName,
-      email,
-      password,
-    });
+    console.log(
+      "[EmailAuthProvider] Starting registration attempt for email:",
+      email
+    );
+    try {
+      const response = await axiosInstance.post("/auth/register", {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
 
-    return {
-      user: response.data.user,
-      accessToken: response.data.accessToken,
-      refreshToken: response.data.refreshToken,
-      status: response.status,
-      message: response.data.message || "Registration successful",
-      success: true,
-    };
+      console.log(
+        "[EmailAuthProvider] Raw registration response:",
+        response.data
+      );
+
+      // Check if the response indicates success
+      if (!response.data.success) {
+        console.log(
+          "[EmailAuthProvider] Registration failed:",
+          response.data.message
+        );
+        return {
+          user: null,
+          accessToken: null,
+          refreshToken: null,
+          status: response.status,
+          message: response.data.message || "Registration failed",
+          success: false,
+        };
+      }
+
+      const result = {
+        user: response.data.user,
+        accessToken: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
+        status: response.status,
+        message: response.data.message || "Registration successful",
+        success: true,
+      };
+
+      console.log("[EmailAuthProvider] Formatted response:", result);
+      return result;
+    } catch (error: any) {
+      console.error("[EmailAuthProvider] Registration error:", {
+        status: error.response?.status,
+        message: error.response?.data?.message,
+        error: error.message,
+      });
+      return {
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || "Registration failed",
+        success: false,
+      };
+    }
   },
 };

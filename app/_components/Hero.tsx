@@ -1,9 +1,16 @@
 "use client";
 
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
+
+//MagicUI
+import HyperText from "@/components/ui/hyper-text";
+
+import { AnimatedBeamDemo } from "@/app/_components/AnimatedBeam";
 
 export default function InvestmentHero() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -18,52 +25,39 @@ export default function InvestmentHero() {
 
   return (
     <div className="container mx-auto">
-      <div className="grid lg:grid-cols-2 min-h-[600px]">
+      <div className="grid lg:grid-cols-2 min-h-[90vh]">
         {/* Left section */}
         <div className="flex flex-col justify-center px-4 lg:px-6 py-12 space-y-8">
           <div className="space-y-6 max-w-xl">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-              Invester i det{" "}
-              <span className="relative">
-                du tror på
-                <div className="absolute bottom-2 -z-10 left-0 right-0 h-3 bg-green-200/60" />
+              Invester i{" "}
+              <span className="py-4">
+                <HyperText
+                  className="text-8xl md:text-5xl lg:text-6xl font-bold tracking-tight"
+                  text="medeierskap"
+                />
               </span>
+              noe du kan{" "}
+              <span className="border-b-4 border-green-500">stole på</span>
             </h1>
             <p className="text-xl text-muted-foreground">
-              Plattform for kjøp av aksjer i unoterte selskap
+              Fremtidens investeringsplattform for unoterte selskaper
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button
-              size="lg"
-              className="bg-zinc-900 text-white hover:bg-zinc-800"
-            >
-              Se investeringsmuligheter
-            </Button>
-            <Button size="lg" variant="outline">
-              Mitt selskap søker egenkapital
-            </Button>
+            <Link href="#investeringsmuligheter">
+              <Button
+                size="lg"
+                className="bg-zinc-900 text-white hover:bg-zinc-800"
+              >
+                Se investeringsmuligheter
+              </Button>
+            </Link>
           </div>
         </div>
 
         {/* Right section */}
         <div className="relative bg-[#1e2c3c] text-white">
-          <div className="absolute inset-0">
-            {[
-              "/placeholder.svg?height=600&width=800",
-              "/placeholder.svg?height=600&width=800&text=Image+2",
-              "/placeholder.svg?height=600&width=800&text=Image+3",
-            ].map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                alt={`Background ${index + 1}`}
-                className={`h-full w-full object-cover opacity-20 transition-opacity duration-1000 absolute inset-0 ${
-                  currentImageIndex === index ? "opacity-20" : "opacity-0"
-                }`}
-              />
-            ))}
-          </div>
           <div className="relative h-full flex items-center p-4 lg:p-6">
             <Card className="w-full bg-transparent text-white border-none">
               <CardHeader>
@@ -73,17 +67,13 @@ export default function InvestmentHero() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <h2 className="text-3xl md:text-4xl font-bold">
-                  Invester i grønn teknologi
+                  Invester i fremtidens teknologi
                 </h2>
                 <p className="text-xl">
-                  Enua utvikler innovativ ladestasjonsteknologi.
+                  Vi driver utviklingen av neste generasjons strømteknologi i
+                  Norge
                 </p>
-                <Button
-                  variant="outline"
-                  className="text-white border-white hover:bg-white/10"
-                >
-                  Les mer <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <AnimatedBeamDemo />
               </CardContent>
             </Card>
           </div>

@@ -16,7 +16,12 @@ import AuthProviderFactory from "@/app/providers/AuthProviderFactory";
 import { AuthProvider } from "@/app/providers/AuthProvider";
 
 //Utils
-import { setCookie, deleteCookie, getCookieValue } from "@/lib/cookies";
+import {
+  setCookie,
+  deleteCookie,
+  getCookieValue,
+  setAuthCookies,
+} from "@/lib/cookies";
 import { fifteenMinutesFromNow, oneMonthFromNow } from "@/lib/date";
 import axiosInstance, { setAuthorizationHeader } from "@/lib/axiosInstance";
 
@@ -88,45 +93,35 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   };
 
   const cleanup = async () => {
+    console.log("[AuthContext] Starting cleanup");
     setUser(null);
     setIsAuthenticated(false);
     setAccessToken(null);
     setAuthorizationHeader("");
     await Promise.all([deleteCookie("session"), deleteCookie("accessToken")]);
+    console.log("[AuthContext] Cleanup completed");
   };
 
   const checkAuth = async () => {
     try {
+      console.log("[AuthContext] Starting checkAuth");
+
+      // Check if we're already authenticated with a user and accessToken
+      if (isAuthenticated && user && accessToken) {
+        console.log("[AuthContext] Already authenticated, skipping check");
+        setLoading(false);
+        return;
+      }
+
       const [sessionCookie, accessTokenCookie] = await Promise.all([
         getCookieValue("session"),
         getCookieValue("accessToken"),
       ]);
 
-      // If we have a session cookie but no auth state, try to validate immediately
-      if (sessionCookie && !isAuthenticated) {
-        try {
-          const { data } = await axiosInstance.post("/auth/refresh", {
-            refreshToken: sessionCookie,
-          });
-
-          if (data.success) {
-            setUser(data.user);
-            setIsAuthenticated(true);
-            setAccessToken(data.accessToken);
-            setAuthorizationHeader(data.accessToken);
-
-            await setCookie(
-              "accessToken",
-              data.accessToken as string,
-              fifteenMinutesFromNow()
-            );
-            return;
-          }
-        } catch (error) {
-          console.log("Initial session validation failed");
-          await cleanup();
-        }
-      }
+      console.log("[AuthContext] Cookies found:", {
+        hasSession: !!sessionCookie,
+        hasAccessToken: !!accessTokenCookie,
+      });
 
       // Check if current path is public first
       const publicPaths = [
@@ -135,35 +130,28 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         "/contact",
         "/coming-soon",
         "/bestill",
-        "/test",
       ];
-
       const currentPath = window.location.pathname;
 
       // For public paths, don't check authentication
       if (publicPaths.includes(currentPath)) {
+        console.log(
+          "[AuthContext] Current path is public, skipping auth check"
+        );
         setLoading(false);
         return;
       }
 
-      if (!sessionCookie) {
-        console.log("No session cookie found");
-        setUser(null);
-        setIsAuthenticated(false);
-        setAccessToken(null);
-        setAuthorizationHeader("");
-        await deleteCookie("accessToken");
-        setLoading(false);
-        return;
-      }
-
-      // Add a direct session check with the backend
-      if (accessTokenCookie) {
+      // If we have both cookies and no auth state, try to validate
+      if (sessionCookie && accessTokenCookie && !isAuthenticated) {
+        console.log("[AuthContext] Found cookies, validating...");
         try {
+          // Try using the access token first
           setAuthorizationHeader(accessTokenCookie);
-          const { data } = await axiosInstance.get("/auth/refresh");
+          const { data } = await axiosInstance.get("/auth/validate");
 
           if (data.success) {
+            console.log("[AuthContext] Access token validation successful");
             setUser(data.user);
             setIsAuthenticated(true);
             setAccessToken(accessTokenCookie);
@@ -171,39 +159,41 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
             return;
           }
         } catch (error) {
-          // If session validation fails, continue to token refresh
-          console.log("Session validation failed, attempting refresh");
+          console.log(
+            "[AuthContext] Access token validation failed, trying refresh"
+          );
+          try {
+            const { data } = await axiosInstance.post("/auth/refresh", {
+              refreshToken: sessionCookie,
+            });
+
+            if (data.success) {
+              console.log("[AuthContext] Refresh successful");
+              setUser(data.user);
+              setIsAuthenticated(true);
+              setAccessToken(data.accessToken);
+              setAuthorizationHeader(data.accessToken);
+
+              await setAuthCookies(
+                data.accessToken,
+                sessionCookie // Keep existing session cookie
+              );
+              setLoading(false);
+              return;
+            }
+          } catch (refreshError) {
+            console.log("[AuthContext] Refresh failed:", refreshError);
+            await cleanup();
+          }
         }
       }
 
-      // Existing refresh token logic
-      try {
-        const { data } = await axiosInstance.post("/auth/refresh", {
-          refreshToken: sessionCookie,
-        });
-
-        const { user, accessToken, success } = data;
-
-        if (success) {
-          setUser(user);
-          setIsAuthenticated(true);
-          setAccessToken(accessToken);
-          setAuthorizationHeader(accessToken);
-
-          await setCookie(
-            "accessToken",
-            accessToken as string,
-            fifteenMinutesFromNow()
-          );
-        } else {
-          throw new Error("Authentication failed");
-        }
-      } catch (error) {
-        console.log("Token refresh failed:");
+      if (!sessionCookie || !accessTokenCookie) {
+        console.log("[AuthContext] Missing required cookies");
         await cleanup();
       }
     } catch (error) {
-      console.log("Authentication check failed");
+      console.error("[AuthContext] Authentication check failed:", error);
       await cleanup();
     } finally {
       setLoading(false);
@@ -212,6 +202,10 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
   // Check auth on mount and when path changes
   useEffect(() => {
+    console.log(
+      "[AuthContext] Running checkAuth effect for pathname:",
+      pathname
+    );
     checkAuth();
   }, [pathname]);
 
@@ -336,9 +330,17 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     email?: string,
     password?: string
   ) => {
+    console.log(
+      "[AuthContext] Starting signUp process for provider:",
+      provider
+    );
     setLoading(true);
     try {
       const authProvider = getProviderInstance(provider);
+      console.log(
+        "[AuthContext] Got auth provider, making registration request"
+      );
+
       const response = await authProvider.register(
         firstName,
         lastName,
@@ -346,64 +348,153 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         password
       );
 
-      const { user, accessToken, message, success, refreshToken } = response;
+      console.log("[AuthContext] Registration response received:", {
+        success: response.success,
+        status: response.status,
+        hasUser: !!response.user,
+        hasAccessToken: !!response.accessToken,
+        hasRefreshToken: !!response.refreshToken,
+      });
 
       // For SSO providers
       if (response.redirectUrl) {
+        console.log(
+          "[AuthContext] SSO redirect detected:",
+          response.redirectUrl
+        );
         const params = new URLSearchParams(window.location.search);
         const redirectUrl = params.get("redirectUrl");
         if (redirectUrl) {
           localStorage.setItem("postLoginRedirect", redirectUrl);
         }
         router.push(response.redirectUrl);
-        return;
+        return response;
       }
 
       if (response.success) {
-        setUser(response.user);
-        setIsAuthenticated(true);
-        setAccessToken(response.accessToken);
-        setAuthorizationHeader(response.accessToken as string);
+        console.log(
+          "[AuthContext] Registration successful, setting up session",
+          {
+            hasAccessToken: !!response.accessToken,
+            hasRefreshToken: !!response.refreshToken,
+            user: response.user,
+          }
+        );
 
-        await Promise.all([
-          setCookie(
-            "accessToken",
+        try {
+          setUser(response.user);
+          setIsAuthenticated(true);
+          setAccessToken(response.accessToken);
+          setAuthorizationHeader(response.accessToken as string);
+
+          console.log("[AuthContext] Attempting to set cookies");
+          const cookieResult = await setAuthCookies(
             response.accessToken as string,
-            fifteenMinutesFromNow()
-          ),
-          setCookie(
-            "session",
-            response.refreshToken as string,
-            oneMonthFromNow()
-          ),
-        ]);
+            response.refreshToken as string
+          );
 
-        // Handle redirect logic
-        let finalRedirectUrl = "/folkekraft";
-        const storedRedirect = localStorage.getItem("postLoginRedirect");
-        if (storedRedirect) {
-          finalRedirectUrl = storedRedirect;
-          localStorage.removeItem("postLoginRedirect");
+          if (!cookieResult.success) {
+            console.error(
+              "[AuthContext] Cookie setting failed:",
+              cookieResult.error
+            );
+            throw new Error("Failed to set cookies");
+          }
+
+          console.log("[AuthContext] Cookies set successfully");
+
+          // Handle redirect logic
+          let finalRedirectUrl = "/folkekraft";
+          const storedRedirect = localStorage.getItem("postLoginRedirect");
+          if (storedRedirect) {
+            finalRedirectUrl = storedRedirect;
+            localStorage.removeItem("postLoginRedirect");
+          }
+
+          console.log("[AuthContext] Redirecting to:", finalRedirectUrl);
+          router.push(finalRedirectUrl);
+
+          return response;
+        } catch (error) {
+          console.error(
+            "[AuthContext] Error during post-registration setup:",
+            error
+          );
+          toast({
+            title: "Warning",
+            description:
+              "Account created but session setup failed. Please try logging in.",
+            variant: "destructive",
+          });
+          return response;
         }
-
-        router.push(finalRedirectUrl);
-        return;
       }
-      toast({
-        title: "Registration Failed",
-        description:
-          response.message || "An error occurred during registration",
-        variant: "destructive",
+
+      if (!response.success) {
+        console.log("[AuthContext] Registration failed:", response.message);
+        toast({
+          title: "Registration Failed",
+          description:
+            response.message || "An error occurred during registration",
+          variant: "destructive",
+        });
+        return response;
+      }
+
+      console.log("[AuthContext] Registration successful, setting up session");
+      setUser(response.user);
+      setIsAuthenticated(true);
+      setAccessToken(response.accessToken);
+      setAuthorizationHeader(response.accessToken as string);
+
+      console.log("[AuthContext] Setting cookies");
+      await Promise.all([
+        setCookie(
+          "accessToken",
+          response.accessToken as string,
+          fifteenMinutesFromNow()
+        ),
+        setCookie(
+          "session",
+          response.refreshToken as string,
+          oneMonthFromNow()
+        ),
+      ]);
+
+      // Handle redirect logic
+      let finalRedirectUrl = "/folkekraft";
+      const storedRedirect = localStorage.getItem("postLoginRedirect");
+      if (storedRedirect) {
+        finalRedirectUrl = storedRedirect;
+        localStorage.removeItem("postLoginRedirect");
+      }
+
+      console.log("[AuthContext] Redirecting to:", finalRedirectUrl);
+      router.push(finalRedirectUrl);
+
+      console.log("[AuthContext] Returning successful response");
+      return response;
+    } catch (error: any) {
+      console.error("[AuthContext] Sign up error:", {
+        message: error.message,
+        stack: error.stack,
       });
-    } catch (error) {
-      console.log("Sign in failed:");
       toast({
         title: "Error",
         description: "An unexpected error occurred",
         variant: "destructive",
       });
+      return {
+        success: false,
+        message: "An unexpected error occurred",
+        status: 500,
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+      };
     } finally {
       setLoading(false);
+      console.log("[AuthContext] Sign up process completed");
     }
   };
 

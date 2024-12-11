@@ -2,18 +2,24 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
 //Next
 import Link from "next/link";
+import Image from "next/image";
 
 //Shadcn
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,23 +67,68 @@ export default function Navbar() {
   };
 
   return (
-    <div className="w-full bg-white border-b">
+    <motion.header
+      className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+      }}
+    >
       <nav className="container flex items-center justify-between p-4 mx-auto">
         <div className=" items-center space-x-8 flex">
-          <Link href="/" className="flex items-center space-x-2 ">
-            <div className="w-8 h-8 bg-[#00263D] text-white hidden items-center justify-center font-bold rounded md:flex">
-              F
-            </div>
-
-            <p className="text-3xl font-bold">Folkekraft</p>
+          <Link
+            href="/"
+            className="mr-8 flex items-center space-x-2 transition-transform hover:scale-105"
+          >
+            <Image
+              src="https://utfs.io/f/1c66qeb7SCm5YmfZi4ybcQKOgLiwrEyTUDXzp5sHV1kNR4d9"
+              alt="Folkekraft logo"
+              width={156}
+              height={128}
+              quality={90}
+              priority
+            />
           </Link>
+
           <div className=" space-x-6 flow-row items-center hidden md:flex">
-            <Link
-              href="/folkekraft"
-              className="text-gray-600 hover:text-gray-900"
-            >
-              Folkekraft AS Emisjon
-            </Link>
+            <NavigationMenu className="hidden lg:flex">
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Om Emisjon</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-3 p-4">
+                      <li className="row-span-3">
+                        <NavigationMenuLink asChild>
+                          <a
+                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                            href="/"
+                          >
+                            <div className="mb-2 mt-4 text-lg font-medium">
+                              Folkekraft AS Emisjon
+                            </div>
+                            <p className="text-sm leading-tight text-muted-foreground">
+                              Lær mer om vår emisjonsprosess og hvordan du kan
+                              bli en del av Folkekraft.
+                            </p>
+                          </a>
+                        </NavigationMenuLink>
+                      </li>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link
+                    href="/kontakt"
+                    className={navigationMenuTriggerStyle()}
+                  >
+                    Kontakt
+                  </Link>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
         </div>
         <div className="flex-1 max-w-xl px-4 hidden">
@@ -154,17 +205,34 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={handleSignIn}>
-                <LogIn className="mr-2 h-4 w-4" />
-                Logg inn
-              </Button>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="ghost"
+                  className="hidden sm:flex"
+                  onClick={handleSignIn}
+                >
+                  Logg inn
+                </Button>
+              </motion.div>
+
               <Link href="/sign-up">
-                <Button>Lag profil</Button>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button>
+                    Lag profil
+                    <User className="ml-2 h-4 w-4" />
+                  </Button>
+                </motion.div>
               </Link>
             </div>
           )}
         </div>
       </nav>
-    </div>
+    </motion.header>
   );
 }

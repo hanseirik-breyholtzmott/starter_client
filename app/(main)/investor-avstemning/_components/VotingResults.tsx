@@ -57,7 +57,7 @@ export function VotingResults({ questions }: VotingResultsProps) {
     >
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-white mb-2">Voting Results</h2>
-        <p className="text-white/80">Here's how everyone voted</p>
+        <p className="text-white/80">Here&apos;s how everyone voted</p>
       </div>
 
       {questions?.map((question) => (

@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useCampaign } from "@/app/hooks/CampaignContext";
 
 //Nextjs
 import Image from "next/image";
@@ -77,24 +80,13 @@ const cardData = [
   },
 ];
 
-type Perk = {
-  title: string;
-  actionText: string;
-  boldText: string;
-  description: string;
-  button: {
-    text: string;
-    link: string;
-  };
-};
+export default function Team() {
+  const { campaign } = useCampaign();
 
-interface PerkProps {
-  perks: Perk[];
-}
+  if (!campaign) return null;
 
-export default function Team({ perks }: PerkProps) {
   return (
-    <div className=" py-8 mt-6 flex">
+    <div className="py-8 mt-6 flex">
       {/* Main content area */}
       <div className="flex-grow flex md:flex-row items-center md:items-start gap-8 flex-col">
         <div className="h-full flex flex-col gap-10 w-full text-center">
@@ -132,7 +124,6 @@ export default function Team({ perks }: PerkProps) {
                   height={160}
                 />
               </div>
-
               <h2 className="text-xl font-semibold mt-2">Hans-Eirik</h2>
               <p className="text-gray-600">Driftsansvarlig</p>
             </div>
@@ -148,7 +139,6 @@ export default function Team({ perks }: PerkProps) {
                   height={160}
                 />
               </div>
-
               <h2 className="text-xl font-semibold mt-2">Lasse</h2>
               <p className="text-gray-600">Salgsansvarlig</p>
             </div>
@@ -174,11 +164,6 @@ export default function Team({ perks }: PerkProps) {
               </div>
             ))}
           </div>
-        </div>
-        <div className="flex flex-col justify-center gap-6 max-w-[320px]">
-          {perks.map((perk, index) => (
-            <PerksCard key={index} {...perk} />
-          ))}
         </div>
       </div>
     </div>

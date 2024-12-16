@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useCampaign } from "@/app/hooks/CampaignContext";
 
 //Shadcn
 import { Button } from "@/components/ui/button";
@@ -15,64 +16,11 @@ import {
 //Icons
 import { Star, Share2, Facebook, Linkedin, Mail } from "lucide-react";
 
-type CampaignInfo = {
-  name: string;
-  description: string;
-  tags: string[];
-};
-
-type InvestmentDetails = {
-  minimumInvestment: number;
-  maximumInvestment: number;
-  shareClassId: string;
-  sharePrice: number;
-  startDate: string;
-  closingDate: string | null;
-  status: string;
-  startAmount: number;
-  targetAmount: number;
-  availableShares: number;
-  _id: string;
-};
-
-type Perk = {
-  name: string;
-  actionText: string;
-  boldText: string;
-  description: string;
-  button: {
-    text: string;
-    link: string;
-  };
-};
-
-type DisplayImage = {
-  image: string;
-  alt: string;
-};
-
-type Documents = {
-  title: string;
-  description: string;
-  link: string;
-};
-
-type Campaign = {
-  _id: string;
-  companyId: string;
-  campaignInfo: CampaignInfo;
-  investmentDetails: InvestmentDetails;
-  perks: Perk[];
-  displayImages: DisplayImage[];
-  documents: Documents[];
-};
-
-interface CampaignHeaderProps {
-  campaignData: Campaign;
-}
-
-export default function CampaignHeader({ campaignData }: CampaignHeaderProps) {
+export default function CampaignHeader() {
+  const { campaign } = useCampaign();
   const [isFavorite, setIsFavorite] = useState(false);
+
+  if (!campaign) return null;
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
@@ -84,8 +32,9 @@ export default function CampaignHeader({ campaignData }: CampaignHeaderProps) {
       icon: Facebook,
       action: () =>
         window.open(
-          "https://www.facebook.com/sharer/sharer.php?u=" +
-            encodeURIComponent(window.location.href),
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+            window.location.href
+          )}`,
           "_blank"
         ),
     },
@@ -94,8 +43,9 @@ export default function CampaignHeader({ campaignData }: CampaignHeaderProps) {
       icon: Linkedin,
       action: () =>
         window.open(
-          "https://www.linkedin.com/shareArticle?mini=true&url=" +
-            encodeURIComponent(window.location.href),
+          `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
+            window.location.href
+          )}`,
           "_blank"
         ),
     },
@@ -103,25 +53,20 @@ export default function CampaignHeader({ campaignData }: CampaignHeaderProps) {
       name: "Email",
       icon: Mail,
       action: () =>
-        (window.location.href =
-          "mailto:?subject=Check out Folkekraft AS&body=" +
-          encodeURIComponent(window.location.href)),
+        (window.location.href = `mailto:?subject=Check out Folkekraft AS&body=${encodeURIComponent(
+          window.location.href
+        )}`),
     },
   ];
 
-  if (!campaignData) return <div>Loading...</div>;
-
-  const { campaignInfo, investmentDetails, perks, displayImages } =
-    campaignData;
-
   return (
-    <header className=" mb-4 px-4">
+    <header className="mb-4 px-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center">
           <div className="w-8 h-8 bg-[#00263D] text-white flex items-center justify-center font-bold rounded mr-2">
             F
           </div>
-          <h1 className="text-3xl font-bold">{campaignInfo.name}</h1>
+          <h1 className="text-3xl font-bold">{campaign.campaignInfo.name}</h1>
         </div>
         <div className="flex space-x-2">
           <Button variant="ghost" size="icon" onClick={toggleFavorite}>
@@ -152,16 +97,16 @@ export default function CampaignHeader({ campaignData }: CampaignHeaderProps) {
 
       {/* Header Description */}
       <p className="text-gray-600 mb-4 mt-2">
-        {campaignData.campaignInfo.description}
+        {campaign.campaignInfo.description}
       </p>
 
       {/* Tags */}
       <div className="flex flex-wrap gap-1 sm:gap-2 mb-4">
-        {campaignData.campaignInfo.tags.map((tag) => (
+        {campaign.campaignInfo.tags.map((tag) => (
           <Badge
             variant="secondary"
             key={tag}
-            className="rounded-full px-4 py-1 uppercase"
+            className="rounded-full px-4 py-1 uppercase transition-all duration-300 ease-in-out transform hover:scale-105"
           >
             {tag}
           </Badge>

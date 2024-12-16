@@ -11,22 +11,7 @@ import { Button } from "@/components/ui/button";
 //Components
 import PerksCard from "../perksCard";
 
-type Perk = {
-  title: string;
-  actionText: string;
-  boldText: string;
-  description: string;
-  button: {
-    text: string;
-    link: string;
-  };
-};
-
-interface PerkProps {
-  perks: Perk[];
-}
-
-export default function About({ perks }: PerkProps) {
+export default function About() {
   const [showButton, setShowButton] = useState(true);
 
   return (
@@ -297,11 +282,6 @@ export default function About({ perks }: PerkProps) {
               />
             </div>
           </div>
-        </div>
-        <div className="flex flex-col justify-center gap-6 max-w-[320px]">
-          {perks.map((perk, index) => (
-            <PerksCard key={index} {...perk} />
-          ))}
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useCampaign } from "@/app/hooks/CampaignContext";
 
 //Nextjs
 import Link from "next/link";
@@ -28,64 +29,11 @@ const tabsData = [
   { id: "documents", label: "Dokumenter", count: null },
 ];
 
-type Props = {};
-
-type CompanyInfo = {
-  name: string;
-  description: string;
-  tags: string[];
-};
-
-type InvestmentDetails = {
-  totalInvestors: number;
-  totalInvestedAmount: number;
-  minimumInvestment: number;
-  sharesPurchasedInPercent: number;
-  status: string;
-  closingDate: string | null;
-};
-
-type Perk = {
-  title: string;
-  actionText: string;
-  boldText: string;
-  description: string;
-  button: {
-    text: string;
-    link: string;
-  };
-};
-
-type Documents = {
-  title: string;
-  description: string;
-  fileName: string;
-  url: string;
-};
-
-type Investor = {
-  userId: string;
-  totalShares: number;
-  name: string;
-  email: string;
-  percentageOwnership: number;
-};
-
-type Caplist = Investor[];
-
-interface CaplistProps {
-  caplist: Caplist; // Add this line
-  documents: Documents[];
-  perks: Perk[];
-}
-
-export default function TabsComponent({
-  caplist,
-  documents,
-  perks,
-}: CaplistProps) {
-  //useState
+export default function TabsComponent() {
+  const { campaign, caplist } = useCampaign();
   const [activeTab, setActiveTab] = useState("about");
+
+  if (!campaign || !caplist) return null;
 
   return (
     <div className="w-full container mx-auto">
@@ -125,19 +73,19 @@ export default function TabsComponent({
             </Link>
           </TabsList>
           <TabsContent value="about">
-            <About perks={perks} />
+            <About />
           </TabsContent>
-          <TabsContent value="emisjon">
-            <FundingVideo perks={perks} />
+          {/*<TabsContent value="emisjon">
+            <FundingVideo perks={campaign.perks} />
           </TabsContent>
-          {/*<TabsContent value="caplist">
-            <CapList caplist={caplist} perks={perks} />
+          <TabsContent value="caplist">
+            <CapList caplist={caplist.investors} perks={campaign.perks} />
           </TabsContent>*/}
           <TabsContent value="team">
-            <Team perks={perks} />
+            <Team />
           </TabsContent>
           <TabsContent value="documents">
-            <Documents documents={documents} perks={perks} />
+            <Documents />
           </TabsContent>
         </Tabs>
       </div>

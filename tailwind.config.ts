@@ -123,6 +123,14 @@ const config: Config = withUt({
   				'100%': {
   					'offset-distance': '100%'
   				}
+  			},
+  			'shiny-text': {
+  				'0%, 90%, 100%': {
+  					'background-position': 'calc(-100% - var(--shiny-width)) 0'
+  				},
+  				'30%, 60%': {
+  					'background-position': 'calc(100% + var(--shiny-width)) 0'
+  				}
   			}
   		},
   		animation: {
@@ -133,7 +141,8 @@ const config: Config = withUt({
   			slide: 'slide var(--speed) ease-in-out infinite alternate',
   			'caret-blink': 'caret-blink 1.25s ease-out infinite',
   			growShrink: 'growShrink 2s ease-in-out infinite',
-  			'border-beam': 'border-beam calc(var(--duration)*1s) infinite linear'
+  			'border-beam': 'border-beam calc(var(--duration)*1s) infinite linear',
+  			'shiny-text': 'shiny-text 8s infinite'
   		}
   	}
   },

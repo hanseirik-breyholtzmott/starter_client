@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { useCampaign } from "@/app/hooks/CampaignContext";
 
 //Framer Motion
 import { motion, AnimatePresence } from "framer-motion";
@@ -48,74 +49,34 @@ import {
   calculateDaysRemaining,
 } from "@/lib/helperFunctions";
 
-type CampaignInfo = {
-  name: string;
-  description: string;
-  tags: string[];
-};
+export default function CampaignInfo() {
+  const titles = [
+    "EMISJON",
+    "BLI MEDEIER",
+    "INVESTER NÅ",
+    "EN KNAPP FRA Å BLI INVESTOR",
+  ];
 
-type InvestmentDetails = {
-  minimumInvestment: number;
-  maximumInvestment: number;
-  shareClassId: string;
-  sharePrice: number;
-  startDate: string;
-  closingDate: string | null;
-  status: string;
-  startAmount: number;
-  targetAmount: number;
-  availableShares: number;
-  _id: string;
-};
-
-type Perk = {
-  name: string;
-  actionText: string;
-  boldText: string;
-  description: string;
-  button: {
-    text: string;
-    link: string;
-  };
-};
-
-type DisplayImage = {
-  image: string;
-  alt: string;
-};
-
-type Documents = {
-  title: string;
-  description: string;
-  link: string;
-};
-
-type Campaign = {
-  _id: string;
-  companyId: string;
-  campaignInfo: CampaignInfo;
-  investmentDetails: InvestmentDetails;
-  perks: Perk[];
-  displayImages: DisplayImage[];
-  documents: Documents[];
-};
-
-interface CampaignInfoProps {
-  campaignData: Campaign;
-  totalInvestments?: number;
-  totalInvested?: number;
-}
-
-export default function CampaignInfo({
-  campaignData,
-  totalInvestments,
-  totalInvested,
-}: CampaignInfoProps) {
-  //useState
+  const { campaign, caplist } = useCampaign();
   const [isCopied, setIsCopied] = useState(false);
-  const [isMounted, setIsMounted] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isReturning, setIsReturning] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [showInvestDialog, setShowInvestDialog] = useState(false);
+
+  const copyToClipboard = useCallback(async () => {
+    const success = await handleCopy(urlToShare);
+    if (success && isMounted) {
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }
+  }, [isMounted]);
+
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -138,51 +99,15 @@ export default function CampaignInfo({
     return () => clearInterval(interval);
   }, [isReturning]);
 
-  //useEffect
-  useEffect(() => {
-    return () => {
-      setIsMounted(false);
-    };
-  }, []);
+  if (!campaign || !caplist) return null;
 
-  //useCallback
-  const copyToClipboard = useCallback(async () => {
-    console.log("copying to clipboard");
-    const success = await handleCopy(urlToShare);
-    if (success && isMounted) {
-      console.log("copied to clipboard");
-      setIsCopied(true);
-      setTimeout(() => {
-        if (isMounted) {
-          setIsCopied(false);
-        }
-      }, 2000);
-    }
-  }, [isMounted]);
-
-  // Move this check after the hooks
-  if (!campaignData) {
-    return <div>No campaign data available</div>;
-  }
-
-  //Constants
-  const { campaignInfo, investmentDetails, perks, displayImages } =
-    campaignData;
-
-  const urlToShare = "https://invest.folkekraft.no/emisjon"; // The URL you want to share
+  const urlToShare = "https://invest.folkekraft.no/emisjon";
   const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
     urlToShare
   )}`;
   const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
     urlToShare
   )}`;
-
-  const titles = [
-    "EMISJON",
-    "BLI MEDEIER",
-    "INVESTER NÅ",
-    "EN KNAPP FRA Å BLI INVESTOR",
-  ];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-4">
@@ -197,7 +122,6 @@ export default function CampaignInfo({
         }}
       >
         <div className="bg-gray-900 text-white rounded-lg mb-4 w-full h-full flex items-center justify-center">
-          {/* Image */}
           <div className="w-full h-[520px] relative overflow-hidden rounded-xl flex items-center justify-center">
             <HeroVideoDialog
               className="dark:hidden block"
@@ -216,7 +140,6 @@ export default function CampaignInfo({
           </div>
         </div>
       </motion.div>
-      {/* CAMPAGN INFO */}
 
       <motion.div
         className="flex-1"
@@ -275,19 +198,20 @@ export default function CampaignInfo({
             </TooltipProvider>
           </div>
           <h3 className="text-4xl font-bold my-4 ">
-            <NumberTicker value={totalInvested as number} decimalPlaces={0} />{" "}
-            kr
+            <NumberTicker value={caplist.totalInvested} decimalPlaces={0} /> kr
           </h3>
           <p className="text-gray-600 mb-2">
             {(
-              ((totalInvested as number) / investmentDetails.targetAmount) *
+              (caplist.totalInvested /
+                campaign.investmentDetails.targetAmount) *
               100
             ).toFixed(0)}
-            % samlet inn av maksbeløpet på 8 millioner
+            % samlet inn av maksbeløpet på{" "}
+            {formatCurrency(campaign.investmentDetails.targetAmount, 0, false)}
           </p>
           <SmoothProgress
-            current={totalInvested as number}
-            target={investmentDetails.targetAmount}
+            current={caplist.totalInvested}
+            target={campaign.investmentDetails.targetAmount}
           />
 
           <div className="grid grid-cols-2 gap-4 my-4 py-8 rounded-lg">
@@ -300,7 +224,7 @@ export default function CampaignInfo({
               >
                 <h4 className="text-2xl font-bold flex items-center gap-2">
                   <Users className="w-5 h-5 text-gray-500" />
-                  {totalInvestments}
+                  {caplist.totalInvestments}
                 </h4>
                 <p className="text-gray-600">Antall investeringer</p>
               </motion.div>
@@ -315,9 +239,16 @@ export default function CampaignInfo({
                 <h4 className="text-2xl font-bold flex items-center gap-2">
                   <Clock className="w-5 h-5 text-gray-500" />
                   {calculateDaysRemaining(
-                    campaignData.investmentDetails.closingDate as string
-                  )}{" "}
-                  dager
+                    campaign.investmentDetails.closingDate as string
+                  )}
+                  {/* Only show "dager" if it's actually days */}
+                  {Number(
+                    calculateDaysRemaining(
+                      campaign.investmentDetails.closingDate as string
+                    )
+                  ) > 1
+                    ? " dager"
+                    : ""}
                 </h4>
                 <p className="text-gray-600">igjen for å investere</p>
               </motion.div>
@@ -355,18 +286,18 @@ export default function CampaignInfo({
               </motion.div>
             </Link>
 
-            {/* Minimum investment */}
             <p className="text-center text-gray-600 hidden md:block">
               Minstetegning er{" "}
               <strong>
                 {formatCurrency(
-                  investmentDetails.minimumInvestment *
-                    investmentDetails.sharePrice,
+                  campaign.investmentDetails.minimumInvestment *
+                    campaign.investmentDetails.sharePrice,
                   0,
                   false
                 )}
               </strong>
             </p>
+
             <Link href="https://folkekraft-weborder.utilitycloud.app/?product=27bf03faa8524810856f558bca49bb34#/">
               <motion.div
                 whileHover={{ scale: 1.02 }}
@@ -385,7 +316,7 @@ export default function CampaignInfo({
           <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-8">
             <div className="w-full hidden">
               <Popover>
-                <PopoverTrigger className="w-full  text-white text-lg h-12">
+                <PopoverTrigger className="w-full text-white text-lg h-12">
                   <div className="w-full text-semibold bg-[#00263D] hover:bg-[#00263D]/80 text-[#59C9B9] text-lg h-12 rounded-md flex items-center justify-center">
                     Del Folkekraft
                   </div>

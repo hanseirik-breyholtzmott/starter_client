@@ -4,12 +4,12 @@ import React from "react";
 import { InvestmentProvider } from "@/app/hooks/InvestContext";
 import { CampaignProvider } from "@/app/hooks/CampaignContext";
 //Components
-import Navbar from "./_components/nav";
-import Footer from "./_components/footer";
+import Navbar from "../../_components/Navbar";
+import Footer from "../../_components/Footer";
 
 //Context
 
-export default function CampaignLayout({
+export default function NewsfeedLayout({
   children,
 }: {
   children: React.ReactNode;

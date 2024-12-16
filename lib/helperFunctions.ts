@@ -101,14 +101,37 @@ export const handleCopy = (text: string) => {
     });
 };
 
-export const calculateDaysRemaining = (date: string | Date) => {
+export const calculateDaysRemaining = (date: string | Date): string => {
   const currentDate = new Date();
   const targetDate = new Date(date);
 
   const differenceInTime = targetDate.getTime() - currentDate.getTime();
+
+  // Check if current date is past the target date
+  if (differenceInTime < 0) {
+    return "Lukket";
+  }
+
   const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
 
-  return differenceInDays;
+  // If less than 1 day remaining, show hours and minutes
+  if (differenceInDays <= 1) {
+    const hours = Math.floor(differenceInTime / (1000 * 60 * 60));
+    const minutes = Math.floor(
+      (differenceInTime % (1000 * 60 * 60)) / (1000 * 60)
+    );
+
+    if (hours <= 0 && minutes <= 0) {
+      return "Lukket";
+    }
+
+    if (hours > 0) {
+      return `${hours} time${hours !== 1 ? "r" : ""} og ${minutes} min`;
+    }
+    return `${minutes} min`;
+  }
+
+  return differenceInDays.toString();
 };
 
 export const formatStringWithSpacing = (

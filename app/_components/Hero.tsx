@@ -1,5 +1,15 @@
 "use client";
 
+import { motion } from "framer-motion";
+import {
+  Share2,
+  TrendingUp,
+  Users,
+  Smartphone,
+  Code,
+  UserCircle,
+} from "lucide-react";
+
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -18,75 +28,69 @@ export default function InvestmentHero() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % 3);
-    }, 5000); // Change image every 5 seconds
+    }, 5000);
 
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="container mx-auto">
-      <div className="grid lg:grid-cols-2 min-h-[90vh]">
-        {/* Left section */}
-        <div className="flex flex-col justify-center px-4 lg:px-6 py-12 space-y-8">
-          <div className="space-y-6 max-w-xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-              Invester i{" "}
-              <span className="py-4">
-                <HyperText
-                  className="text-8xl md:text-5xl lg:text-6xl font-bold tracking-tight"
-                  text="medeierskap"
+    <div className="bg-white min-h-[70vh] flex items-center overflow-hidden">
+      <div className="container mx-auto px-4">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Text Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-6"
+          >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+              Invester i
+              <HyperText
+                className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight"
+                text="medeierskap"
+              />
+              <span className="relative">
+                noe du kan stole på
+                <motion.span
+                  className="absolute bottom-1 left-0 w-full h-1 bg-[#57C7B7]"
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ delay: 0.5, duration: 0.3 }}
                 />
               </span>
-              noe du kan{" "}
-              <span className="border-b-4 border-green-500">stole på</span>
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-slate-800 text-lg md:text-xl">
               Fremtidens investeringsplattform for unoterte selskaper
             </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link href="#investeringsmuligheter">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
               <Button
                 size="lg"
-                className="bg-zinc-900 text-white hover:bg-zinc-800"
+                className="bg-slate-800 hover:bg-slate-700 text-white"
               >
                 Se investeringsmuligheter
               </Button>
-            </Link>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
 
-        {/* Right section */}
-        <div className="relative bg-[#1e2c3c] text-white">
-          <div className="relative h-full flex items-center p-4 lg:p-6">
-            <Card className="w-full bg-transparent text-white border-none">
-              <CardHeader>
-                <p className="text-sm font-medium px-3 py-1 bg-white/10 w-fit rounded-md">
-                  AKTUELL KAPITALUTVIDELSE
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <h2 className="text-3xl md:text-4xl font-bold">
-                  Invester i fremtidens teknologi
-                </h2>
-                <p className="text-xl">
-                  Vi driver utviklingen av neste generasjons strømteknologi i
-                  Norge
-                </p>
+          {/* Animated Network */}
+          <div className="relative hidden lg:block ">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="aspect-square relative w-full max-w-[500px] flex justify-center items-center"
+            >
+              {/* Background Circle */}
+              <div className="absolute inset-0 rounded-full bg-[#00263D]" />
+              <div className="relative z-10 w-full">
                 <AnimatedBeamDemo />
-              </CardContent>
-            </Card>
-          </div>
-          {/* Dots/pagination indicators */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-            {[0, 1, 2].map((index) => (
-              <div
-                key={index}
-                className={`w-8 h-1 rounded ${
-                  currentImageIndex === index ? "bg-white" : "bg-gray-600"
-                }`}
-              />
-            ))}
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -31,11 +31,27 @@ import { useToast } from "@/components/ui/use-toast";
 //Loading
 import LoadingPage from "@/app/loading";
 
+// Enhanced interfaces with more robust typing
+interface LoginResponse {
+  success: boolean;
+  message?: string;
+  user?: User | null;
+  accessToken?: string | null;
+  refreshToken?: string | null;
+  redirectUrl?: string;
+  status: number;
+}
+
 interface User {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
+  roles: {
+    name: string;
+    permissions: string[];
+  }[];
+  permissions: string[];
 }
 
 interface AuthContextType {
@@ -270,7 +286,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       }
 
       console.log("[AuthContext] Login successful, setting up session");
-      setUser(response.user);
+      setUser(response.user as User);
       setIsAuthenticated(true);
       setAccessToken(response.accessToken);
       setAuthorizationHeader(response.accessToken as string);
@@ -382,7 +398,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         );
 
         try {
-          setUser(response.user);
+          setUser(response.user as User);
           setIsAuthenticated(true);
           setAccessToken(response.accessToken);
           setAuthorizationHeader(response.accessToken as string);
@@ -442,7 +458,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       }
 
       console.log("[AuthContext] Registration successful, setting up session");
-      setUser(response.user);
+      setUser(response.user as User);
       setIsAuthenticated(true);
       setAccessToken(response.accessToken);
       setAuthorizationHeader(response.accessToken as string);
@@ -573,11 +589,39 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const refreshAccessToken = async () => {
       try {
+        console.log("[AuthContext] Attempting to refresh access token");
         const response = await axiosInstance.post("/auth/refresh");
-        setAccessToken(response.data.accessToken);
-        setAuthorizationHeader(response.data.accessToken);
+        console.log("[AuthContext] Refresh token response:", {
+          success: !!response.data.accessToken,
+          accessToken: response.data.accessToken ? "exists" : "missing",
+          hasUser: !!response.data.user,
+          status: response.data.status,
+        });
+
+        if (response.data.success) {
+          // Update all relevant state with the refresh response
+          setAccessToken(response.data.accessToken);
+          setAuthorizationHeader(response.data.accessToken);
+          setUser(response.data.user as User);
+
+          // Update cookies with new tokens
+          await Promise.all([
+            setCookie(
+              "accessToken",
+              response.data.accessToken,
+              fifteenMinutesFromNow()
+            ),
+            setCookie("session", response.data.refreshToken, oneMonthFromNow()),
+          ]);
+
+          console.log(
+            "[AuthContext] Successfully refreshed tokens and updated user data"
+          );
+        } else {
+          throw new Error("Refresh token response was not successful");
+        }
       } catch (error) {
-        console.log("Failed to refresh access token:");
+        console.log("[AuthContext] Failed to refresh access token:", error);
         signOut();
       }
     };
@@ -586,7 +630,14 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
+        console.log("[AuthContext] Intercepted error response:", {
+          status: error.response?.status,
+          isRetry: !!originalRequest._retry,
+          path: originalRequest.url,
+        });
+
         if (error.response?.status === 401 && !originalRequest._retry) {
+          console.log("[AuthContext] Attempting to retry with token refresh");
           originalRequest._retry = true;
           await refreshAccessToken();
           return axiosInstance(originalRequest);

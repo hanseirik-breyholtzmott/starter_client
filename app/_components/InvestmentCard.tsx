@@ -12,7 +12,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { type InvestmentOpportunity } from "@/types/campaign";
-import { formatCurrency, covertToPercentage } from "@/lib/helperFunctions";
+import {
+  formatCurrency,
+  covertToPercentage,
+  calculateDaysRemaining,
+} from "@/lib/helperFunctions";
 
 export default function InvestmentCard({
   opportunity,
@@ -90,7 +94,10 @@ export default function InvestmentCard({
         </CardContent>
         <CardFooter className="p-4 pt-0 flex flex-col items-start gap-3">
           <div className="text-sm font-medium text-muted-foreground">
-            {opportunity.daysRemaining} dager igjen
+            {calculateDaysRemaining(opportunity.endDate)}
+            {/* Don't show "dager igjen" if status is "Lukket" */}
+            {calculateDaysRemaining(opportunity.endDate) !== "Lukket" &&
+              " dager igjen"}
           </div>
           <div className="flex flex-wrap gap-2">
             {opportunity.tags.map((tag) => (

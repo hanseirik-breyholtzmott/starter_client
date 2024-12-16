@@ -87,9 +87,8 @@ export default function InvestmentHero() {
             >
               {/* Background Circle */}
               <div className="absolute inset-0 rounded-full bg-[#00263D]" />
-              <div className="relative z-10 w-full">
-                <AnimatedBeamDemo />
-              </div>
+
+              <AnimatedBeamDemo />
             </motion.div>
           </div>
         </div>

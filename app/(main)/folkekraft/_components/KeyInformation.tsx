@@ -43,18 +43,20 @@ const socialIcons = [
 ];
 
 const keyInformationItems: KeyInformationItem[] = [
-  { label: "RAISED", value: "£775,670" },
-  { label: "INVESTORS", value: 459 },
-  { label: "TARGET", value: "£350,000" },
+  { label: "KURS", value: "8,00 kr" },
+  { label: "INVESTORER", value: 409 },
+  { label: "MÅL", value: "8 000 000 kr" },
   {
-    label: "TAX RELIEF",
-    value: "EIS",
-    tooltip: "Enterprise Investment Scheme tax relief information",
+    label: "NEDPRISING",
+    value: "33%",
+    tooltip:
+      "Nedprising fra kr 12 til kr 8 per aksje i forbindelse med emisjonen",
   },
   {
-    label: "TAX REDUCTION",
-    value: "30%",
-    tooltip: "Tax reduction percentage details",
+    label: "POTENTIELT OPPKJØP",
+    value: "12,00 kr",
+    tooltip:
+      "Folkekraft Group AS planlegger å kjøpe aksjene i Folkekraft AS for kr 12 per aksje",
   },
 ];
 

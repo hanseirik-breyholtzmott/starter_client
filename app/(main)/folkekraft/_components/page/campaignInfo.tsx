@@ -153,7 +153,7 @@ export default function CampaignInfo() {
         }}
       >
         <div className="relative bg-white p-8 rounded-xl mb-4 shadow-xl shadow-slate-300">
-          <BorderBeam />
+          <BorderBeam colorFrom="#57C7B7" colorTo="#00263D" />
           <div className="flex items-center justify-between mb-2">
             <AnimatePresence mode="wait">
               <motion.div

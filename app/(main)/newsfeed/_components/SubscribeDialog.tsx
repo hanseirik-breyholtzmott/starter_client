@@ -22,7 +22,7 @@ export function SubscribeDialog() {
     // Here you would typically handle the subscription
     toast({
       title: "Subscription successful",
-      description: "You will now receive updates from Elmera Group.",
+      description: "You will now receive updates from Folkekraft.",
     });
     setEmail("");
   };
@@ -32,14 +32,14 @@ export function SubscribeDialog() {
       <DialogTrigger asChild>
         <Button
           size="lg"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+          className="bg-black hover:bg-black/60 text-white px-8"
         >
           Follow
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Subscribe to Elmera Group Updates</DialogTitle>
+          <DialogTitle>Subscribe to Folkekraft Updates</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubscribe} className="space-y-4 mt-4">
           <div className="space-y-2">

@@ -13,9 +13,6 @@ import { Button } from "@/components/ui/button";
 //Icons
 import { Download, FileText } from "lucide-react";
 
-//Components
-import PerksCard from "../perksCard";
-
 export default function Documents() {
   const { campaign, loading, error } = useCampaign();
 

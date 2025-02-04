@@ -62,8 +62,6 @@ export default function CampaignInfo() {
   const [isMounted, setIsMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isReturning, setIsReturning] = useState(false);
-  const [showShareDialog, setShowShareDialog] = useState(false);
-  const [showInvestDialog, setShowInvestDialog] = useState(false);
 
   const copyToClipboard = useCallback(async () => {
     const success = await handleCopy(urlToShare);
